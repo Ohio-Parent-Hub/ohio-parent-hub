@@ -1,51 +1,94 @@
+import fs from "node:fs";
+import path from "node:path";
 import Link from "next/link";
+import type { Metadata } from "next";
 
-type Props = {
-  params: { city: string };
-};
+type Props = { params: Promise<{ city?: string }> };
+
+type DaycareRow = Record<string, string>;
 
 function prettyCity(city: string) {
-  return decodeURIComponent(city).replace(/-/g, " ");
+  return decodeURIComponent(city || "")
+    .replace(/-/g, " ")
+    .replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
-export default function CityDaycaresPage({ params }: Props) {
-  const cityName = prettyCity(params.city);
+function slugify(s: string) {
+  return (s || "")
+    .toLowerCase()
+    .trim()
+    .replace(/&/g, "and")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)+/g, "");
+}
+
+function loadDaycares(): DaycareRow[] {
+  const p = path.join(process.cwd(), "data", "daycares.json");
+  if (!fs.existsSync(p)) return [];
+  const raw = fs.readFileSync(p, "utf8");
+  return JSON.parse(raw);
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { city } = await params;
+  const cityParam = city ?? "";
+  const cityDisplay = prettyCity(cityParam);
+  const citySlug = cityParam.trim().toLowerCase();
+  
+  const all = loadDaycares();
+  const matches = all.filter((d) => {
+    const dataCitySlug = (d["CITY"] || "")
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, "-");
+    return dataCitySlug === citySlug;
+  });
+  
+  const count = matches.length;
+  
+  return {
+    title: `${count} Licensed Daycares in ${cityDisplay}, Ohio | Ohio Parent Hub`,
+    description: `Find ${count} licensed daycare and childcare programs in ${cityDisplay}, OH. Browse SUTQ-rated providers, view program details, addresses, and contact information.`,
+    openGraph: {
+      title: `Daycares in ${cityDisplay}, Ohio`,
+      description: `${count} licensed childcare programs in ${cityDisplay}`,
+    },
+  };
+}
+
+export default async function CityDaycaresPage({ params }: Props) {
+  const { city } = await params;
+  const cityParam = city ?? "";
+  const citySlug = cityParam.trim().toLowerCase();
+  const cityDisplay = prettyCity(cityParam);
+
+  const all = loadDaycares();
+
+  const matches = all.filter((d) => {
+    const dataCitySlug = (d["CITY"] || "")
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, "-");
+    return dataCitySlug === citySlug;
+  });
+
+  const results = matches.slice(0, 50);
 
   return (
     <main className="mx-auto max-w-7xl px-6 py-8">
-      {/* Header */}
       <header className="mb-6">
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <h1 className="text-2xl font-semibold tracking-tight">
-              Daycares in {cityName}
-            </h1>
-            <p className="mt-1 text-sm text-neutral-600">
-              Browse licensed programs. Filters and map coming next.
-            </p>
-          </div>
+        <h1 className="text-2xl font-semibold tracking-tight">
+          Daycares in {cityDisplay || "Ohio"}
+        </h1>
+        <p className="mt-1 text-sm text-neutral-600">
+          Showing {results.length}
+          {matches.length > results.length ? ` of ${matches.length}` : ""} licensed programs.
+        </p>
 
-          <div className="flex gap-2">
-            <Link
-              href="/"
-              className="rounded-lg border px-3 py-2 text-sm font-medium hover:bg-neutral-50"
-            >
-              Home
-            </Link>
-            <Link
-              href={`/daycare/12345-example-daycare-${params.city}`}
-              className="rounded-lg bg-black px-3 py-2 text-sm font-medium text-white hover:opacity-90"
-            >
-              Example Listing
-            </Link>
-          </div>
-        </div>
-
-        {/* Search bar (UI only for now) */}
         <div className="mt-5 flex gap-2">
           <input
             className="w-full rounded-xl border px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-black/10"
-            placeholder="Search name, address, program type… (coming soon)"
+            placeholder="Search name, address, program type… (next)"
             disabled
           />
           <button
@@ -57,49 +100,12 @@ export default function CityDaycaresPage({ params }: Props) {
         </div>
       </header>
 
-      {/* Split layout */}
       <section className="grid gap-6 lg:grid-cols-12">
-        {/* Filters */}
+        {/* Filters placeholder */}
         <aside className="lg:col-span-3">
           <div className="sticky top-6 rounded-2xl border p-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-sm font-semibold">Filters</h2>
-              <button
-                className="text-xs font-medium text-neutral-600 hover:text-neutral-900"
-                disabled
-              >
-                Reset
-              </button>
-            </div>
-
-            <div className="mt-4 space-y-4">
-              <div>
-                <label className="text-xs font-medium text-neutral-700">
-                  County
-                </label>
-                <div className="mt-2 rounded-xl border px-3 py-2 text-sm text-neutral-500">
-                  Coming soon
-                </div>
-              </div>
-
-              <div>
-                <label className="text-xs font-medium text-neutral-700">
-                  Program type
-                </label>
-                <div className="mt-2 rounded-xl border px-3 py-2 text-sm text-neutral-500">
-                  Coming soon
-                </div>
-              </div>
-
-              <div>
-                <label className="text-xs font-medium text-neutral-700">
-                  SUTQ rating
-                </label>
-                <div className="mt-2 rounded-xl border px-3 py-2 text-sm text-neutral-500">
-                  Coming soon
-                </div>
-              </div>
-            </div>
+            <h2 className="text-sm font-semibold">Filters</h2>
+            <p className="mt-2 text-sm text-neutral-600">Coming next.</p>
           </div>
         </aside>
 
@@ -109,57 +115,79 @@ export default function CityDaycaresPage({ params }: Props) {
             <div className="border-b p-4">
               <h2 className="text-sm font-semibold">Results</h2>
               <p className="mt-1 text-sm text-neutral-600">
-                We’ll load real listings here next.
+                Data source: Ohio early care & education programs.
               </p>
             </div>
 
             <div className="p-4">
-              {/* Placeholder cards */}
-              <div className="space-y-3">
-                {[1, 2, 3, 4, 5].map((i) => (
-                  <div
-                    key={i}
-                    className="rounded-xl border p-4 hover:bg-neutral-50"
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <div className="text-sm font-semibold">
-                          Example Daycare #{i}
-                        </div>
-                        <div className="mt-1 text-sm text-neutral-600">
-                          {cityName}, OH • Franklin County
-                        </div>
-                        <div className="mt-2 inline-flex rounded-full border px-2 py-1 text-xs text-neutral-700">
-                          SUTQ: Pending
+              {results.length === 0 ? (
+                <div className="rounded-xl border p-4 text-sm text-neutral-600">
+                  No results found for <b>{cityDisplay}</b>.
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {results.map((d) => {
+                    const id = d["PROGRAM NUMBER"] || "";
+                    const name = d["PROGRAM NAME"] || "";
+                    const county = d["COUNTY"] || "";
+                    const sutq = d["SUTQ RATING"] || "—";
+                    const street = d["STREET ADDRESS"] || "";
+                    const zip = d["ZIP CODE"] || "";
+                    const programType = d["PROGRAM TYPE"] || "—";
+
+                    const slug = `${id}-${slugify(name)}-${slugify(d["CITY"] || "")}`;
+
+                    return (
+                      <div key={id} className="rounded-xl border p-4 hover:bg-neutral-50">
+                        <div className="flex items-start justify-between gap-3">
+                          <div>
+                            <div className="text-sm font-semibold">{name}</div>
+                            <div className="mt-1 text-sm text-neutral-600">
+                              {street}, {cityDisplay}, OH {zip}
+                            </div>
+                            <div className="mt-1 text-sm text-neutral-600">
+                              {county} County • {programType}
+                            </div>
+
+                            <div className="mt-2 inline-flex gap-2">
+                              <span className="inline-flex rounded-full border px-2 py-1 text-xs text-neutral-700">
+                                SUTQ: {sutq}
+                              </span>
+                              <span className="inline-flex rounded-full border px-2 py-1 text-xs text-neutral-700">
+                                ID: {id}
+                              </span>
+                            </div>
+                          </div>
+
+                          <Link
+                            href={`/daycare/${slug}`}
+                            className="shrink-0 rounded-lg border px-3 py-2 text-xs font-medium hover:bg-white"
+                          >
+                            View
+                          </Link>
                         </div>
                       </div>
+                    );
+                  })}
+                </div>
+              )}
 
-                      <Link
-                        href={`/daycare/1234${i}-example-daycare-${params.city}`}
-                        className="shrink-0 rounded-lg border px-3 py-2 text-xs font-medium hover:bg-white"
-                      >
-                        View
-                      </Link>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <div className="mt-4 text-xs text-neutral-500">
-                Tip: Once data is wired up, we’ll add pagination and map-bound
-                filtering.
-              </div>
+              {matches.length > results.length && (
+                <p className="mt-4 text-xs text-neutral-500">
+                  Showing first {results.length} results. Pagination coming next.
+                </p>
+              )}
             </div>
           </div>
         </div>
 
-        {/* Map */}
+        {/* Map placeholder */}
         <div className="lg:col-span-4">
           <div className="sticky top-6 rounded-2xl border">
             <div className="border-b p-4">
               <h2 className="text-sm font-semibold">Map</h2>
               <p className="mt-1 text-sm text-neutral-600">
-                Map pins coming next.
+                Map pins coming after geocoding.
               </p>
             </div>
 
