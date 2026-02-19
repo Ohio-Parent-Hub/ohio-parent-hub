@@ -4,6 +4,10 @@ import Link from "next/link";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { SutqBadge } from "@/components/SutqBadge";
 import type { Metadata } from "next";
+// import dynamic from "next/dynamic";
+import InteractiveMap from "@/components/InteractiveMap";
+
+// const LeafletMap = dynamic(() => import("@/components/LeafletMap"), { ssr: false });
 
 type Props = { params: Promise<{ city?: string }> };
 
@@ -75,6 +79,28 @@ export default async function CityDaycaresPage({ params }: Props) {
   });
 
   const results = matches.slice(0, 50);
+
+  // We want to map ALL locations, not just the first 50 results
+  // This helps users find daycares near them even if they start with "Z"
+  const markers = matches
+    .filter((d) => d["LAT"] && d["LNG"])
+    .map((d) => {
+      const id = d["PROGRAM NUMBER"];
+      const name = d["PROGRAM NAME"] || "Daycare";
+      const city = d["CITY"] || "";
+      const url = `/daycare/${id}-${slugify(name)}-${slugify(city)}`;
+      return {
+        lat: Number(d["LAT"]),
+        lng: Number(d["LNG"]),
+        title: name,
+        url,
+      };
+    });
+    
+  // Center on the first result if available, otherwise Columbus
+  const center: [number, number] = markers.length > 0 
+    ? [markers[0].lat, markers[0].lng] 
+    : [39.9612, -82.9988];
 
   return (
     <main className="mx-auto max-w-7xl px-6 py-8">
@@ -189,18 +215,21 @@ export default async function CityDaycaresPage({ params }: Props) {
           </div>
         </div>
 
-        {/* Map placeholder */}
+        {/* Map */}
         <div className="lg:col-span-4">
-          <div className="sticky top-6 rounded-2xl border">
-            <div className="border-b p-4">
-              <h2 className="text-sm font-semibold">Map</h2>
-              <p className="mt-1 text-sm text-neutral-600">
-                Map pins coming after geocoding.
-              </p>
-            </div>
-
-            <div className="flex h-[420px] items-center justify-center p-6 text-sm text-neutral-500">
-              Map placeholder
+          <div className="sticky top-6 space-y-4">
+            <div className="rounded-2xl border overflow-hidden">
+              <InteractiveMap
+                center={center}
+                zoom={markers.length > 0 ? 12 : 10}
+                markers={markers}
+                height="400px"
+                className="w-full h-full"
+              />
+              <div className="bg-neutral-50 px-4 py-2 text-xs text-neutral-500 border-t flex justify-between">
+                <span>{markers.length} Locations Mapped</span>
+                <span>OpenStreetMap</span>
+              </div>
             </div>
           </div>
         </div>

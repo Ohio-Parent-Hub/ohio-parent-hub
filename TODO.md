@@ -34,6 +34,11 @@
 - [ ] Set up Google Analytics (if not already done)
 - [x] Build "All Cities" page (`/cities`) with full alphabetical list
 - [x] Add breadcrumb navigation (Homepage → City → Daycare)
+- [x] Add SUTQ Rating Badges (Gold/Silver/Bronze)
+- [x] Integrate Maps (Leaflet + OpenStreetMap)
+  - [x] Geocode 7,600+ daycares (Fixed build process to preserve data)
+  - [x] Add static map on Detail Pages
+  - [x] Add interactive map on City Pages (showing top 50 results)
 - [ ] Test 5-10 random daycare detail pages for data accuracy
 - [ ] Add a footer with basic links (About, Contact, Privacy Policy placeholders)
 

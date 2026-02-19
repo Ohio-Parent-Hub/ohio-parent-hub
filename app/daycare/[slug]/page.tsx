@@ -1,5 +1,6 @@
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { SutqBadge } from "@/components/SutqBadge";
+import StaticMap from "@/components/StaticMap";
 import { slugify } from "@/lib/utils";
 import type { Metadata } from "next";
 import fs from "node:fs";
@@ -96,6 +97,9 @@ export default async function DaycarePage({ params }: Props) {
     ? `${daycare["ADMINISTRATOR FIRST NAME"]} ${daycare["ADMINISTRATOR LAST NAME"]}`
     : "—";
 
+  const lat = daycare["LAT"] ? Number(daycare["LAT"]) : null;
+  const lng = daycare["LNG"] ? Number(daycare["LNG"]) : null;
+
   // Schema.org LocalBusiness structured data
   const schema = {
     "@context": "https://schema.org",
@@ -110,6 +114,14 @@ export default async function DaycarePage({ params }: Props) {
       postalCode: zip,
       addressCountry: "US",
     },
+    ...(lat && lng && {
+      geo: {
+        "@type": "GeoCoordinates",
+        latitude: lat,
+        longitude: lng,
+      },
+      hasMap: `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`,
+    }),
     ...(phone && { telephone: phone }),
     ...(email && { email }),
     ...(website && { url: website.startsWith("http") ? website : `http://${website}` }),
@@ -168,6 +180,23 @@ export default async function DaycarePage({ params }: Props) {
               <p className="text-neutral-700">{city}, OH {zip}</p>
               <p className="text-sm text-neutral-600">{county} County</p>
             </div>
+            
+            {lat && lng && (
+              <div className="mt-6 overflow-hidden rounded-xl border">
+                <StaticMap lat={lat} lng={lng} height="300px" />
+                <div className="bg-neutral-50 px-4 py-2 text-xs text-neutral-500 flex justify-between">
+                  <span>OpenStreetMap</span>
+                  <a 
+                    href={`https://www.google.com/maps/search/?api=1&query=${lat},${lng}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="hover:underline text-neutral-700 font-medium"
+                  >
+                    View on Google Maps →
+                  </a>
+                </div>
+              </div>
+            )}
           </section>
 
           {/* Contact */}
