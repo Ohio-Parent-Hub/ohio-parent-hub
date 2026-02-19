@@ -1,26 +1,157 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Fonts */
+  --font-sans: var(--font-inter);
+  --font-serif: var(--font-dm-serif);
+  
+  /* Ohio Parent Hub Brand Colors */
+  --color-background: #F4F1EC;      /* Cream */
+  --color-foreground: #5F7F84;      /* Soft Teal (dark) */
+  
+  --color-card: #F8F7F4;            /* Lighter cream for cards */
+  --color-card-foreground: #4A6063;
+  
+  --color-popover: #F8F7F4;
+  --color-popover-foreground: #4A6063;
+  
+  --color-primary: #6B8F95;         /* Dusty Teal */
+  --color-primary-foreground: #F4F1EC; /* Cream on teal */
+  
+  --color-secondary: #9FB8A3;       /* Sage */
+  --color-secondary-foreground: #4A6063;
+  
+  --color-muted: #9FB8A3;           /* Sage for muted areas */
+  --color-muted-foreground: #69898F;
+  
+  --color-accent: #D6A21E;          /* Mustard */
+  --color-accent-foreground: #FFFFFF; /* White on mustard */
+  
+  --color-destructive: #E7A7A9;     /* Blush pink for errors */
+  --color-destructive-foreground: #FFFFFF;
+  
+  --color-border: #ADBFC2;          /* Soft teal for borders */
+  --color-input: #ADBFC2;
+  --color-ring: #6B8F95;            /* Dusty teal focus ring */
+  
+  /* Charts */
+  --color-chart-1: #6B8F95;
+  --color-chart-2: #D6A21E;
+  --color-chart-3: #E7A7A9;
+  --color-chart-4: #9FB8A3;
+  --color-chart-5: #5F7F84;
+  
+  /* Sidebar */
+  --color-sidebar: #F4F1EC;
+  --color-sidebar-foreground: #4A6063;
+  --color-sidebar-primary: #6B8F95;
+  --color-sidebar-primary-foreground: #F4F1EC;
+  --color-sidebar-accent: #9FB8A3;
+  --color-sidebar-accent-foreground: #4A6063;
+  --color-sidebar-border: #ADBFC2;
+  --color-sidebar-ring: #6B8F95;
+  
+  /* Radius */
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+:root {
+  --radius: 0.625rem;
+  
+  /* Ohio Parent Hub Brand Colors - HSL format for shadcn compatibility */
+  --background: 37 14% 95%;          /* Cream #F4F1EC */
+  --foreground: 193 14% 45%;         /* Soft Teal (dark) */
+  
+  --card: 37 14% 98%;                /* Lighter cream for cards */
+  --card-foreground: 193 14% 30%;
+  
+  --popover: 37 14% 98%;
+  --popover-foreground: 193 14% 30%;
+  
+  --primary: 193 16% 50%;            /* Dusty Teal #6B8F95 */
+  --primary-foreground: 37 14% 95%;  /* Cream on teal */
+  
+  --secondary: 133 14% 67%;          /* Sage #9FB8A3 */
+  --secondary-foreground: 193 14% 30%;
+  
+  --muted: 133 14% 67%;              /* Sage for muted areas */
+  --muted-foreground: 193 14% 40%;
+  
+  --accent: 44 75% 48%;              /* Mustard #D6A21E */
+  --accent-foreground: 0 0% 100%;    /* White on mustard */
+  
+  --destructive: 357 41% 78%;        /* Blush pink for errors #E7A7A9 */
+  --destructive-foreground: 0 0% 100%;
+  
+  --border: 193 14% 70%;             /* Soft teal for borders */
+  --input: 193 14% 70%;
+  --ring: 193 16% 50%;               /* Dusty teal focus ring */
+  
+  --chart-1: 193 16% 50%;            /* Dusty Teal */
+  --chart-2: 44 75% 48%;             /* Mustard */
+  --chart-3: 357 41% 78%;            /* Blush */
+  --chart-4: 133 14% 67%;            /* Sage */
+  --chart-5: 193 14% 45%;            /* Soft Teal */
+  
+  --sidebar: 37 14% 95%;
+  --sidebar-foreground: 193 14% 30%;
+  --sidebar-primary: 193 16% 50%;
+  --sidebar-primary-foreground: 37 14% 95%;
+  --sidebar-accent: 133 14% 67%;
+  --sidebar-accent-foreground: 193 14% 30%;
+  --sidebar-border: 193 14% 70%;
+  --sidebar-ring: 193 16% 50%;
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
   }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  body {
+    @apply bg-background text-foreground;
+  }
 }
