@@ -80,7 +80,7 @@ export default function HomePage() {
 
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
             <Button size="lg" className="h-12 border-2 border-primary bg-primary px-8 text-lg font-medium text-primary-foreground hover:bg-primary/90 hover:shadow-lg transition-all w-full sm:w-auto" asChild>
-              <Link href="#browse-cities">
+              <Link href="/daycares">
                 <Search className="mr-2 h-5 w-5" />
                 Find a Daycare
               </Link>
@@ -120,7 +120,7 @@ export default function HomePage() {
           <div className="text-center mb-16">
             <h2 className="font-serif text-4xl font-bold text-primary mb-4">Why Parents Trust Us</h2>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              We aggregate official state data to help you make informed decisions about your child's care.
+              We aggregate official state data to help you make informed decisions about your child&apos;s care.
             </p>
           </div>
 
@@ -162,7 +162,7 @@ export default function HomePage() {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground leading-relaxed">
-                  From infant care to preschool and after-school programs. Filter by age group to find the perfect fit for your family's needs.
+                  From infant care to preschool and after-school programs. Filter by age group to find the perfect fit for your family&apos;s needs.
                 </p>
               </CardContent>
             </Card>
@@ -227,7 +227,7 @@ export default function HomePage() {
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
              <Button size="lg" variant="secondary" className="text-lg h-14 px-8 font-semibold text-secondary-foreground shadow-lg hover:shadow-xl hover:bg-secondary/90" asChild>
-                <Link href="#browse-cities">Start Your Search</Link>
+                <Link href="/daycares">Start Your Search</Link>
              </Button>
           </div>
           <p className="mt-8 text-sm opacity-60">

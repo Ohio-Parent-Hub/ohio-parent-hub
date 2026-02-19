@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import L from "leaflet";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import "leaflet/dist/leaflet.css";
 import "leaflet.markercluster/dist/MarkerCluster.css";
@@ -10,7 +10,7 @@ import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 
 // Only run client-side to prevent SSR window errors
 if (typeof window !== "undefined") {
-  // @ts-ignore
+  // @ts-expect-error - _getIconUrl is not typed but exists on prototype
   delete L.Icon.Default.prototype._getIconUrl;
 
   L.Icon.Default.mergeOptions({
@@ -20,7 +20,7 @@ if (typeof window !== "undefined") {
   });
 }
 
-interface MapProps {
+export interface MapProps {
   center: [number, number]; // [lat, lng]
   zoom?: number;
   markers?: Array<{
@@ -35,6 +35,28 @@ interface MapProps {
   scrollWheelZoom?: boolean;
 }
 
+function MapUpdater({ center, zoom, markers }: { center: [number, number], zoom: number, markers: MapProps['markers'] }) {
+  const map = useMap();
+
+  useEffect(() => {
+    map.setView(center, zoom);
+  }, [center, zoom, map]);
+
+  useEffect(() => {
+    if (markers && markers.length > 0) {
+      const validMarkers = markers.filter(m => m.lat && m.lng);
+      if (validMarkers.length > 0) {
+        const bounds = L.latLngBounds(validMarkers.map(m => [m.lat, m.lng]));
+        if (bounds.isValid()) {
+            map.fitBounds(bounds, { padding: [50, 50] });
+        }
+      }
+    }
+  }, [markers, map]);
+
+  return null;
+}
+
 export default function LeafletMap({
   center,
   zoom = 13,
@@ -44,22 +66,8 @@ export default function LeafletMap({
   className = "",
   scrollWheelZoom = false, // Default to false to prevent scroll trapping
 }: MapProps) {
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  if (!isMounted) {
-    return (
-      <div 
-        className={`bg-neutral-100 flex items-center justify-center text-neutral-400 rounded-xl ${className}`} 
-        style={{ height }}
-      >
-        Loading Map...
-      </div>
-    );
-  }
+  // Dynamic import with ssr: false handles client safety. 
+  // Removed internal isMounted check to fix react-hooks lint warning.
 
   // Interactive vs Static configuration
   const mapOptions = interactive
@@ -96,6 +104,7 @@ export default function LeafletMap({
         style={{ height: "100%", width: "100%" }}
         {...mapOptions}
       >
+        <MapUpdater center={center} zoom={zoom} markers={markers} />
 
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
