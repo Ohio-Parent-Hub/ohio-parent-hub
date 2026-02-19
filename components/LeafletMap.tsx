@@ -32,6 +32,7 @@ interface MapProps {
   interactive?: boolean; // If false, disable interactions (static-like mode)
   height?: string;
   className?: string;
+  scrollWheelZoom?: boolean;
 }
 
 export default function LeafletMap({
@@ -41,6 +42,7 @@ export default function LeafletMap({
   interactive = true,
   height = "400px",
   className = "",
+  scrollWheelZoom = false, // Default to false to prevent scroll trapping
 }: MapProps) {
   const [isMounted, setIsMounted] = useState(false);
 
@@ -61,8 +63,22 @@ export default function LeafletMap({
 
   // Interactive vs Static configuration
   const mapOptions = interactive
-    ? { scrollWheelZoom: true, dragging: true, touchZoom: true, doubleClickZoom: true, zoomControl: true }
-    : { scrollWheelZoom: false, dragging: false, touchZoom: false, doubleClickZoom: false, zoomControl: false, boxZoom: false, keyboard: false };
+    ? { 
+        scrollWheelZoom: scrollWheelZoom, 
+        dragging: true, 
+        touchZoom: true, 
+        doubleClickZoom: true, 
+        zoomControl: true 
+      }
+    : { 
+        scrollWheelZoom: false, 
+        dragging: false, 
+        touchZoom: false, 
+        doubleClickZoom: false, 
+        zoomControl: false, 
+        boxZoom: false, 
+        keyboard: false 
+      };
 
   // Re-declare icon here to ensure it's available in render scope if needed, 
   // though typically Marker uses default if not specified.

@@ -284,14 +284,6 @@ export default async function DaycarePage({ params }: Props) {
 
         {/* Right Column - Sidebar */}
         <div className="space-y-6">
-          {/* Map Placeholder */}
-          <div className="rounded-2xl border p-6">
-            <h2 className="text-sm font-semibold mb-3">Map</h2>
-            <div className="flex h-48 items-center justify-center rounded-lg bg-neutral-50 text-sm text-neutral-500">
-              Map coming soon
-            </div>
-          </div>
-
           {/* Quick Actions */}
           <div className="rounded-2xl border p-6">
             <h2 className="text-sm font-semibold mb-3">Quick Info</h2>
