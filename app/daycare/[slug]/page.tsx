@@ -73,7 +73,6 @@ export default async function DaycarePage({ params }: Props) {
   const name = daycare["PROGRAM NAME"] || "Unknown";
   const programNumber = daycare["PROGRAM NUMBER"] || "";
   const programType = daycare["PROGRAM TYPE"] || "Not Specified";
-  const licenseType = daycare["LICENSE TYPE"] || "—";
   const sutq = daycare["SUTQ RATING"] || "Not Rated";
   
   const street = daycare["STREET ADDRESS"] || "";
@@ -81,21 +80,15 @@ export default async function DaycarePage({ params }: Props) {
   const zip = daycare["ZIP CODE"] || "";
   const county = daycare["COUNTY"] || "";
   
-  const phone = daycare["BUSINESS TELEPHONE NUMBER"] || "";
-  const email = daycare["E-MAIL"] || "";
-  const website = daycare["WEB SITE"] || "";
+  const phone = daycare["PHONE"] || "";
+  const email = daycare["EMAIL"] || "";
   
-  const capacity = daycare["LICENSED CAPACITY"] || "—";
-  const ageFrom = daycare["AGE RANGE FROM (MONTHS)"] || "";
-  const ageTo = daycare["AGE RANGE TO (MONTHS)"] || "";
-  const ageRange = ageFrom && ageTo ? `${ageFrom}-${ageTo} months` : "—";
+  const initialLicense = daycare["LICENSE/CERTIFICATION/REGISTRATION BEGIN DATE"] || "—";
+  const licenseExpires = daycare["LICENSE/CERTIFICATION/REGISTRATION END DATE"] || "—";
   
-  const initialLicense = daycare["INITIAL LICENSE DATE"] || "—";
-  const licenseExpires = daycare["LICENSE/REGISTRATION EXPIRATION DATE"] || "—";
-  
-  const administrator = daycare["ADMINISTRATOR FIRST NAME"] && daycare["ADMINISTRATOR LAST NAME"]
-    ? `${daycare["ADMINISTRATOR FIRST NAME"]} ${daycare["ADMINISTRATOR LAST NAME"]}`
-    : "—";
+  const administrator1 = daycare["ADMINISTRATOR 1 NAME"] || "";
+  const administrator2 = daycare["ADMINISTRATOR 2 NAME"] || "";
+  const administrator3 = daycare["ADMINISTRATOR 3 NAME"] || "";
 
   const lat = daycare["LAT"] ? Number(daycare["LAT"]) : null;
   const lng = daycare["LNG"] ? Number(daycare["LNG"]) : null;
@@ -124,7 +117,6 @@ export default async function DaycarePage({ params }: Props) {
     }),
     ...(phone && { telephone: phone }),
     ...(email && { email }),
-    ...(website && { url: website.startsWith("http") ? website : `http://${website}` }),
   };
 
   return (
@@ -161,9 +153,6 @@ export default async function DaycarePage({ params }: Props) {
           <SutqBadge rating={sutq} />
           <span className="inline-flex rounded-full border px-3 py-1 text-sm text-neutral-700">
             {programType}
-          </span>
-          <span className="inline-flex rounded-full border px-3 py-1 text-sm text-neutral-700">
-            {licenseType}
           </span>
         </div>
       </header>
@@ -203,12 +192,22 @@ export default async function DaycarePage({ params }: Props) {
           <section className="rounded-2xl border p-6">
             <h2 className="text-lg font-semibold mb-4">Contact Information</h2>
             <div className="space-y-3">
-              {phone && (
+              {administrator1 && (
                 <div>
-                  <div className="text-sm font-medium text-neutral-600">Phone</div>
-                  <a href={`tel:${phone}`} className="text-neutral-900 hover:underline">
-                    {phone}
-                  </a>
+                  <div className="text-sm font-medium text-neutral-600">Administrator 1</div>
+                  <div className="text-neutral-900">{administrator1}</div>
+                </div>
+              )}
+              {administrator2 && (
+                <div>
+                  <div className="text-sm font-medium text-neutral-600">Administrator 2</div>
+                  <div className="text-neutral-900">{administrator2}</div>
+                </div>
+              )}
+              {administrator3 && (
+                <div>
+                  <div className="text-sm font-medium text-neutral-600">Administrator 3</div>
+                  <div className="text-neutral-900">{administrator3}</div>
                 </div>
               )}
               {email && (
@@ -219,16 +218,11 @@ export default async function DaycarePage({ params }: Props) {
                   </a>
                 </div>
               )}
-              {website && (
+              {phone && (
                 <div>
-                  <div className="text-sm font-medium text-neutral-600">Website</div>
-                  <a
-                    href={website.startsWith("http") ? website : `http://${website}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-600 hover:underline"
-                  >
-                    Visit Website →
+                  <div className="text-sm font-medium text-neutral-600">Phone</div>
+                  <a href={`tel:${phone}`} className="text-neutral-900 hover:underline">
+                    {phone}
                   </a>
                 </div>
               )}
@@ -240,28 +234,9 @@ export default async function DaycarePage({ params }: Props) {
             <h2 className="text-lg font-semibold mb-4">Program Details</h2>
             <dl className="grid grid-cols-2 gap-4">
               <div>
-                <dt className="text-sm font-medium text-neutral-600">Licensed Capacity</dt>
-                <dd className="mt-1 text-neutral-900">{capacity}</dd>
-              </div>
-              <div>
-                <dt className="text-sm font-medium text-neutral-600">Age Range</dt>
-                <dd className="mt-1 text-neutral-900">{ageRange}</dd>
-              </div>
-              <div>
                 <dt className="text-sm font-medium text-neutral-600">Program Type</dt>
                 <dd className="mt-1 text-neutral-900">{programType}</dd>
               </div>
-              <div>
-                <dt className="text-sm font-medium text-neutral-600">License Type</dt>
-                <dd className="mt-1 text-neutral-900">{licenseType}</dd>
-              </div>
-            </dl>
-          </section>
-
-          {/* License Info */}
-          <section className="rounded-2xl border p-6">
-            <h2 className="text-lg font-semibold mb-4">License Information</h2>
-            <dl className="space-y-3">
               <div>
                 <dt className="text-sm font-medium text-neutral-600">Program Number</dt>
                 <dd className="mt-1 font-mono text-sm text-neutral-900">{programNumber}</dd>
@@ -274,32 +249,13 @@ export default async function DaycarePage({ params }: Props) {
                 <dt className="text-sm font-medium text-neutral-600">License Expiration</dt>
                 <dd className="mt-1 text-neutral-900">{licenseExpires}</dd>
               </div>
-              <div>
-                <dt className="text-sm font-medium text-neutral-600">Administrator</dt>
-                <dd className="mt-1 text-neutral-900">{administrator}</dd>
-              </div>
             </dl>
           </section>
+
         </div>
 
         {/* Right Column - Sidebar */}
         <div className="space-y-6">
-          {/* Quick Actions */}
-          <div className="rounded-2xl border p-6">
-            <h2 className="text-sm font-semibold mb-3">Quick Info</h2>
-            <div className="space-y-2 text-sm">
-              <p className="text-neutral-600">
-                <span className="font-medium">SUTQ Rating:</span> {sutq}
-              </p>
-              <p className="text-neutral-600">
-                <span className="font-medium">Capacity:</span> {capacity}
-              </p>
-              <p className="text-neutral-600">
-                <span className="font-medium">County:</span> {county}
-              </p>
-            </div>
-          </div>
-
           {/* Disclaimer */}
           <div className="rounded-xl border border-yellow-200 bg-yellow-50 p-4">
             <p className="text-xs text-neutral-700">
