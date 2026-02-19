@@ -22,7 +22,7 @@ function findDaycareBySlug(slug: string): DaycareRow | null {
   return all.find((d) => d["PROGRAM NUMBER"] === programNumber) || null;
 }
 
-export async function generateMetadata({ params }: Props): Metadata {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const daycare = findDaycareBySlug(slug);
   
