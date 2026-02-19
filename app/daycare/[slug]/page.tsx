@@ -1,4 +1,5 @@
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
+import { SutqBadge } from "@/components/SutqBadge";
 import { slugify } from "@/lib/utils";
 import type { Metadata } from "next";
 import fs from "node:fs";
@@ -145,9 +146,7 @@ export default async function DaycarePage({ params }: Props) {
         <p className="mt-2 text-neutral-600">{city}, Ohio</p>
         
         <div className="mt-4 flex flex-wrap gap-2">
-          <span className="inline-flex rounded-full border border-green-600 bg-green-50 px-3 py-1 text-sm font-medium text-green-900">
-            SUTQ: {sutq}
-          </span>
+          <SutqBadge rating={sutq} />
           <span className="inline-flex rounded-full border px-3 py-1 text-sm text-neutral-700">
             {programType}
           </span>

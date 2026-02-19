@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import Link from "next/link";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
+import { SutqBadge } from "@/components/SutqBadge";
 import type { Metadata } from "next";
 
 type Props = { params: Promise<{ city?: string }> };
@@ -159,9 +160,7 @@ export default async function CityDaycaresPage({ params }: Props) {
                             </div>
 
                             <div className="mt-2 inline-flex gap-2">
-                              <span className="inline-flex rounded-full border px-2 py-1 text-xs text-neutral-700">
-                                SUTQ: {sutq}
-                              </span>
+                              <SutqBadge rating={sutq} />
                               <span className="inline-flex rounded-full border px-2 py-1 text-xs text-neutral-700">
                                 ID: {id}
                               </span>
