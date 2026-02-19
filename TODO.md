@@ -37,6 +37,13 @@
 - [ ] Test 5-10 random daycare detail pages for data accuracy
 - [ ] Add a footer with basic links (About, Contact, Privacy Policy placeholders)
 
+### UI Polish (Optional But Recommended):
+- [ ] Install and configure shadcn/ui component library (~30 mins)
+- [ ] Refactor components to use shadcn primitives (Button, Card, Badge) for consistency
+- [ ] Improve mobile responsiveness - test and fix on small screens (~20 mins)
+- [ ] Add loading states/skeletons where appropriate (~15 mins)
+- [ ] Test cross-browser compatibility (Chrome, Safari, Firefox)
+
 ---
 
 ## 📊 This Month (Week 2-4)
@@ -105,7 +112,6 @@
 - [ ] Consider adding photos (would need licensing/permissions)
 - [ ] Add FAQ page about Ohio daycare licensing
 - [ ] Consider affiliate partnerships (daycare software, insurance, etc.)
-- [ ] Implement shadcn/ui component library (evaluate after traffic data)
 
 ---
 
