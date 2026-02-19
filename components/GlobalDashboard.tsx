@@ -424,9 +424,7 @@ export default function GlobalDashboard() {
       // Text Search
       if (searchQuery) {
         const q = searchQuery.toLowerCase();
-        const textMatch =
-          d["PROGRAM NAME"]?.toLowerCase().includes(q) ||
-          d["STREET ADDRESS"]?.toLowerCase().includes(q);
+        const textMatch = d["PROGRAM NAME"]?.toLowerCase().includes(q);
         if (!textMatch) return false;
       }
 

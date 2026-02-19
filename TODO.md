@@ -39,13 +39,14 @@
   - [x] Geocode 7,600+ daycares (Fixed build process to preserve data)
   - [x] Add interactive map on Detail Pages (scroll zoom disabled for UX)
   - [x] Add interactive map on City Pages (with clustering for all locations)
-- [ ] Build Global Search Page (or enable search on city pages)
+  - [x] Add address search with custom "Red Pin" marker (Geocoding Proxy)
+- [x] Build Global Search Page (or enable search on city pages)
 - [ ] Test 5-10 random daycare detail pages for data accuracy
 - [ ] Add a footer with basic links (About, Contact, Privacy Policy placeholders)
 
 ### UI Polish (Optional But Recommended):
-- [ ] Install and configure shadcn/ui component library (~30 mins)
-- [ ] Refactor components to use shadcn primitives (Button, Card, Badge) for consistency
+- [x] Install and configure shadcn/ui component library (~30 mins)
+- [x] Refactor components to use shadcn primitives (Button, Card, Badge) for consistency
 - [ ] Improve mobile responsiveness - test and fix on small screens (~20 mins)
 - [ ] Add loading states/skeletons where appropriate (~15 mins)
 - [ ] Test cross-browser compatibility (Chrome, Safari, Firefox)
@@ -66,15 +67,15 @@
 ## 🔮 Future Enhancements (Data-Driven - After 4-6 Weeks)
 
 ### If Getting Traffic But High Bounce Rate:
-- [ ] Add search functionality (search by name, city, zip)
-- [ ] Add filters on city pages (SUTQ rating, program type, capacity)
+- [x] Add search functionality (search by name, city, zip)
+- [x] Add filters on city pages (SUTQ rating, program type, capacity)
 - [ ] Improve visual design/UI polish
-- [ ] Consider adding shadcn/ui for consistent component library (buttons, inputs, cards)
+- [x] Consider adding shadcn/ui for consistent component library (buttons, inputs, cards)
 
 ### If Getting Clicks on Smaller Cities:
-- [ ] Build comprehensive `/cities` directory page
+- [x] Build comprehensive `/cities` directory page
 - [ ] Add county-level pages (`/daycares/county/[county]`)
-- [ ] Add zip code search capability
+- [x] Add zip code search capability (via Main/City Search)
 
 ### If Getting Traffic But No "Conversions":
 - [ ] Add map integration (Leaflet + OpenStreetMap)

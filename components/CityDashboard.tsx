@@ -252,18 +252,7 @@ export default function CityDashboard({ daycares, cityDisplay }: CityDashboardPr
       const lowerQuery = searchQuery.toLowerCase();
       result = result.filter((d) => {
         const name = (d["PROGRAM NAME"] || "").toLowerCase();
-        const address = (d["STREET ADDRESS"] || "").toLowerCase();
-        const zip = (d["ZIP CODE"] || "");
-        return (
-          name.includes(lowerQuery) ||
-          address.includes(lowerQuery) ||
-          zip.includes(lowerQuery)
-        );
-      });
-    }
-
-    // 2. Filter by PFCC Agreement (Publicly Funded)
-    if (pfccEnabled) {
+        return name.includes(lowerQuery);
       result = result.filter((d) => d["PFCC AGREEMENT"] === "Y");
     }
 
