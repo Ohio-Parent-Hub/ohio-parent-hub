@@ -29,6 +29,7 @@ export interface MapProps {
     title: string;
     url?: string;
   }>;
+  userLocation?: [number, number] | null; // New prop for user's searched location
   interactive?: boolean; // If false, disable interactions (static-like mode)
   height?: string;
   className?: string;
@@ -61,11 +62,26 @@ export default function LeafletMap({
   center,
   zoom = 13,
   markers = [],
+  userLocation,
   interactive = true,
   height = "400px",
   className = "",
   scrollWheelZoom = false, // Default to false to prevent scroll trapping
 }: MapProps) {
+  // Define a custom red icon for the user location (using Leaflet global)
+  // We need to do this carefully since L might not be fully initialized in SSR
+  // But since this component is dynamic imported with ssr: false, window.L should be available if we imported it.
+  // Actually, we imported L at the top level.
+  
+  const userIcon = new L.Icon({
+    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41]
+  });
+
   // Dynamic import with ssr: false handles client safety. 
   // Removed internal isMounted check to fix react-hooks lint warning.
 
@@ -111,8 +127,17 @@ export default function LeafletMap({
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         
+        {/* Render User Location Marker (Red Pin) if provided */}
+        {userLocation && (
+          <Marker position={userLocation} icon={userIcon} zIndexOffset={1000}>
+            <Popup>
+              <strong>Your Search Location</strong>
+            </Popup>
+          </Marker>
+        )}
+
         {/* Render Primary Center Marker if no markers array provided, or if interactive=false (single pin mode usually) */}
-        {(markers.length === 0 || !interactive) && (
+        {(markers.length === 0 || !interactive) && !userLocation && (
           <Marker position={center} />
         )}
 

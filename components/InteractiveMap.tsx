@@ -20,6 +20,7 @@ interface InteractiveMapProps {
     title: string;
     url?: string;
   }>;
+  userLocation?: [number, number] | null; // Pass through new prop
   height?: string;
   className?: string;
 }

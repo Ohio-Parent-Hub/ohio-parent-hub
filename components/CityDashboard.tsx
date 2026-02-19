@@ -5,6 +5,7 @@ import Link from "next/link";
 import { SutqBadge } from "@/components/SutqBadge";
 import InteractiveMap from "@/components/InteractiveMap";
 import FilterInput from "@/components/FilterInput";
+import LocationSearch from "@/components/LocationSearch";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
@@ -46,6 +47,8 @@ const RATINGS = ["3", "2", "1"];
 
 // Helper component for filter content since it's used in both desktop sidebar and mobile sheet
 function FilterContent({
+  searchQuery,
+  setSearchQuery,
   pfccEnabled,
   setPfccEnabled,
   selectedRatings,
@@ -54,6 +57,8 @@ function FilterContent({
   toggleProgramType,
   onClearAll,
 }: {
+  searchQuery: string;
+  setSearchQuery: (v: string) => void;
   pfccEnabled: boolean;
   setPfccEnabled: (v: boolean) => void;
   selectedRatings: string[];
@@ -64,6 +69,18 @@ function FilterContent({
 }) {
   return (
     <div className="space-y-6 px-4">
+      {/* Name Search moved to filters */}
+      <div>
+        <h2 className="text-sm font-semibold mb-4">Search Name</h2>
+        <FilterInput
+          value={searchQuery}
+          onChange={setSearchQuery} 
+          placeholder="e.g. Little Stars..."
+        />
+      </div>
+
+      <Separator />
+
       <div>
         <h2 className="text-sm font-semibold mb-4">Program filters</h2>
         
@@ -196,6 +213,7 @@ const PROGRAM_TYPES = [
 
 export default function CityDashboard({ daycares, cityDisplay }: CityDashboardProps) {
   const [searchQuery, setSearchQuery] = useState("");
+  const [mapCenter, setMapCenter] = useState<[number, number] | null>(null);
   const [pfccEnabled, setPfccEnabled] = useState(false);
   const [selectedRatings, setSelectedRatings] = useState<string[]>([]);
   const [selectedProgramTypes, setSelectedProgramTypes] = useState<string[]>([]);
@@ -222,6 +240,8 @@ export default function CityDashboard({ daycares, cityDisplay }: CityDashboardPr
     setPfccEnabled(false);
     setSelectedRatings([]);
     setSelectedProgramTypes([]);
+    setSearchQuery("");
+    setMapCenter(null);
   };
 
   const filteredDaycares = useMemo(() => {
@@ -294,7 +314,7 @@ export default function CityDashboard({ daycares, cityDisplay }: CityDashboardPr
 
   // Fallback if no markers
   const defaultCenter: [number, number] = [39.9612, -82.9988]; 
-  const center = markerCenter || defaultCenter;
+  const center = mapCenter || markerCenter || defaultCenter;
 
   return (
     <div>
@@ -309,10 +329,9 @@ export default function CityDashboard({ daycares, cityDisplay }: CityDashboardPr
         </p>
 
         <div className="mt-5">
-           <FilterInput
-             value={searchQuery}
-             onChange={setSearchQuery} 
-             placeholder="Search name, address, or zip code..."
+           <LocationSearch 
+             onLocationFound={(lat, lng) => setMapCenter([lat, lng])}
+             className="max-w-md"
            />
         </div>
       </header>
@@ -340,6 +359,8 @@ export default function CityDashboard({ daycares, cityDisplay }: CityDashboardPr
                 </SheetDescription>
               </SheetHeader>
               <FilterContent 
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
                 pfccEnabled={pfccEnabled}
                 setPfccEnabled={setPfccEnabled}
                 selectedRatings={selectedRatings}
@@ -356,6 +377,8 @@ export default function CityDashboard({ daycares, cityDisplay }: CityDashboardPr
         <aside className="hidden lg:block lg:col-span-3 lg:order-1">
           <div className="sticky top-6 space-y-6 rounded-2xl border p-5">
               <FilterContent 
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
                 pfccEnabled={pfccEnabled}
                 setPfccEnabled={setPfccEnabled}
                 selectedRatings={selectedRatings}
@@ -470,6 +493,7 @@ export default function CityDashboard({ daycares, cityDisplay }: CityDashboardPr
                 center={center}
                 zoom={markers.length > 0 ? 12 : 10}
                 markers={markers}
+                userLocation={mapCenter}
                 height="400px"
                 className="w-full h-full"
               />
