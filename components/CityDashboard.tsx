@@ -63,7 +63,7 @@ function FilterContent({
   onClearAll: () => void;
 }) {
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 px-4">
       <div>
         <h2 className="text-sm font-semibold mb-4">Program filters</h2>
         
@@ -83,7 +83,7 @@ function FilterContent({
                   <Info className="h-4 w-4 text-neutral-400 hover:text-neutral-600" />
                 </div>
               </PopoverTrigger>
-              <PopoverContent className="max-w-xs text-sm" side="right">
+              <PopoverContent className="max-w-[280px] text-sm" align="start" side="bottom">
                 <p className="font-medium mb-1">{FILTER_DEFINITIONS.pfcc.title}</p>
                 <p className="text-neutral-600">{FILTER_DEFINITIONS.pfcc.description}</p>
               </PopoverContent>
@@ -103,7 +103,7 @@ function FilterContent({
                 <Info className="h-4 w-4 text-neutral-400 hover:text-neutral-600" />
               </div>
             </PopoverTrigger>
-            <PopoverContent className="max-w-xs text-sm" side="right">
+            <PopoverContent className="max-w-[280px] text-sm" align="start" side="bottom">
               <p className="font-medium mb-1">{FILTER_DEFINITIONS.sutq.title}</p>
               <p className="text-neutral-600">{FILTER_DEFINITIONS.sutq.description}</p>
             </PopoverContent>
@@ -148,7 +148,7 @@ function FilterContent({
                 <Info className="h-4 w-4 text-neutral-400 hover:text-neutral-600" />
               </div>
             </PopoverTrigger>
-            <PopoverContent className="max-w-xs text-sm" side="right">
+            <PopoverContent className="max-w-[280px] text-sm" align="start" side="bottom">
               <p className="font-medium mb-1">{FILTER_DEFINITIONS.programType.title}</p>
               <p className="text-neutral-600">{FILTER_DEFINITIONS.programType.description}</p>
             </PopoverContent>
