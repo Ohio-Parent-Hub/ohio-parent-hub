@@ -5,6 +5,7 @@ import Link from "next/link";
 import { SutqBadge } from "@/components/SutqBadge";
 import InteractiveMap from "@/components/InteractiveMap";
 import FilterInput from "@/components/FilterInput";
+import LocationSearch from "@/components/LocationSearch";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
@@ -72,6 +73,8 @@ const PROGRAM_TYPES = [
 
 // Reusable Filter Content Component
 function FilterContent({
+  searchQuery,
+  setSearchQuery,
   pfccEnabled,
   setPfccEnabled,
   selectedRatings,
@@ -84,8 +87,11 @@ function FilterContent({
   setSelectedCounty,
   cities,
   counties,
+  mapCenter,
   onClearAll,
 }: {
+  searchQuery: string;
+  setSearchQuery: (v: string) => void;
   pfccEnabled: boolean;
   setPfccEnabled: (v: boolean) => void;
   selectedRatings: string[];
@@ -98,6 +104,7 @@ function FilterContent({
   setSelectedCounty: (v: string) => void;
   cities: string[];
   counties: string[];
+  mapCenter: [number, number] | null;
   onClearAll: () => void;
 }) {
   const [cityOpen, setCityOpen] = useState(false);
@@ -105,6 +112,28 @@ function FilterContent({
 
   return (
     <div className="space-y-6 px-4">
+      {/* Clear Filters Button (only show if filters active) */}
+      {(pfccEnabled || selectedRatings.length > 0 || selectedProgramTypes.length > 0 || searchQuery || mapCenter || selectedCity || selectedCounty) && (
+        <button 
+          onClick={onClearAll}
+          className="text-xs text-neutral-500 underline hover:text-black w-full text-right mb-2"
+        >
+          Clear Filters
+        </button>
+      )}
+
+      {/* Name Search moved to filters */}
+      <div>
+        <h2 className="text-sm font-semibold mb-4">Search Name</h2>
+        <FilterInput
+          value={searchQuery}
+          onChange={setSearchQuery} 
+          placeholder="e.g. Little Stars..."
+        />
+      </div>
+
+      <Separator />
+
       {/* Location Filters */}
       <div>
         <h2 className="text-sm font-semibold mb-4">Location</h2>
@@ -344,16 +373,6 @@ function FilterContent({
           ))}
         </div>
       </div>
-
-      {/* Clear All */}
-      {(pfccEnabled || selectedRatings.length > 0 || selectedProgramTypes.length > 0 || selectedCity || selectedCounty) && (
-        <button 
-          onClick={onClearAll}
-          className="text-xs text-neutral-500 underline hover:text-black w-full text-left pt-2"
-        >
-          Clear all filters
-        </button>
-      )}
     </div>
   );
 }
@@ -364,6 +383,7 @@ export default function GlobalDashboard() {
   const [loading, setLoading] = useState(true);
   
   const [searchQuery, setSearchQuery] = useState("");
+  const [mapCenter, setMapCenter] = useState<[number, number] | null>(null);
   const [pfccEnabled, setPfccEnabled] = useState(false);
   const [selectedRatings, setSelectedRatings] = useState<string[]>([]);
   const [selectedProgramTypes, setSelectedProgramTypes] = useState<string[]>([]);
@@ -448,7 +468,8 @@ export default function GlobalDashboard() {
   }, [filteredDaycares]);
 
   // Ohio Center
-  const defaultCenter: [number, number] = [40.4173, -82.9071];
+  const defaultCenterCoords: [number, number] = [40.4173, -82.9071];
+  const center = mapCenter || defaultCenterCoords;
 
   function clearAll() {
     setPfccEnabled(false);
@@ -457,6 +478,7 @@ export default function GlobalDashboard() {
     setSelectedCity("");
     setSelectedCounty("");
     setSearchQuery("");
+    setMapCenter(null);
   }
 
   const toggleRating = (r: string) => {
@@ -483,12 +505,9 @@ export default function GlobalDashboard() {
     <div className="flex flex-col lg:flex-row gap-8">
       {/* Desktop Sidebar */}
       <aside className="hidden lg:block w-80 flex-shrink-0 space-y-8">
-        <FilterInput
-          value={searchQuery}
-          onChange={setSearchQuery}
-          placeholder="Search by name or address..."
-        />
         <FilterContent 
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
           pfccEnabled={pfccEnabled}
           setPfccEnabled={setPfccEnabled}
           selectedRatings={selectedRatings}
@@ -501,6 +520,7 @@ export default function GlobalDashboard() {
           setSelectedCounty={setSelectedCounty}
           cities={cities}
           counties={counties}
+          mapCenter={mapCenter}
           onClearAll={clearAll}
         />
       </aside>
@@ -509,10 +529,8 @@ export default function GlobalDashboard() {
       <div className="flex-1 space-y-6">
         {/* Mobile Header / Controls */}
         <div className="lg:hidden flex flex-col gap-4">
-          <FilterInput
-            value={searchQuery}
-            onChange={setSearchQuery}
-            placeholder="Search by name or address..."
+          <LocationSearch 
+            onLocationFound={(lat, lng) => setMapCenter([lat, lng])}
           />
           <div className="flex items-center gap-2">
             <Sheet>
@@ -520,7 +538,7 @@ export default function GlobalDashboard() {
                 <Button variant="outline" className="flex-1">
                   <Filter className="mr-2 h-4 w-4" />
                   Filters
-                  {(pfccEnabled || selectedRatings.length > 0 || selectedProgramTypes.length > 0 || selectedCity || selectedCounty) && (
+                  {(pfccEnabled || selectedRatings.length > 0 || selectedProgramTypes.length > 0 || selectedCity || selectedCounty || searchQuery || mapCenter) && (
                     <Badge variant="secondary" className="ml-2 px-1.5 py-0 h-5">
                       !
                     </Badge>
@@ -535,6 +553,8 @@ export default function GlobalDashboard() {
                   </SheetDescription>
                 </SheetHeader>
                 <FilterContent 
+                  searchQuery={searchQuery}
+                  setSearchQuery={setSearchQuery}
                   pfccEnabled={pfccEnabled}
                   setPfccEnabled={setPfccEnabled}
                   selectedRatings={selectedRatings}
@@ -547,6 +567,7 @@ export default function GlobalDashboard() {
                   setSelectedCounty={setSelectedCounty}
                   cities={cities}
                   counties={counties}
+                  mapCenter={mapCenter}
                   onClearAll={clearAll}
                 />
               </SheetContent>
@@ -557,20 +578,29 @@ export default function GlobalDashboard() {
         </div>
 
         {/* Results Header */}
-        <div className="flex items-baseline justify-between">
-          <h1 className="text-xl font-bold">
-            {filteredDaycares.length} Results
-            {selectedCity && <span className="font-normal text-neutral-500 ml-2">in {prettyCity(selectedCity)}</span>}
-            {selectedCounty && <span className="font-normal text-neutral-500 ml-2">in {prettyCity(selectedCounty)} County</span>}
-          </h1>
+        <div className="flex flex-col gap-4">
+          <div className="hidden lg:block">
+            <LocationSearch 
+              onLocationFound={(lat, lng) => setMapCenter([lat, lng])}
+              className="max-w-md mb-4"
+            />
+          </div>
+          <div className="flex items-baseline justify-between">
+            <h1 className="text-xl font-bold">
+              {filteredDaycares.length} Results
+              {selectedCity && <span className="font-normal text-neutral-500 ml-2">in {prettyCity(selectedCity)}</span>}
+              {selectedCounty && <span className="font-normal text-neutral-500 ml-2">in {prettyCity(selectedCounty)} County</span>}
+            </h1>
+          </div>
         </div>
 
         {/* Map */}
         <div className="rounded-xl border bg-neutral-50 shadow-sm relative z-0">
           <InteractiveMap 
-            center={defaultCenter}
-            zoom={7}
+            center={center}
+            zoom={mapCenter ? 12 : 7}
             markers={mapMarkers}
+            userLocation={mapCenter}
             height="500px" // Taller map for global view
             className="rounded-xl"
           />

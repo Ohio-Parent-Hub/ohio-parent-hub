@@ -55,6 +55,7 @@ function FilterContent({
   toggleRating,
   selectedProgramTypes,
   toggleProgramType,
+  mapCenter,
   onClearAll,
 }: {
   searchQuery: string;
@@ -65,10 +66,19 @@ function FilterContent({
   toggleRating: (v: string) => void;
   selectedProgramTypes: string[];
   toggleProgramType: (v: string) => void;
+  mapCenter: [number, number] | null;
   onClearAll: () => void;
 }) {
   return (
-    <div className="space-y-6 px-4">
+    <div className="space-y-6 px-4">      {/* Clear Filters Button (only show if filters active) */}
+      {(pfccEnabled || selectedRatings.length > 0 || selectedProgramTypes.length > 0 || searchQuery || mapCenter) && (
+        <button 
+          onClick={onClearAll}
+          className="text-xs text-neutral-500 underline hover:text-black w-full text-right mb-2"
+        >
+          Clear Filters
+        </button>
+      )}
       {/* Name Search moved to filters */}
       <div>
         <h2 className="text-sm font-semibold mb-4">Search Name</h2>
@@ -179,22 +189,12 @@ function FilterContent({
                 checked={selectedProgramTypes.includes(type)}
                 onCheckedChange={() => toggleProgramType(type)}
                 className="mt-0.5" // Align checkbox with first line of text
-              />
-              <Label htmlFor={`type-${type}`} className="text-sm font-normal cursor-pointer leading-tight">
-                {type}
-              </Label>
-            </div>
-          ))}
-        </div>
-      </div>
-      
-      {/* Clear Filters Button (only show if filters active) */}
-      {(pfccEnabled || selectedRatings.length > 0 || selectedProgramTypes.length > 0) && (
+      {(pfccEnabled || selectedRatings.length > 0 || selectedProgramTypes.length > 0 || searchQuery || mapCenter) && (
         <button 
           onClick={onClearAll}
           className="text-xs text-neutral-500 underline hover:text-black w-full text-left pt-2"
         >
-          Clear all filters
+          Reset View
         </button>
       )}
     </div>
@@ -346,7 +346,7 @@ export default function CityDashboard({ daycares, cityDisplay }: CityDashboardPr
                 <span className="flex items-center">
                   <Filter className="mr-2 h-4 w-4" /> Filters
                 </span>
-                {(pfccEnabled || selectedRatings.length > 0 || selectedProgramTypes.length > 0) && (
+                {(pfccEnabled || selectedRatings.length > 0 || selectedProgramTypes.length > 0 || searchQuery || mapCenter) && (
                    <Badge variant="secondary" className="h-5 px-1.5 text-xs">Active</Badge>
                 )}
               </Button>
@@ -367,6 +367,7 @@ export default function CityDashboard({ daycares, cityDisplay }: CityDashboardPr
                 toggleRating={toggleRating}
                 selectedProgramTypes={selectedProgramTypes}
                 toggleProgramType={toggleProgramType}
+                mapCenter={mapCenter}
                 onClearAll={clearAllFilters}
               />
             </SheetContent>
@@ -385,6 +386,7 @@ export default function CityDashboard({ daycares, cityDisplay }: CityDashboardPr
                 toggleRating={toggleRating}
                 selectedProgramTypes={selectedProgramTypes}
                 toggleProgramType={toggleProgramType}
+                mapCenter={mapCenter}
                 onClearAll={clearAllFilters}
               />
           </div>
