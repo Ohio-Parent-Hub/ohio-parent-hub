@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { DM_Serif_Display, Inter } from "next/font/google";
 import "./globals.css";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 const dmSerif = DM_Serif_Display({
   weight: ["400"],
@@ -51,7 +52,9 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${dmSerif.variable} font-sans antialiased bg-background text-foreground`}
       >
-        {children}
+        <TooltipProvider>
+          {children}
+        </TooltipProvider>
       </body>
     </html>
   );
