@@ -56,6 +56,7 @@
 - [ ] Add search functionality (search by name, city, zip)
 - [ ] Add filters on city pages (SUTQ rating, program type, capacity)
 - [ ] Improve visual design/UI polish
+- [ ] Consider adding shadcn/ui for consistent component library (buttons, inputs, cards)
 
 ### If Getting Clicks on Smaller Cities:
 - [ ] Build comprehensive `/cities` directory page
@@ -104,6 +105,7 @@
 - [ ] Consider adding photos (would need licensing/permissions)
 - [ ] Add FAQ page about Ohio daycare licensing
 - [ ] Consider affiliate partnerships (daycare software, insurance, etc.)
+- [ ] Implement shadcn/ui component library (evaluate after traffic data)
 
 ---
 
@@ -112,6 +114,8 @@
 - **SEO Strategy:** Focus on long-tail keywords (city + "daycare" searches)
 - **Monetization:** Don't even think about this until you have consistent traffic
 - **UI/UX:** Keep it minimal until you validate there's demand
+- **Current UI Stack:** Raw Tailwind CSS (no component library yet)
+- **shadcn/ui Decision:** Wait until you have traffic data showing bounce/engagement issues before adding
 - **Content:** The data IS the content - 8,074 pages is massive value
 - **Marketing:** Let Google do the work first, then consider paid ads if traffic validates
 
