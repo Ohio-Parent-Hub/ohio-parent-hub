@@ -4,6 +4,8 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs"; // Import added
+import { slugify } from "@/lib/utils"; // Import added
 import { ArrowLeft, MapPin } from "lucide-react";
 import type { Metadata } from "next";
 
@@ -21,14 +23,7 @@ function loadDaycares(): DaycareRow[] {
   return JSON.parse(raw);
 }
 
-function slugify(s: string) {
-  return (s || "")
-    .toLowerCase()
-    .trim()
-    .replace(/&/g, "and")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)+/g, "");
-}
+// slugify removed here as it is imported
 
 interface CityData {
   name: string;
@@ -75,12 +70,14 @@ export default function CitiesPage() {
       <div className="mx-auto max-w-6xl">
         {/* Header */}
         <div className="mb-12">
-          <Button variant="ghost" className="mb-6 pl-0 hover:bg-transparent hover:text-primary" asChild>
-            <Link href="/">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Home
-            </Link>
-          </Button>
+          {/* Replaced Back Button with Breadcrumbs */}
+          <Breadcrumbs 
+            items={[
+              { label: "Home", href: "/" },
+              { label: "Cities", href: "/cities" }
+            ]} 
+            className="mb-6"
+          />
           
           <h1 className="font-serif text-4xl font-bold text-primary mb-4">
             Browse Daycares by City

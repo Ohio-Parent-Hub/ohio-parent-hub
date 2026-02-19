@@ -1,3 +1,5 @@
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
+import { slugify } from "@/lib/utils";
 import type { Metadata } from "next";
 import fs from "node:fs";
 import path from "node:path";
@@ -119,10 +121,20 @@ export default async function DaycarePage({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
       />
+      
+      <Breadcrumbs 
+        items={[
+          { label: "Home", href: "/" },
+          { label: "Cities", href: "/cities" },
+          { label: city, href: `/daycares/${slugify(city)}` },
+          { label: "Daycare Details", href: `/daycare/${slug}` }
+        ]} 
+        className="mb-6"
+      />
 
       {/* Header */}
       <div className="mb-6">
-        <Link href={`/daycares/${city.toLowerCase().replace(/\s+/g, "-")}`} className="text-sm text-neutral-600 hover:underline">
+        <Link href={`/daycares/${slugify(city)}`} className="text-sm text-neutral-600 hover:underline">
           ← Back to {city} Daycares
         </Link>
       </div>

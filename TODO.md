@@ -33,7 +33,7 @@
 - [ ] Share site on social media to drive initial traffic
 - [ ] Set up Google Analytics (if not already done)
 - [x] Build "All Cities" page (`/cities`) with full alphabetical list
-- [ ] Add breadcrumb navigation (Homepage → City → Daycare)
+- [x] Add breadcrumb navigation (Homepage → City → Daycare)
 - [ ] Test 5-10 random daycare detail pages for data accuracy
 - [ ] Add a footer with basic links (About, Contact, Privacy Policy placeholders)
 

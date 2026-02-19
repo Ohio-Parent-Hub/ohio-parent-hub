@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import Link from "next/link";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import type { Metadata } from "next";
 
 type Props = { params: Promise<{ city?: string }> };
@@ -76,6 +77,14 @@ export default async function CityDaycaresPage({ params }: Props) {
 
   return (
     <main className="mx-auto max-w-7xl px-6 py-8">
+      <Breadcrumbs 
+        items={[
+          { label: "Home", href: "/" }, 
+          { label: "Cities", href: "/cities" },
+          { label: cityDisplay || "City", href: `/daycares/${citySlug}` }
+        ]} 
+        className="mb-6"
+      />
       <header className="mb-6">
         <h1 className="text-2xl font-semibold tracking-tight">
           Daycares in {cityDisplay || "Ohio"}
