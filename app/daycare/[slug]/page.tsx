@@ -57,7 +57,7 @@ export default async function DaycarePage({ params }: Props) {
         <div className="rounded-xl border p-6 text-center">
           <h1 className="text-xl font-semibold">Daycare Not Found</h1>
           <p className="mt-2 text-sm text-neutral-600">
-            The daycare you're looking for doesn't exist or may have been delisted.
+            The daycare you&apos;re looking for doesn&apos;t exist or may have been delisted.
           </p>
           <Link
             href="/"
@@ -303,7 +303,7 @@ export default async function DaycarePage({ params }: Props) {
           {/* Disclaimer */}
           <div className="rounded-xl border border-yellow-200 bg-yellow-50 p-4">
             <p className="text-xs text-neutral-700">
-              Information sourced from Ohio's public childcare database. Always verify details directly with the provider.
+              Information sourced from Ohio&apos;s public childcare database. Always verify details directly with the provider.
             </p>
           </div>
         </div>
