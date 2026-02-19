@@ -189,14 +189,14 @@ function FilterContent({
                 checked={selectedProgramTypes.includes(type)}
                 onCheckedChange={() => toggleProgramType(type)}
                 className="mt-0.5" // Align checkbox with first line of text
-      {(pfccEnabled || selectedRatings.length > 0 || selectedProgramTypes.length > 0 || searchQuery || mapCenter) && (
-        <button 
-          onClick={onClearAll}
-          className="text-xs text-neutral-500 underline hover:text-black w-full text-left pt-2"
-        >
-          Reset View
-        </button>
-      )}
+              />
+              <Label htmlFor={`type-${type}`} className="text-sm font-normal cursor-pointer leading-tight">
+                {type}
+              </Label>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
@@ -253,6 +253,11 @@ export default function CityDashboard({ daycares, cityDisplay }: CityDashboardPr
       result = result.filter((d) => {
         const name = (d["PROGRAM NAME"] || "").toLowerCase();
         return name.includes(lowerQuery);
+      });
+    }
+
+    // 2. Filter by PFCC Agreement (Publicly Funded)
+    if (pfccEnabled) {
       result = result.filter((d) => d["PFCC AGREEMENT"] === "Y");
     }
 
