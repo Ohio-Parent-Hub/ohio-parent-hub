@@ -52,6 +52,7 @@ function FilterContent({
   toggleRating,
   selectedProgramTypes,
   toggleProgramType,
+  onClearAll,
 }: {
   pfccEnabled: boolean;
   setPfccEnabled: (v: boolean) => void;
@@ -59,6 +60,7 @@ function FilterContent({
   toggleRating: (v: string) => void;
   selectedProgramTypes: string[];
   toggleProgramType: (v: string) => void;
+  onClearAll: () => void;
 }) {
   return (
     <div className="space-y-6">
@@ -172,11 +174,7 @@ function FilterContent({
       {/* Clear Filters Button (only show if filters active) */}
       {(pfccEnabled || selectedRatings.length > 0 || selectedProgramTypes.length > 0) && (
         <button 
-          onClick={() => {
-            setPfccEnabled(false);
-            setSelectedRatings([]);
-            setSelectedProgramTypes([]);
-          }}
+          onClick={onClearAll}
           className="text-xs text-neutral-500 underline hover:text-black w-full text-left pt-2"
         >
           Clear all filters
@@ -218,6 +216,12 @@ export default function CityDashboard({ daycares, cityDisplay }: CityDashboardPr
         ? prev.filter((t) => t !== type)
         : [...prev, type]
     );
+  };
+
+  const clearAllFilters = () => {
+    setPfccEnabled(false);
+    setSelectedRatings([]);
+    setSelectedProgramTypes([]);
   };
 
   const filteredDaycares = useMemo(() => {
@@ -342,6 +346,7 @@ export default function CityDashboard({ daycares, cityDisplay }: CityDashboardPr
                 toggleRating={toggleRating}
                 selectedProgramTypes={selectedProgramTypes}
                 toggleProgramType={toggleProgramType}
+                onClearAll={clearAllFilters}
               />
             </SheetContent>
           </Sheet>
@@ -357,6 +362,7 @@ export default function CityDashboard({ daycares, cityDisplay }: CityDashboardPr
                 toggleRating={toggleRating}
                 selectedProgramTypes={selectedProgramTypes}
                 toggleProgramType={toggleProgramType}
+                onClearAll={clearAllFilters}
               />
           </div>
         </aside>
