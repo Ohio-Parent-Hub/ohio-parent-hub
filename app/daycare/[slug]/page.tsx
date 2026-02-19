@@ -155,12 +155,17 @@ export default async function DaycarePage({ params }: Props) {
             {programType}
           </span>
         </div>
+
+        {/* Disclaimer */}
+        <div className="mt-4 rounded-xl border border-yellow-200 bg-yellow-50 p-4">
+          <p className="text-xs text-neutral-700">
+            Information sourced from Ohio&apos;s public childcare database. Always verify details directly with the provider.
+          </p>
+        </div>
       </header>
 
-      {/* Main Content Grid */}
-      <div className="grid gap-6 lg:grid-cols-3">
-        {/* Left Column - Details */}
-        <div className="lg:col-span-2 space-y-6">
+      {/* Main Content */}
+      <div className="space-y-6">
           {/* Address */}
           <section className="rounded-2xl border p-6">
             <h2 className="text-lg font-semibold mb-4">Location</h2>
@@ -252,17 +257,6 @@ export default async function DaycarePage({ params }: Props) {
             </dl>
           </section>
 
-        </div>
-
-        {/* Right Column - Sidebar */}
-        <div className="space-y-6">
-          {/* Disclaimer */}
-          <div className="rounded-xl border border-yellow-200 bg-yellow-50 p-4">
-            <p className="text-xs text-neutral-700">
-              Information sourced from Ohio&apos;s public childcare database. Always verify details directly with the provider.
-            </p>
-          </div>
-        </div>
       </div>
     </main>
   );
