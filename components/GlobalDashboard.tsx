@@ -617,7 +617,11 @@ export default function GlobalDashboard() {
                   )}
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left" className="w-[300px] overflow-y-auto">
+              <SheetContent
+                side="left"
+                className="w-[300px] overflow-y-auto"
+                onOpenAutoFocus={(event) => event.preventDefault()}
+              >
                 <SheetHeader className="mb-6">
                   <SheetTitle>Filters</SheetTitle>
                   <SheetDescription>

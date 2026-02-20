@@ -355,7 +355,11 @@ export default function CityDashboard({ daycares, cityDisplay }: CityDashboardPr
                 )}
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-full sm:max-w-md overflow-y-auto">
+            <SheetContent
+              side="left"
+              className="w-full sm:max-w-md overflow-y-auto"
+              onOpenAutoFocus={(event) => event.preventDefault()}
+            >
               <SheetHeader className="text-left mb-6">
                 <SheetTitle>Filter Programs</SheetTitle>
                 <SheetDescription>
