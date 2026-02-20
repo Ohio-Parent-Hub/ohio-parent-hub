@@ -20,10 +20,10 @@
 
 ## 📋 Immediate (Next 48 Hours)
 
-- [ ] Monitor Vercel deployment completion
-- [ ] Test live site at ohioparenthub.com
-- [ ] Verify homepage city grid renders correctly
-- [ ] Test mobile responsive layout (homepage, city pages, detail pages)
+- [x] Monitor Vercel deployment completion
+- [x] Test live site at ohioparenthub.com
+- [x] Verify homepage city grid renders correctly
+- [x] Test mobile responsive layout (homepage, city pages, detail pages)
 - [ ] Check Google Search Console for crawl/indexing errors
 
 ---
@@ -78,8 +78,8 @@
 - [x] Add zip code search capability (via Main/City Search)
 
 ### If Getting Traffic But No "Conversions":
-- [ ] Add map integration (Leaflet + OpenStreetMap)
-- [ ] Geocode all addresses (create geocoding script)
+- [x] Add map integration (Leaflet + OpenStreetMap)
+- [ x Geocode all addresses (create geocoding script)
 - [ ] Add "Get Directions" CTA buttons
 - [ ] Add "Call Now" mobile click-to-call
 - [ ] Add email/website CTAs more prominently
