@@ -5,7 +5,7 @@ export const FILTER_DEFINITIONS = {
   },
   sutq: {
     title: "Step Up To Quality (SUTQ)",
-    description: "Step Up To Quality is a tiered quality rating and improvement system designed to recognize the efforts of licensed early learning and development programs that take steps to improve the quality of services they provide. The search function retrieves a list of all early care and education programs with a quality rating equal to or higher than what is selected.",
+    description: "Step Up To Quality is a tiered quality rating and improvement system designed to recognize the efforts of licensed early learning and development programs that take steps to improve the quality of services they provide.",
   },
   programType: {
     title: "Program Type",
