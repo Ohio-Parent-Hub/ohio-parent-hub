@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect, useRef, useTransition, useDeferredValue, useCallback } from "react";
+import { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { SutqBadge } from "@/components/SutqBadge";
 import InteractiveMap from "@/components/InteractiveMap";
@@ -401,10 +401,8 @@ export default function GlobalDashboard() {
   // State
   const [daycares, setDaycares] = useState<Daycare[]>([]);
   const [filteredIndices, setFilteredIndices] = useState<number[]>([]);
-  const [mapFilteredIndices, setMapFilteredIndices] = useState<number[]>([]);
   const [loading, setLoading] = useState(true);
   const [workerInitialized, setWorkerInitialized] = useState(false);
-  const [, startTransition] = useTransition();
   const workerRef = useRef<Worker | null>(null);
   const requestIdRef = useRef(0);
   const latestAppliedRequestRef = useRef(0);
@@ -438,7 +436,6 @@ export default function GlobalDashboard() {
       .then((data) => {
         setDaycares(data);
         setFilteredIndices(Array.from({ length: data.length }, (_, index) => index));
-        setMapFilteredIndices(Array.from({ length: data.length }, (_, index) => index));
         setLoading(false);
       })
       .catch((err) => {
@@ -463,9 +460,7 @@ export default function GlobalDashboard() {
       if (message.type === "filtered" && typeof message.requestId === "number" && Array.isArray(message.indices)) {
         if (message.requestId < latestAppliedRequestRef.current) return;
         latestAppliedRequestRef.current = message.requestId;
-        startTransition(() => {
-          setFilteredIndices(message.indices || []);
-        });
+        setFilteredIndices(message.indices || []);
       }
     };
 
@@ -473,7 +468,7 @@ export default function GlobalDashboard() {
       worker.terminate();
       workerRef.current = null;
     };
-  }, [startTransition]);
+  }, []);
 
   // Send normalized rows to worker whenever dataset changes
   useEffect(() => {
@@ -533,25 +528,8 @@ export default function GlobalDashboard() {
       .filter((daycare): daycare is Daycare => Boolean(daycare));
   }, [daycares, filteredIndices]);
 
-  const mapFilteredDaycares = useMemo(() => {
-    return mapFilteredIndices
-      .map((index) => daycares[index])
-      .filter((daycare): daycare is Daycare => Boolean(daycare));
-  }, [daycares, mapFilteredIndices]);
-
-  // Decouple map updates from filter interactions so checkbox/list feel instant.
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      setMapFilteredIndices(filteredIndices);
-    }, 220);
-
-    return () => clearTimeout(timeoutId);
-  }, [filteredIndices]);
-
-  const deferredMapFilteredDaycares = useDeferredValue(mapFilteredDaycares);
-
   const mapMarkers = useMemo(() => {
-    return deferredMapFilteredDaycares
+    return filteredDaycares
       .filter((d) => d.LAT && d.LNG)
       .map((d) => ({
         lat: typeof d.LAT === 'string' ? parseFloat(d.LAT) : d.LAT,
@@ -559,7 +537,7 @@ export default function GlobalDashboard() {
         title: d["PROGRAM NAME"],
         url: `/daycare/${slugify(d["PROGRAM NUMBER"] + "-" + d["PROGRAM NAME"])}`,
       }));
-  }, [deferredMapFilteredDaycares]);
+  }, [filteredDaycares]);
 
   // Ohio Center
   const defaultCenterCoords: [number, number] = [40.4173, -82.9071];
