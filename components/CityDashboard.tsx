@@ -69,16 +69,26 @@ function FilterContent({
   mapCenter: [number, number] | null;
   onClearAll: () => void;
 }) {
+  const hasActiveFilters =
+    pfccEnabled ||
+    selectedRatings.length > 0 ||
+    selectedProgramTypes.length > 0 ||
+    !!searchQuery ||
+    !!mapCenter;
+
   return (
-    <div className="space-y-6 px-4">      {/* Clear Filters Button (only show if filters active) */}
-      {(pfccEnabled || selectedRatings.length > 0 || selectedProgramTypes.length > 0 || searchQuery || mapCenter) && (
-        <button 
-          onClick={onClearAll}
-          className="text-xs text-neutral-500 underline hover:text-black w-full text-right mb-2"
-        >
-          Clear Filters
-        </button>
-      )}
+    <div className="space-y-6 px-4">      {/* Clear Filters Button (always rendered to prevent layout shift) */}
+      <button
+        onClick={onClearAll}
+        disabled={!hasActiveFilters}
+        className={`text-xs w-full text-right mb-2 transition-opacity ${
+          hasActiveFilters
+            ? "text-neutral-500 underline hover:text-black opacity-100"
+            : "text-neutral-400 opacity-0 pointer-events-none"
+        }`}
+      >
+        Clear Filters
+      </button>
       {/* Name Search moved to filters */}
       <div>
         <h2 className="text-sm font-semibold mb-4">Search Name</h2>

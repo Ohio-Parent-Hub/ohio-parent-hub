@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import L from "leaflet";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
-import MarkerClusterGroup from "react-leaflet-cluster";
+import "leaflet.markercluster";
 import "leaflet/dist/leaflet.css";
 import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
@@ -36,24 +36,85 @@ export interface MapProps {
   scrollWheelZoom?: boolean;
 }
 
-function MapUpdater({ center, zoom, markers }: { center: [number, number], zoom: number, markers: MapProps['markers'] }) {
+function MapUpdater({ center, zoom }: { center: [number, number], zoom: number }) {
   const map = useMap();
+  const centerLat = center[0];
+  const centerLng = center[1];
 
   useEffect(() => {
-    map.setView(center, zoom);
-  }, [center, zoom, map]);
+    map.setView([centerLat, centerLng], zoom);
+  }, [centerLat, centerLng, zoom, map]);
+
+  return null;
+}
+
+function escapeHtml(value: string) {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+function ClusteredMarkersLayer({ markers }: { markers: NonNullable<MapProps["markers"]> }) {
+  const map = useMap();
+  const clusterGroupRef = useRef<L.LayerGroup | null>(null);
 
   useEffect(() => {
-    if (markers && markers.length > 0) {
-      const validMarkers = markers.filter(m => m.lat && m.lng);
-      if (validMarkers.length > 0) {
-        const bounds = L.latLngBounds(validMarkers.map(m => [m.lat, m.lng]));
-        if (bounds.isValid()) {
-            map.fitBounds(bounds, { padding: [50, 50] });
-        }
-      }
-    }
-  }, [markers, map]);
+    const markerClusterFactory = (L as unknown as {
+      markerClusterGroup: (options?: Record<string, unknown>) => L.LayerGroup;
+    }).markerClusterGroup;
+
+    const clusterGroup = markerClusterFactory({
+      chunkedLoading: true,
+      chunkInterval: 120,
+      chunkDelay: 30,
+      maxClusterRadius: 60,
+      spiderfyOnMaxZoom: true,
+      removeOutsideVisibleBounds: true,
+      animate: false,
+      animateAddingMarkers: false,
+      showCoverageOnHover: false,
+    });
+
+    clusterGroupRef.current = clusterGroup;
+    clusterGroup.addTo(map);
+
+    return () => {
+      clusterGroup.remove();
+      clusterGroupRef.current = null;
+    };
+  }, [map]);
+
+  useEffect(() => {
+    const clusterGroup = clusterGroupRef.current as
+      | (L.LayerGroup & {
+          clearLayers: () => void;
+          addLayers: (layers: L.Marker[]) => void;
+        })
+      | null;
+
+    if (!clusterGroup) return;
+
+    clusterGroup.clearLayers();
+
+    if (markers.length === 0) return;
+
+    const leafletMarkers = markers.map((markerData) => {
+      const marker = L.marker([markerData.lat, markerData.lng]);
+      const safeTitle = escapeHtml(markerData.title || "");
+      const safeUrl = markerData.url ? escapeHtml(markerData.url) : "";
+      const popupHtml = safeUrl
+        ? `<div class="text-sm font-sans"><strong>${safeTitle}</strong><div class="mt-1"><a href="${safeUrl}" class="text-blue-600 hover:underline">View Details</a></div></div>`
+        : `<div class="text-sm font-sans"><strong>${safeTitle}</strong></div>`;
+
+      marker.bindPopup(popupHtml);
+      return marker;
+    });
+
+    clusterGroup.addLayers(leafletMarkers);
+  }, [markers]);
 
   return null;
 }
@@ -73,14 +134,18 @@ export default function LeafletMap({
   // But since this component is dynamic imported with ssr: false, window.L should be available if we imported it.
   // Actually, we imported L at the top level.
   
-  const userIcon = new L.Icon({
-    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
-    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    shadowSize: [41, 41]
-  });
+  const userIcon = useMemo(
+    () =>
+      new L.Icon({
+        iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png",
+        shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41],
+      }),
+    []
+  );
 
   // Dynamic import with ssr: false handles client safety. 
   // Removed internal isMounted check to fix react-hooks lint warning.
@@ -120,7 +185,7 @@ export default function LeafletMap({
         style={{ height: "100%", width: "100%" }}
         {...mapOptions}
       >
-        <MapUpdater center={center} zoom={zoom} markers={markers} />
+        <MapUpdater center={center} zoom={zoom} />
 
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -142,28 +207,7 @@ export default function LeafletMap({
         )}
 
         {/* Render Multiple Markers if provided and interactive */}
-        {interactive && (
-          <MarkerClusterGroup
-            chunkedLoading
-            maxClusterRadius={60}
-            spiderfyOnMaxZoom={true}
-          >
-            {markers.map((m, idx) => (
-              <Marker key={idx} position={[m.lat, m.lng]}>
-                <Popup>
-                  <div className="text-sm font-sans">
-                    <strong>{m.title}</strong>
-                    {m.url && (
-                      <div className="mt-1">
-                        <a href={m.url} className="text-blue-600 hover:underline">View Details</a>
-                      </div>
-                    )}
-                  </div>
-                </Popup>
-              </Marker>
-            ))}
-          </MarkerClusterGroup>
-        )}
+        {interactive && <ClusteredMarkersLayer markers={markers} />}
       </MapContainer>
       
       {/* Overlay for pure static mode to prevent capturing clicks at all if needed? 

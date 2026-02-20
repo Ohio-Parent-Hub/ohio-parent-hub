@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef, useTransition, useDeferredValue, useCallback } from "react";
 import Link from "next/link";
 import { SutqBadge } from "@/components/SutqBadge";
 import InteractiveMap from "@/components/InteractiveMap";
@@ -42,6 +42,15 @@ import { cn } from "@/lib/utils";
 import { FILTER_DEFINITIONS } from "@/data/filterDefinitions";
 
 type Daycare = Record<string, string>;
+
+type FilterWorkerRow = {
+  name: string;
+  city: string;
+  county: string;
+  pfcc: boolean;
+  rating: string;
+  programType: string;
+};
 
 // Helper to format city names
 function prettyCity(city: string) {
@@ -109,18 +118,29 @@ function FilterContent({
 }) {
   const [cityOpen, setCityOpen] = useState(false);
   const [countyOpen, setCountyOpen] = useState(false);
+  const hasActiveFilters =
+    pfccEnabled ||
+    selectedRatings.length > 0 ||
+    selectedProgramTypes.length > 0 ||
+    !!searchQuery ||
+    !!mapCenter ||
+    !!selectedCity ||
+    !!selectedCounty;
 
   return (
     <div className="space-y-6 px-4">
-      {/* Clear Filters Button (only show if filters active) */}
-      {(pfccEnabled || selectedRatings.length > 0 || selectedProgramTypes.length > 0 || searchQuery || mapCenter || selectedCity || selectedCounty) && (
-        <button 
-          onClick={onClearAll}
-          className="text-xs text-neutral-500 underline hover:text-black w-full text-right mb-2"
-        >
-          Clear Filters
-        </button>
-      )}
+      {/* Clear Filters Button (always rendered to prevent layout shift) */}
+      <button
+        onClick={onClearAll}
+        disabled={!hasActiveFilters}
+        className={`text-xs w-full text-right mb-2 transition-opacity ${
+          hasActiveFilters
+            ? "text-neutral-500 underline hover:text-black opacity-100"
+            : "text-neutral-400 opacity-0 pointer-events-none"
+        }`}
+      >
+        Clear Filters
+      </button>
 
       {/* Name Search moved to filters */}
       <div>
@@ -380,7 +400,14 @@ function FilterContent({
 export default function GlobalDashboard() {
   // State
   const [daycares, setDaycares] = useState<Daycare[]>([]);
+  const [filteredIndices, setFilteredIndices] = useState<number[]>([]);
+  const [mapFilteredIndices, setMapFilteredIndices] = useState<number[]>([]);
   const [loading, setLoading] = useState(true);
+  const [workerInitialized, setWorkerInitialized] = useState(false);
+  const [, startTransition] = useTransition();
+  const workerRef = useRef<Worker | null>(null);
+  const requestIdRef = useRef(0);
+  const latestAppliedRequestRef = useRef(0);
   
   const [searchQuery, setSearchQuery] = useState("");
   const [mapCenter, setMapCenter] = useState<[number, number] | null>(null);
@@ -390,12 +417,28 @@ export default function GlobalDashboard() {
   const [selectedCity, setSelectedCity] = useState("");
   const [selectedCounty, setSelectedCounty] = useState("");
 
+  const normalizedRows = useMemo<FilterWorkerRow[]>(() => {
+    return daycares.map((d) => {
+      const ratingRaw = d["SUTQ RATING"] || "0";
+      return {
+        name: (d["PROGRAM NAME"] || "").toLowerCase(),
+        city: (d.CITY || "").trim(),
+        county: (d.COUNTY || "").trim(),
+        pfcc: d["PFCC"] === "Y",
+        rating: !ratingRaw || ratingRaw === "" ? "0" : ratingRaw,
+        programType: d["wPROGRAM TYPE"] || d["PROGRAM TYPE"] || "",
+      };
+    });
+  }, [daycares]);
+
   // Fetch data on mount
   useEffect(() => {
     fetch("/api/daycares")
       .then((res) => res.json())
       .then((data) => {
         setDaycares(data);
+        setFilteredIndices(Array.from({ length: data.length }, (_, index) => index));
+        setMapFilteredIndices(Array.from({ length: data.length }, (_, index) => index));
         setLoading(false);
       })
       .catch((err) => {
@@ -403,6 +446,72 @@ export default function GlobalDashboard() {
         setLoading(false);
       });
   }, []);
+
+  // Initialize worker once
+  useEffect(() => {
+    const worker = new Worker(new URL("./workers/daycareFilter.worker.ts", import.meta.url));
+    workerRef.current = worker;
+
+    worker.onmessage = (event: MessageEvent<{ type: string; requestId?: number; indices?: number[] }>) => {
+      const message = event.data;
+
+      if (message.type === "initialized") {
+        setWorkerInitialized(true);
+        return;
+      }
+
+      if (message.type === "filtered" && typeof message.requestId === "number" && Array.isArray(message.indices)) {
+        if (message.requestId < latestAppliedRequestRef.current) return;
+        latestAppliedRequestRef.current = message.requestId;
+        startTransition(() => {
+          setFilteredIndices(message.indices || []);
+        });
+      }
+    };
+
+    return () => {
+      worker.terminate();
+      workerRef.current = null;
+    };
+  }, [startTransition]);
+
+  // Send normalized rows to worker whenever dataset changes
+  useEffect(() => {
+    if (!workerRef.current || normalizedRows.length === 0) return;
+
+    setWorkerInitialized(false);
+    workerRef.current.postMessage({
+      type: "init",
+      rows: normalizedRows,
+    });
+  }, [normalizedRows]);
+
+  // Run filtering in worker whenever filters change
+  useEffect(() => {
+    if (!workerRef.current || !workerInitialized) return;
+
+    const requestId = requestIdRef.current + 1;
+    requestIdRef.current = requestId;
+
+    workerRef.current.postMessage({
+      type: "filter",
+      requestId,
+      searchQuery: searchQuery.trim().toLowerCase(),
+      pfccEnabled,
+      selectedRatings,
+      selectedProgramTypes,
+      selectedCity,
+      selectedCounty,
+    });
+  }, [
+    workerInitialized,
+    searchQuery,
+    pfccEnabled,
+    selectedRatings,
+    selectedProgramTypes,
+    selectedCity,
+    selectedCounty,
+  ]);
 
   // Derive unique lists for dropdowns
   const { cities, counties } = useMemo(() => {
@@ -418,44 +527,31 @@ export default function GlobalDashboard() {
     };
   }, [daycares]);
 
-  // Filtering Logic
   const filteredDaycares = useMemo(() => {
-    return daycares.filter((d) => {
-      // Text Search
-      if (searchQuery) {
-        const q = searchQuery.toLowerCase();
-        const textMatch = d["PROGRAM NAME"]?.toLowerCase().includes(q);
-        if (!textMatch) return false;
-      }
+    return filteredIndices
+      .map((index) => daycares[index])
+      .filter((daycare): daycare is Daycare => Boolean(daycare));
+  }, [daycares, filteredIndices]);
 
-      // Location Filters
-      if (selectedCity && d.CITY?.trim() !== selectedCity) return false;
-      if (selectedCounty && d.COUNTY?.trim() !== selectedCounty) return false;
+  const mapFilteredDaycares = useMemo(() => {
+    return mapFilteredIndices
+      .map((index) => daycares[index])
+      .filter((daycare): daycare is Daycare => Boolean(daycare));
+  }, [daycares, mapFilteredIndices]);
 
-      // PFCC
-      if (pfccEnabled && d["PFCC"] !== "Y") return false;
+  // Decouple map updates from filter interactions so checkbox/list feel instant.
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      setMapFilteredIndices(filteredIndices);
+    }, 220);
 
-      // SUTQ
-      if (selectedRatings.length > 0) {
-        const r = d["SUTQ RATING"] || "0"; // "0" or "1","2","3"
-        // If "Unrated" (0) is selected, we want to match d["SUTQ RATING"] empty or 0.
-        // Data likely has "1", "2", "3" or empty.
-        // If rating is empty/null, treat as "0".
-        const dRating = !r || r === "" ? "0" : r;
-        if (!selectedRatings.includes(dRating)) return false;
-      }
+    return () => clearTimeout(timeoutId);
+  }, [filteredIndices]);
 
-      // Program Type
-      if (selectedProgramTypes.length > 0) {
-        if (!selectedProgramTypes.includes(d["wPROGRAM TYPE"] || d["PROGRAM TYPE"])) return false;
-      }
-
-      return true;
-    });
-  }, [daycares, searchQuery, pfccEnabled, selectedRatings, selectedProgramTypes, selectedCity, selectedCounty]);
+  const deferredMapFilteredDaycares = useDeferredValue(mapFilteredDaycares);
 
   const mapMarkers = useMemo(() => {
-    return filteredDaycares
+    return deferredMapFilteredDaycares
       .filter((d) => d.LAT && d.LNG)
       .map((d) => ({
         lat: typeof d.LAT === 'string' ? parseFloat(d.LAT) : d.LAT,
@@ -463,13 +559,13 @@ export default function GlobalDashboard() {
         title: d["PROGRAM NAME"],
         url: `/daycare/${slugify(d["PROGRAM NUMBER"] + "-" + d["PROGRAM NAME"])}`,
       }));
-  }, [filteredDaycares]);
+  }, [deferredMapFilteredDaycares]);
 
   // Ohio Center
   const defaultCenterCoords: [number, number] = [40.4173, -82.9071];
   const center = mapCenter || defaultCenterCoords;
 
-  function clearAll() {
+  const clearAll = useCallback(() => {
     setPfccEnabled(false);
     setSelectedRatings([]);
     setSelectedProgramTypes([]);
@@ -477,19 +573,19 @@ export default function GlobalDashboard() {
     setSelectedCounty("");
     setSearchQuery("");
     setMapCenter(null);
-  }
+  }, []);
 
-  const toggleRating = (r: string) => {
+  const toggleRating = useCallback((r: string) => {
     setSelectedRatings(prev => 
       prev.includes(r) ? prev.filter(x => x !== r) : [...prev, r]
     );
-  };
+  }, []);
 
-  const toggleProgramType = (t: string) => {
+  const toggleProgramType = useCallback((t: string) => {
     setSelectedProgramTypes(prev => 
       prev.includes(t) ? prev.filter(x => x !== t) : [...prev, t]
     );
-  };
+  }, []);
 
   if (loading) {
     return (
