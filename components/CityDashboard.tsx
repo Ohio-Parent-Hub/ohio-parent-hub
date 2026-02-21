@@ -323,10 +323,10 @@ export default function CityDashboard({ daycares, cityDisplay }: CityDashboardPr
   return (
     <div>
       <header className="mb-6">
-        <h1 className="text-2xl font-semibold tracking-tight">
+        <h2 className="font-serif text-2xl font-bold tracking-tight text-primary">
           Daycares in {cityDisplay || "Ohio"}
-        </h1>
-        <p className="mt-1 text-sm text-neutral-600">
+        </h2>
+        <p className="mt-1 text-sm text-muted-foreground">
           Showing {displayList.length}
           {filteredDaycares.length > displayList.length ? ` of ${filteredDaycares.length}` : ""} licensed programs
           {daycares.length !== filteredDaycares.length ? ` (filtered from ${daycares.length})` : ""}.

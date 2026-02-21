@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import CityDashboard from "@/components/CityDashboard";
+import { Badge } from "@/components/ui/badge";
 import type { Metadata } from "next";
 
 type Props = { params: Promise<{ city?: string }> };
@@ -74,6 +75,16 @@ export default async function CityDaycaresPage({ params }: Props) {
         ]} 
         className="mb-6"
       />
+
+      <section className="mb-8 rounded-2xl border border-primary/20 bg-primary/10 p-6 sm:p-8">
+        <Badge variant="outline" className="mb-3 border-primary/40 text-primary">City Overview</Badge>
+        <h1 className="font-serif text-3xl font-bold tracking-tight text-primary sm:text-4xl">
+          Daycares in {cityDisplay || "Ohio"}
+        </h1>
+        <p className="mt-2 max-w-2xl text-muted-foreground">
+          Explore licensed providers, compare SUTQ ratings, and narrow results by program options in your local area.
+        </p>
+      </section>
       
       <CityDashboard daycares={matches} cityDisplay={cityDisplay} />
     </main>
