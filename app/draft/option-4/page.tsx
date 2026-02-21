@@ -14,188 +14,204 @@ function slugify(s: string) {
 }
 
 import { Button } from "@/components/ui/button";
-import { MapPin, Search, ShieldCheck, Sparkles, Baby, ArrowRight, Heart, BookOpen, Leaf } from "lucide-react";
+import { MapPin, Search, ShieldCheck, Baby, ArrowRight, Heart, Leaf, Flower2, TreePine } from "lucide-react";
 
 /* =========================================================
    OPTION 4 — "Garden Party"
-   Rich greens, floral pinks, cream, golden yellow
-   Lush, botanical, vibrant
+   Sticky sidebar navigation on the left, single scrolling
+   content column on the right. Botanical greens, floral
+   pinks, golden accents. Lush, elegant, editorial.
    ========================================================= */
+
+const forest = "#2D5016";
+const leaf = "#4A7C28";
+const floral = "#D4577A";
+const golden = "#D4A843";
+const cream = "#FEFDF5";
+const lightGreen = "#E8F5E0";
+const softPink = "#FDECF2";
 
 export default function Option4() {
   const daycares = loadDaycares();
   const cityCounts = new Map<string, number>();
   daycares.forEach((d) => { const c = d["CITY"]; if (c) cityCounts.set(c, (cityCounts.get(c) || 0) + 1); });
-  const topCities = Array.from(cityCounts.entries()).sort((a, b) => b[1] - a[1]).slice(0, 24).map(([city, count]) => ({ city, count, slug: slugify(city) }));
-
-  const forest = "#2D5016";
-  const leaf = "#4A7C28";
-  const lightGreen = "#E8F5E0";
-  const floral = "#E84393";
-  const softPink = "#FDECF2";
-  const golden = "#F1C40F";
-  const cream = "#FFFDF7";
+  const topCities = Array.from(cityCounts.entries()).sort((a, b) => b[1] - a[1]).slice(0, 16).map(([city, count]) => ({ city, count, slug: slugify(city) }));
 
   return (
-    <div className="flex min-h-screen flex-col" style={{ background: cream, color: forest }}>
-      <div className="fixed top-4 left-4 z-50">
-        <Link href="/draft" className="rounded-full px-4 py-2 text-xs font-bold uppercase tracking-widest" style={{ background: forest, color: "#fff" }}>&larr; All Options</Link>
+    <div className="flex min-h-screen" style={{ background: cream, color: forest }}>
+      {/* Back link */}
+      <div className="fixed top-4 left-4 z-50 lg:hidden">
+        <Link href="/draft" className="rounded-full px-4 py-2 text-xs font-bold uppercase tracking-widest" style={{ background: forest, color: "#fff" }}>&larr; Back</Link>
       </div>
 
-      {/* NAV */}
-      <nav className="sticky top-0 z-40 border-b backdrop-blur-xl" style={{ borderColor: `${leaf}20`, background: `${cream}ee` }}>
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
-          <Link href="/draft/option-4" className="flex items-center gap-3">
-            <Image src="/icon.png" alt="Ohio Parent Hub" width={36} height={36} className="rounded-lg" />
-            <span className="text-lg font-bold" style={{ color: forest }}>Ohio Parent Hub</span>
+      {/* SIDEBAR NAV -- Sticky left, hidden on mobile */}
+      <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col justify-between border-r px-6 py-8 lg:flex" style={{ borderColor: `${leaf}15`, background: lightGreen }}>
+        <div>
+          <Link href="/draft/option-4" className="mb-8 flex items-center gap-3">
+            <Image src="/icon.png" alt="Ohio Parent Hub" width={40} height={40} className="rounded-xl shadow-sm" />
           </Link>
-          <div className="hidden items-center gap-6 md:flex">
-            <Link href="/daycares" className="text-sm font-medium" style={{ color: forest }}>Find Daycares</Link>
-            <Link href="/cities" className="text-sm font-medium" style={{ color: forest }}>Cities</Link>
-            <Button size="sm" className="rounded-full px-5 font-bold" style={{ background: floral, color: "#fff" }} asChild>
-              <Link href="/daycares"><Search className="mr-1.5 h-3.5 w-3.5" />Search</Link>
-            </Button>
-          </div>
-        </div>
-      </nav>
+          <h3 className="font-serif text-xl font-bold" style={{ color: forest }}>Ohio Parent Hub</h3>
+          <p className="mt-1 text-xs font-medium uppercase tracking-[0.2em]" style={{ color: `${forest}88` }}>Parent Resource</p>
 
-      {/* HERO -- Forest green with floral accents */}
-      <section className="relative overflow-hidden px-6 py-32 sm:py-40" style={{ background: `linear-gradient(160deg, ${forest} 0%, ${leaf} 100%)` }}>
-        {/* Botanical decoration circles */}
-        <div className="pointer-events-none absolute -top-16 -right-16 h-56 w-56 rounded-full" style={{ background: `${golden}15` }} />
-        <div className="pointer-events-none absolute bottom-10 -left-10 h-40 w-40 rounded-full" style={{ background: `${floral}15` }} />
-        <div className="pointer-events-none absolute top-1/2 right-[5%] h-32 w-32 rounded-full" style={{ background: `${lightGreen}10` }} />
-
-        <div className="relative z-10 mx-auto max-w-4xl text-center">
-          <div className="mb-8 flex justify-center">
-            <div className="rounded-full p-2" style={{ background: "rgba(255,255,255,0.1)" }}>
-              <Image src="/icon.png" alt="Ohio Parent Hub" width={100} height={100} className="rounded-full shadow-2xl" />
-            </div>
-          </div>
-          <span className="mb-6 inline-flex items-center gap-2 rounded-full px-5 py-2 text-sm font-semibold" style={{ background: "rgba(255,255,255,0.15)", color: "#fff" }}>
-            <Leaf className="h-4 w-4" style={{ color: golden }} />
-            Ohio&apos;s Trusted Parent Resource
-          </span>
-          <h1 className="mt-6 font-serif text-5xl font-bold tracking-tight text-white sm:text-6xl md:text-7xl">
-            Finding Childcare
-            <br className="hidden sm:block" />
-            <span style={{ color: golden }}>Should Be Simple.</span>
-          </h1>
-          <p className="mx-auto mt-8 max-w-2xl text-lg leading-relaxed" style={{ color: "rgba(255,255,255,0.85)" }}>
-            Browse <strong style={{ color: golden }}>{daycares.length.toLocaleString()}</strong> licensed programs across <strong style={{ color: golden }}>{cityCounts.size}</strong> Ohio cities.
-          </p>
-          <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <Button size="lg" className="h-14 rounded-full px-10 text-lg font-bold shadow-lg" style={{ background: floral, color: "#fff" }} asChild>
-              <Link href="/daycares"><Search className="mr-2 h-5 w-5" />Find a Daycare</Link>
-            </Button>
-            <Button size="lg" variant="outline" className="h-14 rounded-full border-2 px-10 text-lg font-bold" style={{ borderColor: "rgba(255,255,255,0.4)", color: "#fff" }} asChild>
-              <Link href="/about">Learn More</Link>
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* STATS -- Golden bar */}
-      <section className="px-6 py-10" style={{ background: golden }}>
-        <div className="mx-auto grid max-w-4xl grid-cols-2 gap-6 md:grid-cols-4">
-          {[
-            { value: daycares.length.toLocaleString(), label: "Programs", icon: BookOpen },
-            { value: String(cityCounts.size), label: "Cities", icon: MapPin },
-            { value: "100%", label: "Licensed", icon: ShieldCheck },
-            { value: "Free", label: "For Parents", icon: Heart },
-          ].map((s) => (
-            <div key={s.label} className="flex flex-col items-center">
-              <s.icon className="mb-2 h-6 w-6" style={{ color: forest }} />
-              <span className="font-serif text-3xl font-bold" style={{ color: forest }}>{s.value}</span>
-              <span className="mt-1 text-xs font-semibold uppercase tracking-widest" style={{ color: `${forest}99` }}>{s.label}</span>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* FEATURES -- Light green section with colored cards */}
-      <section className="py-24 px-6" style={{ background: lightGreen }}>
-        <div className="mx-auto max-w-6xl">
-          <div className="mb-16 text-center">
-            <span className="mb-3 inline-block rounded-full px-4 py-1.5 text-sm font-semibold uppercase tracking-widest" style={{ background: `${floral}15`, color: floral }}>Why Parents Trust Us</span>
-            <h2 className="mt-4 font-serif text-4xl font-bold" style={{ color: forest }}>Built for Ohio Families</h2>
-          </div>
-          <div className="grid gap-8 md:grid-cols-3">
+          <nav className="mt-10 flex flex-col gap-1">
             {[
-              { icon: ShieldCheck, title: "State Licensed", desc: "Every program verified against state records. Only licensed providers.", bg: forest, text: "#fff" },
-              { icon: MapPin, title: "Local Focus", desc: "Search by city for care in your neighborhood. Every corner of Ohio.", bg: floral, text: "#fff" },
-              { icon: Baby, title: "All Ages", desc: "From infant care to after-school. Filter by age group.", bg: golden, text: forest },
-            ].map((f) => (
-              <div key={f.title} className="rounded-2xl p-8 shadow-md transition-all hover:-translate-y-1 hover:shadow-xl" style={{ background: f.bg, color: f.text }}>
-                <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-xl" style={{ background: "rgba(255,255,255,0.2)" }}>
-                  <f.icon className="h-7 w-7" />
-                </div>
-                <h3 className="mb-3 font-serif text-2xl font-bold">{f.title}</h3>
-                <p className="leading-relaxed" style={{ opacity: 0.85 }}>{f.desc}</p>
+              { label: "Find Daycares", href: "/daycares", icon: Search },
+              { label: "Browse Cities", href: "/cities", icon: MapPin },
+              { label: "About Us", href: "/about", icon: Leaf },
+              { label: "Contact", href: "/contact", icon: Heart },
+            ].map((item) => (
+              <Link key={item.label} href={item.href} className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors hover:bg-white/60" style={{ color: forest }}>
+                <item.icon className="h-4 w-4" style={{ color: leaf }} />
+                {item.label}
+              </Link>
+            ))}
+          </nav>
+        </div>
+
+        <div className="flex flex-col gap-3">
+          <Link href="/draft" className="flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-semibold transition-colors hover:bg-white/60" style={{ color: `${forest}88` }}>
+            &larr; All Options
+          </Link>
+          <div className="flex items-center gap-1 text-xs" style={{ color: `${forest}50` }}>
+            <Flower2 className="h-3 w-3" style={{ color: floral }} /> Made for Ohio families
+          </div>
+        </div>
+      </aside>
+
+      {/* MAIN CONTENT -- Single scrolling column */}
+      <main className="flex-1 overflow-x-hidden">
+        {/* Mobile nav */}
+        <nav className="sticky top-0 z-40 flex items-center justify-between border-b px-6 py-3 backdrop-blur-xl lg:hidden" style={{ borderColor: `${leaf}15`, background: `${cream}ee` }}>
+          <Link href="/draft/option-4" className="flex items-center gap-2">
+            <Image src="/icon.png" alt="Ohio Parent Hub" width={32} height={32} className="rounded-lg" />
+            <span className="font-serif text-base font-bold" style={{ color: forest }}>Ohio Parent Hub</span>
+          </Link>
+          <Button size="sm" className="rounded-full font-bold" style={{ background: floral, color: "#fff" }} asChild>
+            <Link href="/daycares"><Search className="mr-1 h-3 w-3" />Search</Link>
+          </Button>
+        </nav>
+
+        {/* HERO - Elegant, long-form, left-aligned */}
+        <section className="px-8 py-28 lg:px-16 lg:py-36">
+          <div className="max-w-3xl">
+            <div className="mb-6 flex items-center gap-3">
+              <div className="h-px w-12" style={{ background: floral }} />
+              <span className="text-xs font-semibold uppercase tracking-[0.3em]" style={{ color: floral }}>Ohio&apos;s Trusted Parent Resource</span>
+            </div>
+            <h1 className="font-serif text-5xl font-bold leading-tight sm:text-6xl lg:text-7xl" style={{ color: forest }}>
+              Finding Childcare
+              <br />
+              <span style={{ color: floral }}>Should Be Simple.</span>
+            </h1>
+            <p className="mt-8 max-w-xl text-lg leading-relaxed" style={{ color: `${forest}bb` }}>
+              Browse <strong style={{ color: golden }}>{daycares.length.toLocaleString()}</strong> licensed programs across <strong style={{ color: golden }}>{cityCounts.size}</strong> Ohio cities. Verified. Always free.
+            </p>
+            <div className="mt-10 flex flex-wrap gap-4">
+              <Button size="lg" className="h-12 rounded-lg px-8 font-bold shadow-md" style={{ background: forest, color: "#fff" }} asChild>
+                <Link href="/daycares"><Search className="mr-2 h-4 w-4" />Find a Daycare</Link>
+              </Button>
+              <Button size="lg" variant="outline" className="h-12 rounded-lg border-2 px-8 font-bold" style={{ borderColor: floral, color: floral }} asChild>
+                <Link href="/cities"><MapPin className="mr-2 h-4 w-4" />Browse Cities</Link>
+              </Button>
+            </div>
+          </div>
+        </section>
+
+        {/* STATS - Inline, elegant */}
+        <section className="border-y px-8 py-10 lg:px-16" style={{ borderColor: `${leaf}15`, background: lightGreen }}>
+          <div className="flex flex-wrap gap-12">
+            {[
+              { val: daycares.length.toLocaleString(), lbl: "Programs", c: forest },
+              { val: String(cityCounts.size), lbl: "Cities", c: golden },
+              { val: "100%", lbl: "Licensed", c: floral },
+              { val: "Free", lbl: "Always", c: leaf },
+            ].map((s) => (
+              <div key={s.lbl}>
+                <span className="font-serif text-4xl font-bold" style={{ color: s.c }}>{s.val}</span>
+                <p className="mt-1 text-xs font-semibold uppercase tracking-[0.2em]" style={{ color: `${forest}60` }}>{s.lbl}</p>
               </div>
             ))}
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* CITIES */}
-      <section className="py-24 px-6" style={{ background: softPink }}>
-        <div className="mx-auto max-w-6xl">
-          <div className="mb-12 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-            <div>
-              <h2 className="font-serif text-4xl font-bold" style={{ color: forest }}>Explore Top Cities</h2>
+        {/* FEATURES - Long-form text blocks, botanical style */}
+        <section className="px-8 py-24 lg:px-16">
+          <div className="max-w-3xl">
+            <div className="mb-4 flex items-center gap-3">
+              <TreePine className="h-5 w-5" style={{ color: leaf }} />
+              <h2 className="font-serif text-3xl font-bold" style={{ color: forest }}>Why Parents Trust Us</h2>
             </div>
-            <Button variant="outline" className="group rounded-full border-2" style={{ borderColor: floral, color: floral }} asChild>
-              <Link href="/cities">View All <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" /></Link>
-            </Button>
-          </div>
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
-            {topCities.map(({ city, count, slug }, i) => {
-              const accents = [forest, floral, golden, leaf];
-              const a = accents[i % 4];
-              return (
-                <Link key={city} href={`/daycares/${slug}`} className="group block">
-                  <div className="flex h-full flex-col rounded-xl border-l-4 p-5 shadow-sm transition-all group-hover:-translate-y-0.5 group-hover:shadow-lg" style={{ borderColor: a, background: "#fff" }}>
-                    <div className="mb-3 flex items-center justify-between">
-                      <MapPin className="h-4 w-4" style={{ color: a }} />
-                      <span className="rounded-full px-3 py-0.5 text-xs font-bold" style={{ background: `${a}15`, color: a }}>{count}</span>
-                    </div>
-                    <h3 className="font-serif text-lg font-bold line-clamp-1" style={{ color: forest }}>{city}</h3>
-                    <p className="mt-auto pt-2 text-xs" style={{ color: `${forest}50` }}>{"View programs \u2192"}</p>
+            <div className="mt-12 flex flex-col gap-12">
+              {[
+                { icon: ShieldCheck, title: "State Licensed Data", desc: "Every listing is verified against official Ohio state records. We only show licensed, approved childcare providers -- never crowdsourced or unverified.", accent: forest },
+                { icon: MapPin, title: "Neighborhood Search", desc: "Browse by your exact city to find care right in your community. We cover all of Ohio, from Columbus to the smallest towns.", accent: floral },
+                { icon: Baby, title: "Every Age Group", desc: "Whether you need infant care, a toddler program, preschool, or after-school supervision -- find it all in one place.", accent: golden },
+              ].map((f) => (
+                <div key={f.title} className="flex gap-6">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg" style={{ background: `${f.accent}15` }}>
+                    <f.icon className="h-6 w-6" style={{ color: f.accent }} />
                   </div>
-                </Link>
-              );
-            })}
+                  <div>
+                    <h3 className="font-serif text-xl font-bold" style={{ color: forest }}>{f.title}</h3>
+                    <p className="mt-2 max-w-lg leading-relaxed" style={{ color: `${forest}99` }}>{f.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* CTA */}
-      <section className="relative overflow-hidden py-28 text-center" style={{ background: `linear-gradient(135deg, ${floral}, ${forest})` }}>
-        <div className="relative z-10 mx-auto max-w-3xl px-6">
-          <h2 className="font-serif text-4xl font-bold text-white sm:text-5xl text-balance">Ready to find the perfect care?</h2>
-          <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed" style={{ color: "rgba(255,255,255,0.8)" }}>Join thousands of Ohio parents who trust us.</p>
-          <Button size="lg" className="mt-10 h-14 rounded-full px-10 text-lg font-bold shadow-lg" style={{ background: golden, color: forest }} asChild>
-            <Link href="/daycares"><Search className="mr-2 h-5 w-5" />Start Your Search</Link>
-          </Button>
-        </div>
-      </section>
+        {/* CITIES - Alternating color rows */}
+        <section className="border-t px-8 py-24 lg:px-16" style={{ borderColor: `${leaf}15` }}>
+          <div className="max-w-3xl">
+            <div className="mb-10 flex items-end justify-between">
+              <h2 className="font-serif text-3xl font-bold" style={{ color: forest }}>Top Ohio Cities</h2>
+              <Link href="/cities" className="text-sm font-semibold" style={{ color: floral }}>All Cities <ArrowRight className="ml-1 inline h-3.5 w-3.5" /></Link>
+            </div>
+            <div className="flex flex-col">
+              {topCities.map(({ city, count, slug }, i) => {
+                const bg = i % 2 === 0 ? lightGreen : softPink;
+                const accent = i % 2 === 0 ? forest : floral;
+                return (
+                  <Link key={city} href={`/daycares/${slug}`} className="group flex items-center justify-between rounded-lg px-5 py-4 transition-all hover:shadow-sm" style={{ background: bg }}>
+                    <div className="flex items-center gap-3">
+                      <MapPin className="h-4 w-4" style={{ color: accent }} />
+                      <span className="font-serif text-lg font-bold" style={{ color: forest }}>{city}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-semibold" style={{ color: `${forest}60` }}>{count} programs</span>
+                      <ArrowRight className="h-3.5 w-3.5 opacity-0 transition-opacity group-hover:opacity-100" style={{ color: accent }} />
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        </section>
 
-      {/* FOOTER */}
-      <footer className="py-12 px-6" style={{ background: lightGreen }}>
-        <div className="mx-auto flex max-w-6xl flex-col items-center gap-5 text-center">
-          <Image src="/icon.png" alt="Ohio Parent Hub" width={48} height={48} className="rounded-lg" />
-          <p className="font-serif text-lg font-bold" style={{ color: forest }}>Ohio Parent Hub</p>
-          <div className="flex flex-wrap justify-center gap-6 text-sm font-medium" style={{ color: `${forest}bb` }}>
-            <Link href="/daycares">Find Daycares</Link>
-            <Link href="/cities">Cities</Link>
-            <Link href="/about">About</Link>
+        {/* CTA */}
+        <section className="px-8 py-24 lg:px-16" style={{ background: forest }}>
+          <div className="max-w-3xl">
+            <h2 className="font-serif text-4xl font-bold text-white">Ready to find the perfect care?</h2>
+            <p className="mt-4 text-base" style={{ color: "rgba(255,255,255,0.75)" }}>Join thousands of Ohio parents who trust us.</p>
+            <div className="mt-8 flex gap-4">
+              <Button size="lg" className="h-12 rounded-lg px-8 font-bold" style={{ background: golden, color: forest }} asChild>
+                <Link href="/daycares"><Search className="mr-2 h-4 w-4" />Start Your Search</Link>
+              </Button>
+              <Button size="lg" className="h-12 rounded-lg px-8 font-bold" style={{ background: floral, color: "#fff" }} asChild>
+                <Link href="/cities">Browse Cities</Link>
+              </Button>
+            </div>
           </div>
-          <div className="flex items-center gap-1 text-sm" style={{ color: `${forest}60` }}>
-            Made with <Heart className="mx-1 h-3.5 w-3.5" style={{ color: floral }} /> for Ohio families
+        </section>
+
+        {/* FOOTER */}
+        <footer className="px-8 py-8 lg:px-16" style={{ background: cream }}>
+          <div className="flex items-center gap-1 text-xs" style={{ color: `${forest}50` }}>
+            Made with <Heart className="mx-1 h-3 w-3" style={{ color: floral }} /> for Ohio families
           </div>
-        </div>
-      </footer>
+        </footer>
+      </main>
     </div>
   );
 }

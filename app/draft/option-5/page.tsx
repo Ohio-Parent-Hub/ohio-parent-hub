@@ -14,191 +14,189 @@ function slugify(s: string) {
 }
 
 import { Button } from "@/components/ui/button";
-import { MapPin, Search, ShieldCheck, Sparkles, Baby, ArrowRight, Heart, BookOpen, Zap } from "lucide-react";
+import { MapPin, Search, ShieldCheck, Baby, ArrowRight, Heart, Zap } from "lucide-react";
 
 /* =========================================================
-   OPTION 5 — "Candy Pop"
-   Bold primaries: bright pink, electric blue, sunny yellow, lime
-   Energetic, playful, youthful
+   OPTION 5 — "Candy Pop" — Bento Grid
+   The ENTIRE page is a bento grid of colorful tiles, each
+   a different size. Memphis/geometric decorations. Bold
+   primary colors. Very playful, very different layout.
    ========================================================= */
+
+const hotPink = "#FF1493";
+const electricBlue = "#0EA5E9";
+const sunny = "#FACC15";
+const lime = "#84CC16";
+const nearBlack = "#1A1A2E";
+const white = "#FFFFFF";
+const lightBg = "#FFF5F8";
 
 export default function Option5() {
   const daycares = loadDaycares();
   const cityCounts = new Map<string, number>();
   daycares.forEach((d) => { const c = d["CITY"]; if (c) cityCounts.set(c, (cityCounts.get(c) || 0) + 1); });
-  const topCities = Array.from(cityCounts.entries()).sort((a, b) => b[1] - a[1]).slice(0, 24).map(([city, count]) => ({ city, count, slug: slugify(city) }));
-
-  const hotPink = "#FF1493";
-  const electricBlue = "#00BFFF";
-  const sunnyYellow = "#FFD700";
-  const lime = "#7CFC00";
-  const white = "#FFFFFF";
-  const nearBlack = "#1A1A2E";
-  const lightBg = "#FFF5F9";
+  const topCities = Array.from(cityCounts.entries()).sort((a, b) => b[1] - a[1]).slice(0, 12).map(([city, count]) => ({ city, count, slug: slugify(city) }));
 
   return (
-    <div className="flex min-h-screen flex-col" style={{ background: lightBg, color: nearBlack }}>
-      <div className="fixed top-4 left-4 z-50">
+    <div className="min-h-screen px-3 py-3 sm:px-4 sm:py-4" style={{ background: nearBlack }}>
+      {/* Back link */}
+      <div className="fixed top-6 left-6 z-50">
         <Link href="/draft" className="rounded-full px-4 py-2 text-xs font-bold uppercase tracking-widest" style={{ background: hotPink, color: "#fff" }}>&larr; All Options</Link>
       </div>
 
-      {/* NAV */}
-      <nav className="sticky top-0 z-40 border-b-4 backdrop-blur-xl" style={{ borderColor: hotPink, background: `${white}ee` }}>
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
-          <Link href="/draft/option-5" className="flex items-center gap-3">
-            <Image src="/icon.png" alt="Ohio Parent Hub" width={36} height={36} className="rounded-lg" />
-            <span className="text-lg font-extrabold" style={{ color: hotPink }}>Ohio Parent Hub</span>
-          </Link>
-          <div className="hidden items-center gap-6 md:flex">
-            <Link href="/daycares" className="text-sm font-bold" style={{ color: nearBlack }}>Daycares</Link>
-            <Link href="/cities" className="text-sm font-bold" style={{ color: nearBlack }}>Cities</Link>
-            <Button size="sm" className="rounded-full px-5 font-extrabold shadow-md" style={{ background: electricBlue, color: "#fff" }} asChild>
-              <Link href="/daycares"><Search className="mr-1.5 h-3.5 w-3.5" />Search</Link>
-            </Button>
-          </div>
+      {/* TOP NAV TILE */}
+      <div className="mb-3 flex items-center justify-between rounded-2xl px-6 py-4 sm:mb-4" style={{ background: white }}>
+        <Link href="/draft/option-5" className="flex items-center gap-3">
+          <Image src="/icon.png" alt="Ohio Parent Hub" width={36} height={36} className="rounded-lg" />
+          <span className="text-lg font-extrabold" style={{ color: hotPink }}>Ohio Parent Hub</span>
+        </Link>
+        <div className="hidden items-center gap-5 md:flex">
+          <Link href="/daycares" className="text-sm font-bold" style={{ color: nearBlack }}>Daycares</Link>
+          <Link href="/cities" className="text-sm font-bold" style={{ color: nearBlack }}>Cities</Link>
+          <Button size="sm" className="rounded-full px-5 font-extrabold" style={{ background: electricBlue, color: white }} asChild>
+            <Link href="/daycares"><Search className="mr-1 h-3.5 w-3.5" />Search</Link>
+          </Button>
         </div>
-      </nav>
+      </div>
 
-      {/* HERO -- Hot pink with pops of yellow and blue */}
-      <section className="relative overflow-hidden px-6 py-32 sm:py-40" style={{ background: hotPink }}>
-        {/* Pop circles */}
-        <div className="pointer-events-none absolute -top-12 -left-12 h-48 w-48 rounded-full" style={{ background: sunnyYellow, opacity: 0.2 }} />
-        <div className="pointer-events-none absolute top-20 right-[5%] h-32 w-32 rounded-full" style={{ background: electricBlue, opacity: 0.2 }} />
-        <div className="pointer-events-none absolute bottom-10 left-[20%] h-24 w-24 rounded-full" style={{ background: lime, opacity: 0.15 }} />
-        <div className="pointer-events-none absolute bottom-20 right-[15%] h-20 w-20 rounded-full" style={{ background: sunnyYellow, opacity: 0.15 }} />
+      {/* BENTO GRID */}
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-6">
 
-        <div className="relative z-10 mx-auto max-w-4xl text-center">
-          <div className="mb-8 flex justify-center">
-            <Image src="/icon.png" alt="Ohio Parent Hub" width={100} height={100} className="rounded-2xl shadow-2xl ring-4 ring-white/30" />
-          </div>
-          <span className="mb-6 inline-flex items-center gap-2 rounded-full px-5 py-2 text-sm font-extrabold uppercase tracking-widest" style={{ background: sunnyYellow, color: nearBlack }}>
-            <Zap className="h-4 w-4" />
-            Ohio&apos;s #1 Parent Resource
-          </span>
-          <h1 className="mt-6 text-5xl font-extrabold tracking-tight text-white sm:text-6xl md:text-7xl" style={{ fontFamily: "inherit" }}>
-            Finding Childcare
-            <br className="hidden sm:block" />
-            <span style={{ color: sunnyYellow }}>Should Be Simple!</span>
-          </h1>
-          <p className="mx-auto mt-8 max-w-2xl text-lg font-medium leading-relaxed text-white/90">
-            Browse <strong style={{ color: sunnyYellow }}>{daycares.length.toLocaleString()}</strong> licensed programs across <strong style={{ color: sunnyYellow }}>{cityCounts.size}</strong> Ohio cities.
-          </p>
-          <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <Button size="lg" className="h-14 rounded-full px-10 text-lg font-extrabold shadow-xl" style={{ background: sunnyYellow, color: nearBlack }} asChild>
-              <Link href="/daycares"><Search className="mr-2 h-5 w-5" />Find a Daycare</Link>
-            </Button>
-            <Button size="lg" className="h-14 rounded-full px-10 text-lg font-extrabold shadow-xl" style={{ background: electricBlue, color: "#fff" }} asChild>
-              <Link href="/about">Learn More</Link>
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* STATS -- 4 colored blocks */}
-      <section className="px-6 py-4" style={{ background: white }}>
-        <div className="mx-auto grid max-w-4xl grid-cols-2 gap-4 md:grid-cols-4">
-          {[
-            { value: daycares.length.toLocaleString(), label: "Programs", bg: hotPink, text: "#fff" },
-            { value: String(cityCounts.size), label: "Cities", bg: electricBlue, text: "#fff" },
-            { value: "100%", label: "Licensed", bg: sunnyYellow, text: nearBlack },
-            { value: "Free", label: "For Parents", bg: lime, text: nearBlack },
-          ].map((s) => (
-            <div key={s.label} className="flex flex-col items-center rounded-2xl p-6" style={{ background: s.bg, color: s.text }}>
-              <span className="text-3xl font-extrabold">{s.value}</span>
-              <span className="mt-1 text-xs font-bold uppercase tracking-widest" style={{ opacity: 0.8 }}>{s.label}</span>
+        {/* HERO TILE - spans 4 cols, 2 rows on desktop */}
+        <div className="col-span-2 row-span-2 flex flex-col justify-between rounded-2xl p-8 md:col-span-4 lg:col-span-4 lg:p-12" style={{ background: hotPink }}>
+          {/* Memphis shapes */}
+          <div className="pointer-events-none absolute -top-4 right-8 hidden h-16 w-16 rotate-12 rounded-lg lg:block" style={{ background: `${sunny}30` }} />
+          <div>
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-extrabold uppercase tracking-widest" style={{ background: sunny, color: nearBlack }}>
+              <Zap className="h-3.5 w-3.5" /> Ohio&apos;s #1 Resource
             </div>
-          ))}
-        </div>
-      </section>
-
-      {/* FEATURES */}
-      <section className="py-24 px-6" style={{ background: white }}>
-        <div className="mx-auto max-w-6xl">
-          <div className="mb-16 text-center">
-            <h2 className="text-4xl font-extrabold" style={{ color: nearBlack }}>Why Parents <span style={{ color: hotPink }}>Love</span> Us</h2>
+            <h1 className="text-4xl font-extrabold leading-tight text-white sm:text-5xl lg:text-6xl">
+              Finding Childcare
+              <br />
+              <span style={{ color: sunny }}>Should Be Simple!</span>
+            </h1>
+            <p className="mt-4 max-w-lg text-base font-medium" style={{ color: "rgba(255,255,255,0.85)" }}>
+              Browse {daycares.length.toLocaleString()} licensed programs across {cityCounts.size} Ohio cities.
+            </p>
           </div>
-          <div className="grid gap-8 md:grid-cols-3">
-            {[
-              { icon: ShieldCheck, title: "State Licensed", desc: "Every program verified against state records. Only licensed providers.", border: hotPink },
-              { icon: MapPin, title: "Local Focus", desc: "Search by city for care in your neighborhood. Every corner of Ohio.", border: electricBlue },
-              { icon: Baby, title: "All Ages", desc: "From infant care to after-school programs. Filter by age group.", border: sunnyYellow },
-            ].map((f) => (
-              <div key={f.title} className="rounded-2xl border-4 p-8 transition-all hover:-translate-y-2 hover:shadow-xl" style={{ borderColor: f.border, background: white }}>
-                <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-full" style={{ background: f.border }}>
-                  <f.icon className="h-7 w-7 text-white" />
+          <div className="mt-6 flex flex-wrap gap-3">
+            <Button size="lg" className="h-12 rounded-full px-8 font-extrabold shadow-lg" style={{ background: sunny, color: nearBlack }} asChild>
+              <Link href="/daycares"><Search className="mr-2 h-4 w-4" />Find a Daycare</Link>
+            </Button>
+            <Button size="lg" className="h-12 rounded-full px-8 font-extrabold shadow-lg" style={{ background: electricBlue, color: white }} asChild>
+              <Link href="/cities"><MapPin className="mr-2 h-4 w-4" />Browse Cities</Link>
+            </Button>
+          </div>
+        </div>
+
+        {/* STAT TILES - 2 cols on the right on desktop */}
+        {[
+          { value: daycares.length.toLocaleString(), label: "Programs", bg: sunny, text: nearBlack },
+          { value: String(cityCounts.size), label: "Cities", bg: electricBlue, text: white },
+          { value: "100%", label: "Licensed", bg: lime, text: nearBlack },
+          { value: "Free", label: "Always", bg: white, text: hotPink },
+        ].map((s) => (
+          <div key={s.label} className="flex flex-col items-center justify-center rounded-2xl p-5" style={{ background: s.bg, color: s.text }}>
+            <span className="text-3xl font-extrabold">{s.value}</span>
+            <span className="mt-1 text-xs font-bold uppercase tracking-widest" style={{ opacity: 0.7 }}>{s.label}</span>
+          </div>
+        ))}
+
+        {/* LOGO TILE */}
+        <div className="flex items-center justify-center rounded-2xl p-6" style={{ background: lightBg }}>
+          <Image src="/icon.png" alt="" width={80} height={80} className="rounded-2xl" />
+        </div>
+
+        {/* FEATURE TILES - Different sizes */}
+        <div className="col-span-2 flex flex-col justify-center rounded-2xl p-8 md:col-span-2" style={{ background: electricBlue, color: white }}>
+          <ShieldCheck className="mb-3 h-8 w-8" />
+          <h3 className="text-xl font-extrabold">State Licensed</h3>
+          <p className="mt-2 text-sm font-medium" style={{ opacity: 0.85 }}>Every program verified against official state records. Only licensed providers.</p>
+        </div>
+
+        <div className="flex flex-col justify-center rounded-2xl p-6" style={{ background: sunny, color: nearBlack }}>
+          <MapPin className="mb-3 h-7 w-7" />
+          <h3 className="text-lg font-extrabold">Local Focus</h3>
+          <p className="mt-1 text-xs font-medium" style={{ opacity: 0.75 }}>Every corner of Ohio.</p>
+        </div>
+
+        <div className="flex flex-col justify-center rounded-2xl p-6" style={{ background: lime, color: nearBlack }}>
+          <Baby className="mb-3 h-7 w-7" />
+          <h3 className="text-lg font-extrabold">All Ages</h3>
+          <p className="mt-1 text-xs font-medium" style={{ opacity: 0.75 }}>Infant to after-school.</p>
+        </div>
+
+        {/* Decorative shape tile */}
+        <div className="flex items-center justify-center rounded-2xl" style={{ background: hotPink }}>
+          <div className="h-16 w-16 rotate-45 rounded-lg" style={{ background: `${sunny}40` }} />
+        </div>
+
+        {/* SECTION HEADER TILE */}
+        <div className="col-span-2 flex items-center justify-between rounded-2xl px-8 py-5 md:col-span-4 lg:col-span-6" style={{ background: white }}>
+          <h2 className="text-2xl font-extrabold" style={{ color: nearBlack }}>Top Ohio Cities</h2>
+          <Link href="/cities" className="flex items-center gap-1 text-sm font-extrabold" style={{ color: hotPink }}>
+            All Cities <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
+
+        {/* CITY TILES - Each one a bento tile */}
+        {topCities.map(({ city, count, slug }, i) => {
+          const bgs = [hotPink, electricBlue, sunny, lime, white, lightBg];
+          const texts = [white, white, nearBlack, nearBlack, nearBlack, nearBlack];
+          const bg = bgs[i % bgs.length];
+          const text = texts[i % texts.length];
+          const wide = i === 0 || i === 5;
+          return (
+            <Link key={city} href={`/daycares/${slug}`} className={`group block ${wide ? "col-span-2" : ""}`}>
+              <div className="flex h-full flex-col justify-between rounded-2xl p-5 transition-all group-hover:-translate-y-1 group-hover:shadow-xl" style={{ background: bg, color: text }}>
+                <div className="flex items-center justify-between">
+                  <MapPin className="h-4 w-4" />
+                  <span className="rounded-full px-2.5 py-0.5 text-xs font-extrabold" style={{ background: "rgba(0,0,0,0.1)" }}>{count}</span>
                 </div>
-                <h3 className="mb-3 text-2xl font-extrabold" style={{ color: nearBlack }}>{f.title}</h3>
-                <p className="leading-relaxed" style={{ color: `${nearBlack}99` }}>{f.desc}</p>
+                <div className="mt-4">
+                  <h3 className="text-lg font-extrabold line-clamp-1">{city}</h3>
+                  <span className="text-xs font-bold" style={{ opacity: 0.6 }}>{"View programs \u2192"}</span>
+                </div>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
+            </Link>
+          );
+        })}
 
-      {/* CITIES */}
-      <section className="py-24 px-6" style={{ background: `${electricBlue}10` }}>
-        <div className="mx-auto max-w-6xl">
-          <div className="mb-12 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-            <h2 className="text-4xl font-extrabold" style={{ color: nearBlack }}>Explore Top Cities</h2>
-            <Button className="group rounded-full border-4 font-extrabold" style={{ borderColor: hotPink, background: "transparent", color: hotPink }} asChild>
-              <Link href="/cities">View All <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" /></Link>
-            </Button>
-          </div>
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
-            {topCities.map(({ city, count, slug }, i) => {
-              const accents = [hotPink, electricBlue, sunnyYellow, lime];
-              const a = accents[i % 4];
-              const textOnAccent = i % 4 >= 2 ? nearBlack : "#fff";
-              return (
-                <Link key={city} href={`/daycares/${slug}`} className="group block">
-                  <div className="flex h-full flex-col rounded-xl border-2 p-5 transition-all group-hover:-translate-y-1 group-hover:shadow-lg" style={{ borderColor: `${a}40`, background: white }}>
-                    <div className="mb-3 flex items-center justify-between">
-                      <div className="flex h-9 w-9 items-center justify-center rounded-full" style={{ background: a }}>
-                        <MapPin className="h-4 w-4" style={{ color: textOnAccent }} />
-                      </div>
-                      <span className="rounded-full px-3 py-0.5 text-xs font-extrabold" style={{ background: a, color: textOnAccent }}>{count}</span>
-                    </div>
-                    <h3 className="text-lg font-extrabold line-clamp-1" style={{ color: nearBlack }}>{city}</h3>
-                    <p className="mt-auto pt-2 text-xs font-bold" style={{ color: a }}>{"View programs \u2192"}</p>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
+        {/* Decorative circle tile */}
+        <div className="flex items-center justify-center rounded-2xl" style={{ background: electricBlue }}>
+          <div className="h-14 w-14 rounded-full" style={{ background: `${white}30` }} />
         </div>
-      </section>
 
-      {/* CTA */}
-      <section className="py-28 text-center" style={{ background: electricBlue }}>
-        <div className="mx-auto max-w-3xl px-6">
-          <h2 className="text-4xl font-extrabold text-white sm:text-5xl text-balance">Ready to find the perfect care?</h2>
-          <p className="mx-auto mt-6 max-w-2xl text-lg text-white/80 font-medium">Join thousands of Ohio parents who trust us.</p>
-          <div className="mt-10 flex flex-col justify-center gap-4 sm:flex-row">
-            <Button size="lg" className="h-14 rounded-full px-10 text-lg font-extrabold shadow-xl" style={{ background: sunnyYellow, color: nearBlack }} asChild>
-              <Link href="/daycares"><Search className="mr-2 h-5 w-5" />Start Your Search</Link>
+        {/* CTA TILE - Full width */}
+        <div className="col-span-2 flex flex-col items-center justify-center rounded-2xl px-8 py-14 text-center md:col-span-4 lg:col-span-6" style={{ background: sunny }}>
+          <h2 className="text-3xl font-extrabold sm:text-4xl" style={{ color: nearBlack }}>Ready to find the perfect care?</h2>
+          <p className="mt-3 text-base font-medium" style={{ color: `${nearBlack}99` }}>Join thousands of Ohio parents who trust us.</p>
+          <div className="mt-6 flex gap-3">
+            <Button size="lg" className="h-12 rounded-full px-8 font-extrabold shadow-lg" style={{ background: hotPink, color: white }} asChild>
+              <Link href="/daycares"><Search className="mr-2 h-4 w-4" />Start Your Search</Link>
             </Button>
-            <Button size="lg" className="h-14 rounded-full px-10 text-lg font-extrabold shadow-xl" style={{ background: hotPink, color: "#fff" }} asChild>
+            <Button size="lg" className="h-12 rounded-full px-8 font-extrabold shadow-lg" style={{ background: nearBlack, color: white }} asChild>
               <Link href="/cities">Browse Cities</Link>
             </Button>
           </div>
         </div>
-      </section>
 
-      {/* FOOTER */}
-      <footer className="py-12 px-6" style={{ background: nearBlack }}>
-        <div className="mx-auto flex max-w-6xl flex-col items-center gap-5 text-center">
-          <Image src="/icon.png" alt="Ohio Parent Hub" width={48} height={48} className="rounded-lg" />
-          <p className="text-lg font-extrabold" style={{ color: hotPink }}>Ohio Parent Hub</p>
-          <div className="flex flex-wrap justify-center gap-6 text-sm font-bold" style={{ color: "rgba(255,255,255,0.6)" }}>
+        {/* FOOTER TILE */}
+        <div className="col-span-2 flex items-center justify-between rounded-2xl px-6 py-4 md:col-span-4 lg:col-span-6" style={{ background: `${white}10` }}>
+          <div className="flex items-center gap-3">
+            <Image src="/icon.png" alt="Ohio Parent Hub" width={28} height={28} className="rounded-md" />
+            <span className="text-sm font-extrabold" style={{ color: hotPink }}>Ohio Parent Hub</span>
+          </div>
+          <div className="flex flex-wrap gap-4 text-xs font-bold" style={{ color: "rgba(255,255,255,0.5)" }}>
             <Link href="/daycares">Daycares</Link>
             <Link href="/cities">Cities</Link>
             <Link href="/about">About</Link>
           </div>
-          <div className="flex items-center gap-1 text-sm" style={{ color: "rgba(255,255,255,0.4)" }}>
-            Made with <Heart className="mx-1 h-3.5 w-3.5" style={{ color: hotPink }} /> for Ohio families
+          <div className="hidden items-center gap-1 text-xs sm:flex" style={{ color: "rgba(255,255,255,0.3)" }}>
+            <Heart className="h-3 w-3" style={{ color: hotPink }} /> Ohio families
           </div>
         </div>
-      </footer>
+      </div>
     </div>
   );
 }
