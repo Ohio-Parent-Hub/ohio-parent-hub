@@ -128,11 +128,11 @@ export default function HomePage() {
               Browse <strong style={{ color: gold }}>{daycares.length.toLocaleString()}</strong> licensed programs across <strong style={{ color: gold }}>{cityCounts.size}</strong> Ohio cities to find child care near you.
             </p>
 
-            <div className="mt-10 flex flex-col items-start gap-4 sm:flex-row">
-              <Button size="lg" className="h-14 rounded-full px-10 text-lg font-bold shadow-lg" style={{ background: teal, color: "#fff" }} asChild>
+            <div className="mt-10 flex w-full max-w-xl flex-row items-center gap-3 sm:w-auto sm:max-w-none sm:gap-4">
+              <Button size="lg" className="h-12 flex-1 rounded-full px-4 text-sm font-bold shadow-lg sm:h-14 sm:flex-none sm:px-10 sm:text-lg" style={{ background: teal, color: "#fff" }} asChild>
                 <Link href="/daycares"><Search className="mr-2 h-5 w-5" />Find a Daycare</Link>
               </Button>
-              <Button size="lg" variant="outline" className="h-14 rounded-full border-2 px-10 text-lg font-bold" style={{ borderColor: pink, color: pink }} asChild>
+              <Button size="lg" variant="outline" className="h-12 flex-1 rounded-full border-2 px-4 text-sm font-bold sm:h-14 sm:flex-none sm:px-10 sm:text-lg" style={{ borderColor: pink, color: pink }} asChild>
                 <Link href="/cities">Browse Cities</Link>
               </Button>
             </div>

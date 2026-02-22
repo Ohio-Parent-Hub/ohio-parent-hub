@@ -41,30 +41,31 @@ export default function CityBrowseClient({ allCities, basePath = "" }: CityBrows
 
   return (
     <>
-      <div className="mb-8">
-        <label htmlFor="city-search" className="mb-2 block text-sm font-medium text-foreground">
-          Search for a city
-        </label>
-        <input
-          id="city-search"
-          value={query}
-          onChange={(event) => setQuery(event.target.value)}
-          placeholder="Start typing a city name..."
-          className="w-full rounded-xl border px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-black/10"
-        />
-      </div>
+      <div className="sticky top-4 z-10 mb-12 rounded-2xl border border-border/40 bg-background/95 p-3 backdrop-blur">
+        <div className="mb-4">
+          <label htmlFor="city-search" className="mb-2 block text-sm font-medium text-foreground">
+            Search for a city
+          </label>
+          <input
+            id="city-search"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="Start typing a city name..."
+            className="w-full rounded-xl border px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-black/10"
+          />
+        </div>
 
-      {/* Quick Jump Links for Letters */}
-      <div className="mb-12 flex flex-wrap gap-2 sticky top-4 z-10 bg-background/95 backdrop-blur py-2 border-b border-border/40">
-        {letters.map((letter) => (
-          <a
-            key={letter}
-            href={`#city-group-${letter}`}
-            className="inline-flex h-8 w-8 items-center justify-center rounded-md text-sm font-medium text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary focus:bg-primary/10 focus:text-primary"
-          >
-            {letter}
-          </a>
-        ))}
+        <div className="flex flex-wrap gap-2 border-t border-border/40 pt-3">
+          {letters.map((letter) => (
+            <a
+              key={letter}
+              href={`#city-group-${letter}`}
+              className="inline-flex h-8 w-8 items-center justify-center rounded-md text-sm font-medium text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary focus:bg-primary/10 focus:text-primary"
+            >
+              {letter}
+            </a>
+          ))}
+        </div>
       </div>
 
       {filteredCities.length === 0 ? (
