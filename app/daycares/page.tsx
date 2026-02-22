@@ -1,7 +1,7 @@
-
-import { Breadcrumbs } from "@/components/ui/breadcrumbs";
-import GlobalDashboard from "@/components/GlobalDashboard";
 import type { Metadata } from "next";
+import DraftDaycaresPageClient from "@/components/DraftDaycaresPageClient";
+import fs from "node:fs";
+import path from "node:path";
 
 export const metadata: Metadata = {
   title: "Best Daycares in Ohio | Search Licensed Child Care Near You",
@@ -23,25 +23,25 @@ export const metadata: Metadata = {
   },
 };
 
-export default function GlobalSearchPage() {
-  return (
-    <main className="mx-auto max-w-7xl px-6 py-8">
-      <Breadcrumbs 
-        items={[
-          { label: "Home", href: "/" }, 
-          { label: "Find a Daycare", href: "/daycares" }
-        ]} 
-        className="mb-6"
-      />
-      
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight mb-2">Best Daycares in Ohio</h1>
-        <p className="text-neutral-500 max-w-2xl">
-          Search our complete database of licensed childcare providers. Use the map and filters to compare locations, quality ratings, and program types near you.
-        </p>
-      </div>
+type DaycareRow = Record<string, string>;
 
-      <GlobalDashboard />
-    </main>
+function loadDaycares(): DaycareRow[] {
+  const p = path.join(process.cwd(), "data", "daycares.json");
+  if (!fs.existsSync(p)) return [];
+  return JSON.parse(fs.readFileSync(p, "utf8"));
+}
+
+export default function GlobalSearchPage() {
+  const daycares = loadDaycares();
+  const cityCount = new Set(daycares.map((d) => d.CITY).filter(Boolean)).size;
+
+  return (
+    <DraftDaycaresPageClient
+      daycareCount={daycares.length}
+      cityCount={cityCount}
+      basePath=""
+      homeHref="/"
+      searchHref="/daycares"
+    />
   );
 }

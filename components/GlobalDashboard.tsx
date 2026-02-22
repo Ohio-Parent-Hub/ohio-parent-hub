@@ -133,7 +133,7 @@ function FilterContent({
       <button
         onClick={onClearAll}
         disabled={!hasActiveFilters}
-        className={`text-xs w-full text-right mb-2 transition-opacity ${
+        className={`text-xs w-full text-left mb-2 transition-opacity ${
           hasActiveFilters
             ? "text-neutral-500 underline hover:text-black opacity-100"
             : "text-neutral-400 opacity-0 pointer-events-none"
@@ -397,7 +397,25 @@ function FilterContent({
   );
 }
 
-export default function GlobalDashboard({ basePath = "" }: { basePath?: string }) {
+interface GlobalDashboardProps {
+  basePath?: string;
+  externalMapCenter?: [number, number] | null;
+  onExternalMapCenterChange?: (coords: [number, number] | null) => void;
+  externalLocationQuery?: string;
+  onExternalLocationQueryChange?: (query: string) => void;
+  onClearAllFilters?: () => void;
+  hideDesktopLocationSearch?: boolean;
+}
+
+export default function GlobalDashboard({
+  basePath = "",
+  externalMapCenter,
+  onExternalMapCenterChange,
+  externalLocationQuery,
+  onExternalLocationQueryChange,
+  onClearAllFilters,
+  hideDesktopLocationSearch = false,
+}: GlobalDashboardProps) {
   // State
   const [daycares, setDaycares] = useState<Daycare[]>([]);
   const [filteredIndices, setFilteredIndices] = useState<number[]>([]);
@@ -408,7 +426,14 @@ export default function GlobalDashboard({ basePath = "" }: { basePath?: string }
   const latestAppliedRequestRef = useRef(0);
   
   const [searchQuery, setSearchQuery] = useState("");
-  const [mapCenter, setMapCenter] = useState<[number, number] | null>(null);
+  const [internalMapCenter, setInternalMapCenter] = useState<[number, number] | null>(null);
+  const [internalLocationQuery, setInternalLocationQuery] = useState("");
+  const [locationSearchClearSignal, setLocationSearchClearSignal] = useState(0);
+  const mapCenter = externalMapCenter !== undefined ? externalMapCenter : internalMapCenter;
+  const setMapCenter = onExternalMapCenterChange ?? setInternalMapCenter;
+  const locationQuery = externalLocationQuery !== undefined ? externalLocationQuery : internalLocationQuery;
+  const setLocationQuery = onExternalLocationQueryChange ?? setInternalLocationQuery;
+
   const [pfccEnabled, setPfccEnabled] = useState(false);
   const [selectedRatings, setSelectedRatings] = useState<string[]>([]);
   const [selectedProgramTypes, setSelectedProgramTypes] = useState<string[]>([]);
@@ -551,7 +576,16 @@ export default function GlobalDashboard({ basePath = "" }: { basePath?: string }
     setSelectedCounty("");
     setSearchQuery("");
     setMapCenter(null);
-  }, []);
+    setLocationQuery("");
+    setLocationSearchClearSignal((value) => value + 1);
+    onClearAllFilters?.();
+  }, [onClearAllFilters, setLocationQuery, setMapCenter]);
+
+  const clearLocationOnly = useCallback(() => {
+    setMapCenter(null);
+    setLocationQuery("");
+    setLocationSearchClearSignal((value) => value + 1);
+  }, [setLocationQuery, setMapCenter]);
 
   const toggleRating = useCallback((r: string) => {
     setSelectedRatings(prev => 
@@ -603,6 +637,8 @@ export default function GlobalDashboard({ basePath = "" }: { basePath?: string }
         <div className="lg:hidden flex flex-col gap-4">
           <LocationSearch 
             onLocationFound={(lat, lng) => setMapCenter([lat, lng])}
+            onSearchSuccess={(query) => setLocationQuery(query)}
+            clearSignal={locationSearchClearSignal}
           />
           <div className="flex items-center gap-2">
             <Sheet>
@@ -655,18 +691,36 @@ export default function GlobalDashboard({ basePath = "" }: { basePath?: string }
 
         {/* Results Header */}
         <div className="flex flex-col gap-4">
-          <div className="hidden lg:block">
-            <LocationSearch 
-              onLocationFound={(lat, lng) => setMapCenter([lat, lng])}
-              className="max-w-md mb-4"
-            />
-          </div>
+          {!hideDesktopLocationSearch && (
+            <div className="hidden lg:block max-w-md">
+              <LocationSearch
+                onLocationFound={(lat, lng) => setMapCenter([lat, lng])}
+                onSearchSuccess={(query) => setLocationQuery(query)}
+                clearSignal={locationSearchClearSignal}
+                placeholder="Search by street, city, or ZIP in Ohio"
+              />
+            </div>
+          )}
           <div className="flex items-baseline justify-between">
-            <h1 className="text-xl font-bold">
-              {filteredDaycares.length} Results
-              {selectedCity && <span className="font-normal text-neutral-500 ml-2">in {prettyCity(selectedCity)}</span>}
-              {selectedCounty && <span className="font-normal text-neutral-500 ml-2">in {prettyCity(selectedCounty)} County</span>}
-            </h1>
+            <div>
+              <h1 className="text-xl font-bold">
+                {filteredDaycares.length} Results
+                {selectedCity && <span className="font-normal text-neutral-500 ml-2">in {prettyCity(selectedCity)}</span>}
+                {selectedCounty && <span className="font-normal text-neutral-500 ml-2">in {prettyCity(selectedCounty)} County</span>}
+              </h1>
+              {locationQuery && (
+                <p className="mt-1 text-sm text-neutral-500">
+                  Showing results near <span className="font-medium text-neutral-700">{locationQuery}</span>.
+                  <button
+                    type="button"
+                    onClick={clearLocationOnly}
+                    className="ml-2 underline hover:text-neutral-700"
+                  >
+                    Clear location
+                  </button>
+                </p>
+              )}
+            </div>
           </div>
         </div>
 

@@ -82,7 +82,7 @@ function FilterContent({
       <button
         onClick={onClearAll}
         disabled={!hasActiveFilters}
-        className={`text-xs w-full text-right mb-2 transition-opacity ${
+        className={`text-xs w-full text-left mb-2 transition-opacity ${
           hasActiveFilters
             ? "text-neutral-500 underline hover:text-black opacity-100"
             : "text-neutral-400 opacity-0 pointer-events-none"
@@ -333,11 +333,11 @@ export default function CityDashboard({ daycares, cityDisplay, basePath = "" }: 
           {daycares.length !== filteredDaycares.length ? ` (filtered from ${daycares.length})` : ""}.
         </p>
 
-        <div className="mt-5">
-           <LocationSearch 
-             onLocationFound={(lat, lng) => setMapCenter([lat, lng])}
-             className="max-w-md"
-           />
+        <div className="mt-5 max-w-md">
+          <LocationSearch
+            onLocationFound={(lat, lng) => setMapCenter([lat, lng])}
+            placeholder="Search by street, city, or ZIP in Ohio"
+          />
         </div>
       </header>
 
