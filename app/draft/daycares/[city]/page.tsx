@@ -38,5 +38,15 @@ export default async function DraftCityDaycaresPage({ params }: Props) {
     notFound();
   }
 
-  return <DraftCityDaycaresPageClient cityDisplay={cityDisplay} citySlug={citySlug} cityCount={matches.length} daycares={matches} />;
+  return (
+    <DraftCityDaycaresPageClient
+      cityDisplay={cityDisplay}
+      citySlug={citySlug}
+      cityCount={matches.length}
+      daycares={matches}
+      basePath="/draft"
+      homeHref="/draft"
+      citiesHref="/draft/cities"
+    />
+  );
 }

@@ -13,6 +13,9 @@ interface DraftCityDaycaresPageClientProps {
   citySlug: string;
   cityCount: number;
   daycares: DaycareRow[];
+  basePath?: string;
+  homeHref?: string;
+  citiesHref?: string;
 }
 
 function SparkleDecor({ className, style }: { className?: string; style?: CSSProperties }) {
@@ -33,10 +36,19 @@ const lightTeal = "#D5E5E3";
 const lightPink = "#FADED4";
 const lightGold = "#F5E9BE";
 
-export default function DraftCityDaycaresPageClient({ cityDisplay, citySlug, cityCount, daycares }: DraftCityDaycaresPageClientProps) {
+export default function DraftCityDaycaresPageClient({
+  cityDisplay,
+  citySlug,
+  cityCount,
+  daycares,
+  basePath = "/draft",
+  homeHref = "/draft",
+  citiesHref = "/draft/cities",
+}: DraftCityDaycaresPageClientProps) {
   const [mapCenter, setMapCenter] = useState<[number, number] | null>(null);
   const [locationQuery, setLocationQuery] = useState("");
   const [heroSearchClearSignal, setHeroSearchClearSignal] = useState(0);
+  const cityHref = `${basePath}/daycares/${citySlug}`;
 
   return (
     <main className="min-h-screen" style={{ background: cream, color: dark }}>
@@ -51,9 +63,9 @@ export default function DraftCityDaycaresPageClient({ cityDisplay, citySlug, cit
         <div className="relative z-10 mx-auto max-w-7xl">
           <Breadcrumbs
             items={[
-              { label: "Home", href: "/draft" },
-              { label: "Cities", href: "/draft/cities" },
-              { label: cityDisplay || "City", href: `/draft/daycares/${citySlug}` },
+              { label: "Home", href: homeHref },
+              { label: "Cities", href: citiesHref },
+              { label: cityDisplay || "City", href: cityHref },
             ]}
             className="mb-6"
           />
@@ -97,7 +109,7 @@ export default function DraftCityDaycaresPageClient({ cityDisplay, citySlug, cit
           <CityDashboard
             daycares={daycares}
             cityDisplay={cityDisplay}
-            basePath="/draft"
+            basePath={basePath}
             externalMapCenter={mapCenter}
             onExternalMapCenterChange={setMapCenter}
             externalLocationQuery={locationQuery}
