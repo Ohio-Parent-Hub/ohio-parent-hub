@@ -28,6 +28,12 @@ export interface MapProps {
     lng: number;
     title: string;
     url?: string;
+    sutqRating?: string;
+    programType?: string;
+    pfcc?: boolean;
+    streetAddress?: string;
+    city?: string;
+    zipCode?: string;
   }>;
   userLocation?: [number, number] | null; // New prop for user's searched location
   interactive?: boolean; // If false, disable interactions (static-like mode)
@@ -57,9 +63,56 @@ function escapeHtml(value: string) {
     .replaceAll("'", "&#39;");
 }
 
+function normalizeSutqTier(rating?: string): "gold" | "silver" | "bronze" | "not-rated" {
+  const raw = (rating || "").trim().toLowerCase();
+  if (raw === "3" || raw === "gold") return "gold";
+  if (raw === "2" || raw === "silver") return "silver";
+  if (raw === "1" || raw === "bronze") return "bronze";
+  return "not-rated";
+}
+
+function sutqLabelFromTier(tier: "gold" | "silver" | "bronze" | "not-rated") {
+  if (tier === "gold") return "SUTQ: Gold";
+  if (tier === "silver") return "SUTQ: Silver";
+  if (tier === "bronze") return "SUTQ: Bronze";
+  return "SUTQ: Not Rated";
+}
+
+function sutqBadgeColor(tier: "gold" | "silver" | "bronze" | "not-rated") {
+  if (tier === "gold") return "#DCB346";
+  if (tier === "silver") return "#9CA3AF";
+  if (tier === "bronze") return "#B87333";
+  return "#6B7280";
+}
+
+function createSutqPinIcon(fillColor: string) {
+  const svg = `
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 26 42" width="26" height="42">
+      <path d="M13 1C6.5 1 1.2 6.1 1.2 12.5c0 8.9 11.8 27.5 11.8 27.5s11.8-18.6 11.8-27.5C24.8 6.1 19.5 1 13 1z" fill="${fillColor}" stroke="#ffffff" stroke-width="1.6" />
+      <circle cx="13" cy="12.8" r="4.7" fill="#ffffff" fill-opacity="0.92" />
+    </svg>
+  `;
+
+  return L.icon({
+    iconUrl: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`,
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+  });
+}
+
 function ClusteredMarkersLayer({ markers }: { markers: NonNullable<MapProps["markers"]> }) {
   const map = useMap();
   const clusterGroupRef = useRef<L.LayerGroup | null>(null);
+  const sutqIcons = useMemo(
+    () => ({
+      gold: createSutqPinIcon("#DCB346"),
+      silver: createSutqPinIcon("#9CA3AF"),
+      bronze: createSutqPinIcon("#B87333"),
+      "not-rated": createSutqPinIcon("#6B7280"),
+    }),
+    []
+  );
 
   useEffect(() => {
     const markerClusterFactory = (L as unknown as {
@@ -102,19 +155,50 @@ function ClusteredMarkersLayer({ markers }: { markers: NonNullable<MapProps["mar
     if (markers.length === 0) return;
 
     const leafletMarkers = markers.map((markerData) => {
-      const marker = L.marker([markerData.lat, markerData.lng]);
+      const tier = normalizeSutqTier(markerData.sutqRating);
+      const marker = L.marker([markerData.lat, markerData.lng], {
+        icon: sutqIcons[tier],
+      });
       const safeTitle = escapeHtml(markerData.title || "");
       const safeUrl = markerData.url ? escapeHtml(markerData.url) : "";
+      const safeProgramType = escapeHtml(markerData.programType || "");
+      const safeStreetAddress = escapeHtml(markerData.streetAddress || "");
+      const safeCity = escapeHtml(markerData.city || "");
+      const safeZip = escapeHtml(markerData.zipCode || "");
+      const ratingLabel = sutqLabelFromTier(tier);
+      const ratingColor = sutqBadgeColor(tier);
+
+      const addressLine2 = [safeCity, safeZip].filter(Boolean).join(", ");
+
+      const metadataBadges = [
+        `<span style="display:inline-block;background:${ratingColor};color:#fff;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:600;line-height:1.4;">${escapeHtml(ratingLabel)}</span>`,
+        safeProgramType
+          ? `<span style="display:inline-block;background:#EEF2F7;color:#334155;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:600;line-height:1.4;">${safeProgramType}</span>`
+          : "",
+        markerData.pfcc
+          ? `<span style="display:inline-block;background:#DBEAFE;color:#1D4ED8;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700;line-height:1.4;">PFCC</span>`
+          : "",
+      ]
+        .filter(Boolean)
+        .join(" ");
+
+      const addressBlock = [
+        safeStreetAddress ? `<div style=\"margin-top:6px;color:#334155;font-size:12px;\">${safeStreetAddress}</div>` : "",
+        addressLine2 ? `<div style=\"color:#64748B;font-size:12px;\">${addressLine2}</div>` : "",
+      ]
+        .filter(Boolean)
+        .join("");
+
       const popupHtml = safeUrl
-        ? `<div class="text-sm font-sans"><strong>${safeTitle}</strong><div class="mt-1"><a href="${safeUrl}" class="text-blue-600 hover:underline">View Details</a></div></div>`
-        : `<div class="text-sm font-sans"><strong>${safeTitle}</strong></div>`;
+        ? `<div style="font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;max-width:260px;"><div style="font-size:14px;font-weight:700;color:#111827;line-height:1.35;">${safeTitle}</div><div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:4px;">${metadataBadges}</div>${addressBlock}<div style="margin-top:8px;"><a href="${safeUrl}" style="color:#2563EB;text-decoration:none;font-size:12px;font-weight:600;">View Details</a></div></div>`
+        : `<div style="font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;max-width:260px;"><div style="font-size:14px;font-weight:700;color:#111827;line-height:1.35;">${safeTitle}</div><div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:4px;">${metadataBadges}</div>${addressBlock}</div>`;
 
       marker.bindPopup(popupHtml);
       return marker;
     });
 
     clusterGroup.addLayers(leafletMarkers);
-  }, [markers]);
+  }, [markers, sutqIcons]);
 
   return null;
 }
@@ -188,8 +272,8 @@ export default function LeafletMap({
         <MapUpdater center={center} zoom={zoom} />
 
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+          url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
         />
         
         {/* Render User Location Marker (Red Pin) if provided */}

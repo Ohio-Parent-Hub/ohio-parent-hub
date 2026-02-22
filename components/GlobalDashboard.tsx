@@ -447,7 +447,7 @@ export default function GlobalDashboard({
         name: (d["PROGRAM NAME"] || "").toLowerCase(),
         city: (d.CITY || "").trim(),
         county: (d.COUNTY || "").trim(),
-        pfcc: d["PFCC"] === "Y",
+        pfcc: d["PFCC"] === "Y" || d["PFCC AGREEMENT"] === "Y",
         rating: !ratingRaw || ratingRaw === "" ? "0" : ratingRaw,
         programType: d["wPROGRAM TYPE"] || d["PROGRAM TYPE"] || "",
       };
@@ -561,6 +561,12 @@ export default function GlobalDashboard({
         lng: typeof d.LNG === 'string' ? parseFloat(d.LNG) : d.LNG,
         title: d["PROGRAM NAME"],
         url: `/daycare/${slugify(d["PROGRAM NUMBER"] + "-" + d["PROGRAM NAME"])}`,
+        sutqRating: d["SUTQ RATING"] || "0",
+        programType: d["PROGRAM TYPE"] || "",
+        pfcc: d["PFCC"] === "Y" || d["PFCC AGREEMENT"] === "Y",
+        streetAddress: d["STREET ADDRESS"] || "",
+        city: d["CITY"] || "",
+        zipCode: d["ZIP CODE"] || "",
       }));
   }, [filteredDaycares]);
 

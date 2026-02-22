@@ -19,6 +19,12 @@ interface InteractiveMapProps {
     lng: number;
     title: string;
     url?: string;
+    sutqRating?: string;
+    programType?: string;
+    pfcc?: boolean;
+    streetAddress?: string;
+    city?: string;
+    zipCode?: string;
   }>;
   userLocation?: [number, number] | null; // Pass through new prop
   height?: string;

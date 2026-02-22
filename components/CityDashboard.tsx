@@ -340,6 +340,12 @@ export default function CityDashboard({
           lng: Number(d["LNG"]),
           title: name,
           url,
+          sutqRating: d["SUTQ RATING"] || "0",
+          programType: d["PROGRAM TYPE"] || "",
+          pfcc: d["PFCC AGREEMENT"] === "Y",
+          streetAddress: d["STREET ADDRESS"] || "",
+          city: city || "",
+          zipCode: d["ZIP CODE"] || "",
         };
       });
   }, [filteredDaycares, cityDisplay, basePath]);
