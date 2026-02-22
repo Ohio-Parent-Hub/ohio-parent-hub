@@ -3,9 +3,6 @@ import Image from "next/image";
 import fs from "node:fs";
 import path from "node:path";
 
-import { Button } from "@/components/ui/button";
-import { MapPin, Search, ShieldCheck, Baby, ArrowRight, Heart, Sparkles } from "lucide-react";
-
 type DaycareRow = Record<string, string>;
 function loadDaycares(): DaycareRow[] {
   const p = path.join(process.cwd(), "data", "daycares.json");
@@ -15,6 +12,16 @@ function loadDaycares(): DaycareRow[] {
 function slugify(s: string) {
   return (s || "").toLowerCase().trim().replace(/&/g, "and").replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "");
 }
+
+import { Button } from "@/components/ui/button";
+import { MapPin, Search, ShieldCheck, Baby, ArrowRight, Heart, Sparkles } from "lucide-react";
+
+/* =========================================================
+   OPTION 9 — "Wonder Skies: Storybook Illustrated"
+   Same palette but heavily illustrated feel: wavy dividers,
+   hand-drawn-style soft borders, layered pastel backgrounds,
+   warm & childlike, like a children's book
+   ========================================================= */
 
 const teal = "#7EA8A4";
 const pink = "#E8A0AC";
@@ -51,7 +58,7 @@ function SparkleDecor({ className }: { className?: string }) {
   );
 }
 
-export default function HomePage() {
+export default function Option9() {
   const daycares = loadDaycares();
   const cityCounts = new Map<string, number>();
   daycares.forEach((d) => { const c = d["CITY"]; if (c) cityCounts.set(c, (cityCounts.get(c) || 0) + 1); });
@@ -59,9 +66,14 @@ export default function HomePage() {
 
   return (
     <div className="flex min-h-screen flex-col" style={{ background: cream, color: dark }}>
+      <div className="fixed top-4 left-4 z-50">
+        <Link href="/draft" className="rounded-full px-4 py-2 text-xs font-bold uppercase tracking-widest" style={{ background: teal, color: "#fff" }}>&larr; All Options</Link>
+      </div>
+
+      {/* NAV -- Soft, rounded, storybook feel */}
       <nav className="sticky top-0 z-40 backdrop-blur-xl" style={{ background: `${cream}ee` }}>
         <div className="mx-auto flex h-20 max-w-6xl items-center justify-between px-6">
-          <Link href="/" className="flex items-center gap-3">
+          <Link href="/draft/option-9" className="flex items-center gap-3">
             <Image src="/icon.png" alt="Ohio Parent Hub" width={44} height={44} />
             <span className="font-serif text-xl font-bold" style={{ color: teal }}>Ohio Parent Hub</span>
           </Link>
@@ -75,7 +87,9 @@ export default function HomePage() {
         </div>
       </nav>
 
+      {/* HERO -- Layered pastel background with sparkles */}
       <section className="relative overflow-hidden px-6 py-28 sm:py-36" style={{ background: lightTeal }}>
+        {/* Decorative elements */}
         <SparkleDecor className="absolute top-10 left-[8%] h-6 w-6 text-gold/30 animate-pulse" style={{ color: gold }} />
         <SparkleDecor className="absolute top-20 right-[12%] h-4 w-4 text-pink/30 animate-pulse" style={{ color: pink }} />
         <SparkleDecor className="absolute bottom-24 left-[15%] h-5 w-5 text-teal/20 animate-pulse" style={{ color: teal }} />
@@ -83,6 +97,7 @@ export default function HomePage() {
         <SparkleDecor className="absolute top-1/2 left-[4%] h-4 w-4 text-pink/20 animate-pulse" style={{ color: pink }} />
         <SparkleDecor className="absolute top-32 right-[5%] h-5 w-5" style={{ color: `${sage}60` }} />
 
+        {/* Soft background circles */}
         <div className="pointer-events-none absolute -top-20 -left-20 h-64 w-64 rounded-full" style={{ background: `${pink}20` }} />
         <div className="pointer-events-none absolute -bottom-16 -right-16 h-48 w-48 rounded-full" style={{ background: `${gold}15` }} />
         <div className="pointer-events-none absolute top-1/3 right-[10%] h-32 w-32 rounded-full" style={{ background: `${sage}20` }} />
@@ -109,7 +124,7 @@ export default function HomePage() {
                 <Link href="/daycares"><Search className="mr-2 h-5 w-5" />Find a Daycare</Link>
               </Button>
               <Button size="lg" variant="outline" className="h-14 rounded-full border-2 px-10 text-lg font-bold" style={{ borderColor: pink, color: pink }} asChild>
-                <Link href="/cities">Browse Cities</Link>
+                <Link href="/about">Learn More</Link>
               </Button>
             </div>
           </div>
@@ -133,10 +148,12 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Wave into features */}
       <div style={{ background: lightTeal }}>
         <WaveDivider fill="#fff" />
       </div>
 
+      {/* FEATURES */}
       <section className="px-6 pb-24 pt-12" style={{ background: "#fff" }}>
         <div className="mx-auto max-w-6xl">
           <div className="mb-16">
@@ -182,10 +199,12 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Wave into cities */}
       <div style={{ background: "#fff" }}>
         <WaveDivider fill={cream} />
       </div>
 
+      {/* CITIES */}
       <section className="px-6 pb-24 pt-12" style={{ background: cream }}>
         <div className="mx-auto max-w-6xl">
           <div className="mb-12 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
@@ -218,8 +237,10 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Wave into CTA */}
       <WaveDivider fill={teal} />
 
+      {/* CTA */}
       <section className="relative overflow-hidden px-6 pb-28 pt-12 text-center" style={{ background: teal }}>
         <SparkleDecor className="absolute top-12 left-[10%] h-5 w-5 text-white/20 animate-pulse" />
         <SparkleDecor className="absolute bottom-16 right-[12%] h-4 w-4 animate-pulse" style={{ color: `${gold}40` }} />
@@ -237,8 +258,10 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Wave into footer */}
       <WaveDivider fill={cream} />
 
+      {/* FOOTER */}
       <footer className="px-6 pb-12 pt-4" style={{ background: cream }}>
         <div className="mx-auto flex max-w-6xl flex-col items-center gap-5 text-center">
           <Image src="/icon.png" alt="Ohio Parent Hub" width={48} height={48} className="rounded-xl shadow-sm" />
@@ -246,6 +269,8 @@ export default function HomePage() {
           <div className="flex flex-wrap justify-center gap-6 text-sm font-medium" style={{ color: `${dark}88` }}>
             <Link href="/daycares">Find Daycares</Link>
             <Link href="/cities">Cities</Link>
+            <Link href="/about">About</Link>
+            <Link href="/contact">Contact</Link>
           </div>
           <div className="flex items-center gap-1 text-sm" style={{ color: `${dark}50` }}>
             Made with <Heart className="mx-1 h-3.5 w-3.5" style={{ color: pink }} /> for Ohio families
