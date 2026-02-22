@@ -32,6 +32,7 @@ type Daycare = Record<string, string>;
 interface CityDashboardProps {
   daycares: Daycare[];
   cityDisplay: string;
+  basePath?: string;
 }
 
 function slugify(s: string) {
@@ -221,7 +222,7 @@ const PROGRAM_TYPES = [
   "Registered Day Camp or Approved Day Camp",
 ];
 
-export default function CityDashboard({ daycares, cityDisplay }: CityDashboardProps) {
+export default function CityDashboard({ daycares, cityDisplay, basePath = "" }: CityDashboardProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [mapCenter, setMapCenter] = useState<[number, number] | null>(null);
   const [pfccEnabled, setPfccEnabled] = useState(false);
@@ -472,7 +473,7 @@ export default function CityDashboard({ daycares, cityDisplay }: CityDashboardPr
                           </div>
 
                           <Link
-                            href={`/daycare/${slug}`}
+                            href={`${basePath}/daycare/${slug}`}
                             className="shrink-0 rounded-lg border px-3 py-2 text-xs font-medium hover:bg-white hover:text-blue-700 transition-colors"
                           >
                             View

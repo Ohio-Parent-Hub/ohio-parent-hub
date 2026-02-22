@@ -397,7 +397,7 @@ function FilterContent({
   );
 }
 
-export default function GlobalDashboard() {
+export default function GlobalDashboard({ basePath = "" }: { basePath?: string }) {
   // State
   const [daycares, setDaycares] = useState<Daycare[]>([]);
   const [filteredIndices, setFilteredIndices] = useState<number[]>([]);
@@ -694,7 +694,7 @@ export default function GlobalDashboard() {
                      <SutqBadge rating={d["SUTQ RATING"]} className="scale-90 origin-left" />
                   </div>
                  <h3 className="font-bold text-lg leading-tight mb-1">
-                   <Link href={`/daycare/${slugify(d["PROGRAM NUMBER"] + "-" + d["PROGRAM NAME"])}`} className="hover:underline">
+                   <Link href={`${basePath}/daycare/${slugify(d["PROGRAM NUMBER"] + "-" + d["PROGRAM NAME"])}`} className="hover:underline">
                      {d["PROGRAM NAME"]}
                    </Link>
                  </h3>
@@ -717,7 +717,7 @@ export default function GlobalDashboard() {
                
                <div className="hidden sm:flex flex-col items-end gap-3 min-w-[120px]">
                  <SutqBadge rating={d["SUTQ RATING"]} />
-                 <Link href={`/daycare/${slugify(d["PROGRAM NUMBER"] + "-" + d["PROGRAM NAME"])}`}>
+                 <Link href={`${basePath}/daycare/${slugify(d["PROGRAM NUMBER"] + "-" + d["PROGRAM NAME"])}`}>
                     <Button variant="outline" size="sm" className="w-full">
                         View Details
                     </Button>
@@ -725,7 +725,7 @@ export default function GlobalDashboard() {
                </div>
                
                <div className="sm:hidden">
-                    <Link href={`/daycare/${slugify(d["PROGRAM NUMBER"] + "-" + d["PROGRAM NAME"])}`}>
+                    <Link href={`${basePath}/daycare/${slugify(d["PROGRAM NUMBER"] + "-" + d["PROGRAM NAME"])}`}>
                         <Button variant="outline" size="sm" className="w-full">
                             View Details
                         </Button>

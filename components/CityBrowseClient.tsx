@@ -13,9 +13,10 @@ interface CityData {
 
 interface CityBrowseClientProps {
   allCities: CityData[];
+  basePath?: string;
 }
 
-export default function CityBrowseClient({ allCities }: CityBrowseClientProps) {
+export default function CityBrowseClient({ allCities, basePath = "" }: CityBrowseClientProps) {
   const [query, setQuery] = useState("");
 
   const filteredCities = useMemo(() => {
@@ -83,7 +84,7 @@ export default function CityBrowseClient({ allCities }: CityBrowseClientProps) {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {groupedCities[letter].map((city) => (
-                  <Link key={city.name} href={`/daycares/${city.slug}`} className="group block h-full">
+                  <Link key={city.name} href={`${basePath}/daycares/${city.slug}`} className="group block h-full">
                     <Card className="h-full border-transparent bg-card shadow-sm hover:border-primary/20 hover:shadow-md transition-all">
                       <CardContent className="p-4 flex items-center justify-between">
                         <span className="font-medium text-foreground group-hover:text-primary transition-colors">

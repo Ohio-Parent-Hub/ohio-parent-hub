@@ -104,6 +104,30 @@ export default function DraftIndex() {
         </div>
       </header>
 
+      <section className="mx-auto max-w-6xl px-6 pt-12">
+        <div className="mb-4">
+          <span className="inline-block rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-widest" style={{ background: "#4A6B67", color: "#fff" }}>
+            Directory UI Draft Routes
+          </span>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            { href: "/draft/daycares", label: "Global Search", desc: "Draft version of /daycares" },
+            { href: "/draft/cities", label: "Cities Index", desc: "Draft version of /cities" },
+            { href: "/draft/daycares/columbus", label: "City Results", desc: "Draft version of /daycares/[city]" },
+            { href: "/draft/daycares/columbus", label: "Daycare Detail", desc: "Open a listing from city results to view /draft/daycare/[slug]" },
+          ].map((item) => (
+            <Link key={item.href} href={item.href} className="group block">
+              <div className="rounded-2xl border-2 bg-white p-5 shadow-sm transition-all group-hover:-translate-y-1 group-hover:shadow-lg" style={{ borderColor: "#4A6B6730" }}>
+                <h2 className="font-serif text-lg font-bold" style={{ color: "#4A6B67" }}>{item.label}</h2>
+                <p className="mt-1 text-sm" style={{ color: "#4A6B6799" }}>{item.desc}</p>
+                <div className="mt-3 text-xs font-bold" style={{ color: "#7EA8A4" }}>{"Open draft route →"}</div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
+
       {/* Grid of options */}
       <main className="mx-auto max-w-6xl px-6 py-16">
         {/* Section: Custom Themes */}
