@@ -4,14 +4,21 @@ import GlobalDashboard from "@/components/GlobalDashboard";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Find Daycares in Ohio | Search All Licensed Providers",
-  description: "Search and filter over 8,000 licensed daycare and childcare programs in Ohio. Filter by city, county, SUTQ rating, and more.",
+  title: "Best Daycares in Ohio | Search Licensed Child Care Near You",
+  description: "Search and filter over 8,000 licensed daycare and childcare programs in Ohio. Compare providers by city, county, SUTQ rating, and program type.",
+  keywords: [
+    "best daycares in ohio",
+    "licensed daycare ohio",
+    "childcare near me",
+    "ohio childcare search",
+    "top rated daycare ohio",
+  ],
   alternates: {
     canonical: "/daycares",
   },
   openGraph: {
-    title: "Find Licensed Daycares in Ohio",
-    description: "Search tool for all licensed childcare providers in Ohio.",
+    title: "Best Daycares in Ohio | Search Licensed Child Care",
+    description: "Search and compare licensed childcare providers across Ohio with city and quality filters.",
     url: "https://ohioparenthub.com/daycares",
   },
 };
@@ -28,9 +35,9 @@ export default function GlobalSearchPage() {
       />
       
       <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight mb-2">Find a Daycare in Ohio</h1>
+        <h1 className="text-3xl font-bold tracking-tight mb-2">Best Daycares in Ohio</h1>
         <p className="text-neutral-500 max-w-2xl">
-          Search our complete database of licensed childcare providers. Use the map and filters to narrow down results by location, quality rating, and program type.
+          Search our complete database of licensed childcare providers. Use the map and filters to compare locations, quality ratings, and program types near you.
         </p>
       </div>
 

@@ -9,16 +9,23 @@ import { Button } from "@/components/ui/button";
 import { MapPin, Search, ShieldCheck, Baby, ArrowRight, Heart, Sparkles } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Ohio Parent Hub | Find Licensed Daycares in Ohio",
+  title: "Best Daycares in Ohio | Licensed Child Care Search",
   description:
-    "Search licensed Ohio daycares by city, compare SUTQ quality ratings, and review provider details in one place.",
+    "Find top-rated, licensed Ohio daycares by city. Compare SUTQ quality ratings and provider details to choose child care near you.",
+  keywords: [
+    "best daycares in ohio",
+    "ohio daycare search",
+    "licensed childcare ohio",
+    "child care near me ohio",
+    "sutq rated daycare",
+  ],
   alternates: {
     canonical: "/",
   },
   openGraph: {
-    title: "Ohio Parent Hub | Find Licensed Daycares in Ohio",
+    title: "Best Daycares in Ohio | Licensed Child Care Search",
     description:
-      "Search licensed Ohio daycares by city, compare SUTQ quality ratings, and review provider details in one place.",
+      "Find top-rated, licensed Ohio daycares by city and compare SUTQ quality information.",
     url: "https://ohioparenthub.com/",
   },
 };
@@ -112,13 +119,13 @@ export default function HomePage() {
             </div>
 
             <h1 className="font-serif text-5xl font-bold tracking-tight sm:text-6xl md:text-7xl" style={{ color: dark }}>
-              <span className="text-balance">Finding Childcare</span>
+              <span className="text-balance">Find the Best Daycares</span>
               <br className="hidden sm:block" />
-              <span style={{ color: pink }}>Should Be Simple.</span>
+              <span style={{ color: pink }}>in Ohio.</span>
             </h1>
 
             <p className="mt-8 max-w-2xl text-lg leading-relaxed" style={{ color: `${dark}bb` }}>
-              Browse <strong style={{ color: gold }}>{daycares.length.toLocaleString()}</strong> licensed programs across <strong style={{ color: gold }}>{cityCounts.size}</strong> Ohio cities.
+              Browse <strong style={{ color: gold }}>{daycares.length.toLocaleString()}</strong> licensed programs across <strong style={{ color: gold }}>{cityCounts.size}</strong> Ohio cities to find child care near you.
             </p>
 
             <div className="mt-10 flex flex-col items-start gap-4 sm:flex-row">

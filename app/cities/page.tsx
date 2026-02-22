@@ -11,15 +11,21 @@ import { ArrowLeft, MapPin } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Browse Daycares by Ohio City | Ohio Parent Hub",
-  description: "Find licensed daycares and early childhood programs in cities across Ohio. Browse alphabetically to find care near you.",
+  title: "Best Daycares by Ohio City | Ohio Parent Hub",
+  description: "Browse licensed daycares and early childhood programs by city across Ohio to find child care near you.",
+  keywords: [
+    "best daycares by city ohio",
+    "ohio daycare cities",
+    "childcare near me ohio city",
+    "licensed daycare by city",
+  ],
   alternates: {
     canonical: "/cities",
   },
   openGraph: {
-    title: "Browse Ohio Cities for Licensed Daycares",
+    title: "Best Daycares by Ohio City",
     description:
-      "Explore Ohio cities and open local daycare listings with program details and quality information.",
+      "Explore Ohio cities and open local daycare listings with quality and program details.",
     url: "https://ohioparenthub.com/cities",
   },
 };
@@ -78,7 +84,7 @@ export default function CitiesPage() {
           />
           
           <h1 className="font-serif text-4xl font-bold text-primary mb-4">
-            Browse Daycares by City
+            Find the Best Daycares by City in Ohio
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl">
             Find licensed childcare providers in {allCities.length} cities across Ohio. 

@@ -58,14 +58,21 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const canonicalSlug = canonicalDaycareSlug(daycare);
   
   return {
-    title: `${name} - ${city}, OH | Ohio Parent Hub`,
-    description: `${name} in ${city}, Ohio. SUTQ Rating: ${sutq}. View program details, address, license information, and contact info.`,
+    title: `${name} in ${city}, OH | Daycare Profile | Ohio Parent Hub`,
+    description: `${name} is a licensed daycare in ${city}, Ohio. SUTQ Rating: ${sutq}. View address, contact details, and program information.`,
+    keywords: [
+      `${name}`,
+      `${city} daycare`,
+      `${city} childcare`,
+      `licensed daycare ${city} ohio`,
+      `${name} ${city} ohio`,
+    ],
     alternates: {
       canonical: `/daycare/${canonicalSlug}`,
     },
     openGraph: {
-      title: `${name} - ${city}, Ohio Daycare`,
-      description: `${name} in ${city}, Ohio. SUTQ Rating: ${sutq}.`,
+      title: `${name} in ${city}, Ohio | Daycare Profile`,
+      description: `${name} is a licensed daycare in ${city}, Ohio. SUTQ Rating: ${sutq}.`,
       url: `https://ohioparenthub.com/daycare/${canonicalSlug}`,
     },
   };

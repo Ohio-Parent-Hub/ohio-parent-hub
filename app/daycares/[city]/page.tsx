@@ -52,14 +52,21 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
   
   return {
-    title: `${count} Licensed Daycares in ${cityDisplay}, Ohio | Ohio Parent Hub`,
-    description: `Find ${count} licensed daycare and childcare programs in ${cityDisplay}, OH. Browse SUTQ-rated providers, view program details, addresses, and contact information.`,
+    title: `Best Daycares in ${cityDisplay}, Ohio | Ohio Parent Hub`,
+    description: `Compare ${count} licensed daycare and childcare programs in ${cityDisplay}, OH. Explore SUTQ ratings, locations, and key provider details.`,
+    keywords: [
+      `best daycares in ${cityDisplay}`,
+      `${cityDisplay} daycare`,
+      `${cityDisplay} childcare`,
+      `licensed daycare ${cityDisplay} ohio`,
+      `top rated daycare ${cityDisplay}`,
+    ],
     alternates: {
       canonical: `/daycares/${citySlug}`,
     },
     openGraph: {
-      title: `Daycares in ${cityDisplay}, Ohio`,
-      description: `${count} licensed childcare programs in ${cityDisplay}`,
+      title: `Best Daycares in ${cityDisplay}, Ohio`,
+      description: `Compare ${count} licensed childcare programs in ${cityDisplay}, Ohio.`,
       url: `https://ohioparenthub.com/daycares/${citySlug}`,
     },
   };
@@ -99,7 +106,7 @@ export default async function CityDaycaresPage({ params }: Props) {
       <section className="mb-8 rounded-2xl border border-primary/20 bg-primary/10 p-6 sm:p-8">
         <Badge variant="outline" className="mb-3 border-primary/40 text-primary">City Overview</Badge>
         <h1 className="font-serif text-3xl font-bold tracking-tight text-primary sm:text-4xl">
-          Daycares in {cityDisplay || "Ohio"}
+          Best Daycares in {cityDisplay || "Ohio"}
         </h1>
         <p className="mt-2 max-w-2xl text-muted-foreground">
           Explore licensed providers, compare SUTQ ratings, and narrow results by program options in your local area.
