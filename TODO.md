@@ -142,6 +142,7 @@
 
 ### Monthly:
 - [ ] Update daycares.json if Ohio releases new data
+- [ ] Revisit Ohio data source strategy (ArcGIS service + export/provider enrichment hybrid)
 - [ ] Check for broken links
 - [ ] Review top-performing pages in GSC
 
