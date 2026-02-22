@@ -611,6 +611,7 @@ export default function GlobalDashboard({
     <div className="flex flex-col lg:flex-row gap-8">
       {/* Desktop Sidebar */}
       <aside className="hidden lg:block w-80 flex-shrink-0 space-y-8">
+        <h2 className="font-serif text-2xl font-bold tracking-tight text-primary">Daycares in Ohio</h2>
         <FilterContent 
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}

@@ -33,6 +33,12 @@ interface CityDashboardProps {
   daycares: Daycare[];
   cityDisplay: string;
   basePath?: string;
+  externalMapCenter?: [number, number] | null;
+  onExternalMapCenterChange?: (coords: [number, number] | null) => void;
+  externalLocationQuery?: string;
+  onExternalLocationQueryChange?: (query: string) => void;
+  onClearAllFilters?: () => void;
+  hideHeaderLocationSearch?: boolean;
 }
 
 function slugify(s: string) {
@@ -222,12 +228,29 @@ const PROGRAM_TYPES = [
   "Registered Day Camp or Approved Day Camp",
 ];
 
-export default function CityDashboard({ daycares, cityDisplay, basePath = "" }: CityDashboardProps) {
+export default function CityDashboard({
+  daycares,
+  cityDisplay,
+  basePath = "",
+  externalMapCenter,
+  onExternalMapCenterChange,
+  externalLocationQuery,
+  onExternalLocationQueryChange,
+  onClearAllFilters,
+  hideHeaderLocationSearch = false,
+}: CityDashboardProps) {
   const [searchQuery, setSearchQuery] = useState("");
-  const [mapCenter, setMapCenter] = useState<[number, number] | null>(null);
+  const [internalMapCenter, setInternalMapCenter] = useState<[number, number] | null>(null);
+  const [internalLocationQuery, setInternalLocationQuery] = useState("");
+  const [locationSearchClearSignal, setLocationSearchClearSignal] = useState(0);
   const [pfccEnabled, setPfccEnabled] = useState(false);
   const [selectedRatings, setSelectedRatings] = useState<string[]>([]);
   const [selectedProgramTypes, setSelectedProgramTypes] = useState<string[]>([]);
+
+  const mapCenter = externalMapCenter !== undefined ? externalMapCenter : internalMapCenter;
+  const setMapCenter = onExternalMapCenterChange ?? setInternalMapCenter;
+  const locationQuery = externalLocationQuery !== undefined ? externalLocationQuery : internalLocationQuery;
+  const setLocationQuery = onExternalLocationQueryChange ?? setInternalLocationQuery;
 
   // Toggle rating filter
   const toggleRating = (rating: string) => {
@@ -253,6 +276,15 @@ export default function CityDashboard({ daycares, cityDisplay, basePath = "" }: 
     setSelectedProgramTypes([]);
     setSearchQuery("");
     setMapCenter(null);
+    setLocationQuery("");
+    setLocationSearchClearSignal((value) => value + 1);
+    onClearAllFilters?.();
+  };
+
+  const clearLocationOnly = () => {
+    setMapCenter(null);
+    setLocationQuery("");
+    setLocationSearchClearSignal((value) => value + 1);
   };
 
   const filteredDaycares = useMemo(() => {
@@ -302,7 +334,7 @@ export default function CityDashboard({ daycares, cityDisplay, basePath = "" }: 
         const id = d["PROGRAM NUMBER"];
         const name = d["PROGRAM NAME"] || "Daycare";
         const city = d["CITY"] || cityDisplay;
-        const url = `/daycare/${id}-${slugify(name)}-${slugify(city)}`;
+        const url = `${basePath}/daycare/${id}-${slugify(name)}-${slugify(city)}`;
         return {
           lat: Number(d["LAT"]),
           lng: Number(d["LNG"]),
@@ -310,7 +342,7 @@ export default function CityDashboard({ daycares, cityDisplay, basePath = "" }: 
           url,
         };
       });
-  }, [filteredDaycares, cityDisplay]);
+  }, [filteredDaycares, cityDisplay, basePath]);
 
   // Center on the first result if available, otherwise default to a central Ohio coordinate (or the first original result)
   const markerCenter: [number, number] | null = markers.length > 0
@@ -323,199 +355,200 @@ export default function CityDashboard({ daycares, cityDisplay, basePath = "" }: 
 
   return (
     <div>
-      <header className="mb-6">
-        <h2 className="font-serif text-2xl font-bold tracking-tight text-primary">
-          Daycares in {cityDisplay || "Ohio"}
-        </h2>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Showing {displayList.length}
-          {filteredDaycares.length > displayList.length ? ` of ${filteredDaycares.length}` : ""} licensed programs
-          {daycares.length !== filteredDaycares.length ? ` (filtered from ${daycares.length})` : ""}.
-        </p>
-
-        <div className="mt-5 max-w-md">
-          <LocationSearch
-            onLocationFound={(lat, lng) => setMapCenter([lat, lng])}
-            placeholder="Search by street, city, or ZIP in Ohio"
+      <div className="flex flex-col lg:flex-row gap-8">
+        {/* Desktop Sidebar */}
+        <aside className="hidden lg:block w-80 flex-shrink-0 space-y-8">
+          <h2 className="font-serif text-2xl font-bold tracking-tight text-primary">
+            Daycares in {cityDisplay || "Ohio"}
+          </h2>
+          <FilterContent 
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            pfccEnabled={pfccEnabled}
+            setPfccEnabled={setPfccEnabled}
+            selectedRatings={selectedRatings}
+            toggleRating={toggleRating}
+            selectedProgramTypes={selectedProgramTypes}
+            toggleProgramType={toggleProgramType}
+            mapCenter={mapCenter}
+            onClearAll={clearAllFilters}
           />
-        </div>
-      </header>
-
-      <section className="flex flex-col lg:grid lg:grid-cols-12 gap-6">
-        
-        {/* Mobile Filter Sheet Trigger & Header (Mobile Only) */}
-        <div className="lg:hidden order-2 mb-2">
-           <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="outline" className="w-full justify-between">
-                <span className="flex items-center">
-                  <Filter className="mr-2 h-4 w-4" /> Filters
-                </span>
-                {(pfccEnabled || selectedRatings.length > 0 || selectedProgramTypes.length > 0 || searchQuery || mapCenter) && (
-                   <Badge variant="secondary" className="h-5 px-1.5 text-xs">Active</Badge>
-                )}
-              </Button>
-            </SheetTrigger>
-            <SheetContent
-              side="left"
-              className="w-full sm:max-w-md overflow-y-auto"
-              onOpenAutoFocus={(event) => event.preventDefault()}
-            >
-              <SheetHeader className="text-left mb-6">
-                <SheetTitle>Filter Programs</SheetTitle>
-                <SheetDescription>
-                  Refine your search results.
-                </SheetDescription>
-              </SheetHeader>
-              <FilterContent 
-                searchQuery={searchQuery}
-                setSearchQuery={setSearchQuery}
-                pfccEnabled={pfccEnabled}
-                setPfccEnabled={setPfccEnabled}
-                selectedRatings={selectedRatings}
-                toggleRating={toggleRating}
-                selectedProgramTypes={selectedProgramTypes}
-                toggleProgramType={toggleProgramType}
-                mapCenter={mapCenter}
-                onClearAll={clearAllFilters}
-              />
-            </SheetContent>
-          </Sheet>
-        </div>
-
-        {/* Desktop Sidebar Filters (Hidden on Mobile) */}
-        <aside className="hidden lg:block lg:col-span-3 lg:order-1">
-          <div className="sticky top-6 space-y-6 rounded-2xl border p-5">
-              <FilterContent 
-                searchQuery={searchQuery}
-                setSearchQuery={setSearchQuery}
-                pfccEnabled={pfccEnabled}
-                setPfccEnabled={setPfccEnabled}
-                selectedRatings={selectedRatings}
-                toggleRating={toggleRating}
-                selectedProgramTypes={selectedProgramTypes}
-                toggleProgramType={toggleProgramType}
-                mapCenter={mapCenter}
-                onClearAll={clearAllFilters}
-              />
-          </div>
         </aside>
 
-        {/* Results List */}
-        <div className="lg:col-span-5 order-3 lg:order-2">
-          <div className="rounded-2xl border">
-            <div className="border-b p-4 flex justify-between items-center">
+        {/* Main Content */}
+        <div className="flex-1 space-y-6">
+          {/* Mobile Header / Controls */}
+          <div className="lg:hidden flex flex-col gap-4">
+            <LocationSearch
+              onLocationFound={(lat, lng) => setMapCenter([lat, lng])}
+              onSearchSuccess={(query) => setLocationQuery(query)}
+              clearSignal={locationSearchClearSignal}
+              placeholder="Search by street, city, or ZIP in Ohio"
+            />
+            <div className="flex items-center gap-2">
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button variant="outline" className="w-full justify-between">
+                    <span className="flex items-center">
+                      <Filter className="mr-2 h-4 w-4" /> Filters
+                    </span>
+                    {(pfccEnabled || selectedRatings.length > 0 || selectedProgramTypes.length > 0 || searchQuery || mapCenter) && (
+                      <Badge variant="secondary" className="h-5 px-1.5 text-xs">Active</Badge>
+                    )}
+                  </Button>
+                </SheetTrigger>
+                <SheetContent
+                  side="left"
+                  className="w-full sm:max-w-md overflow-y-auto"
+                  onOpenAutoFocus={(event) => event.preventDefault()}
+                >
+                  <SheetHeader className="text-left mb-6">
+                    <SheetTitle>Filter Programs</SheetTitle>
+                    <SheetDescription>
+                      Refine your search results.
+                    </SheetDescription>
+                  </SheetHeader>
+                  <FilterContent
+                    searchQuery={searchQuery}
+                    setSearchQuery={setSearchQuery}
+                    pfccEnabled={pfccEnabled}
+                    setPfccEnabled={setPfccEnabled}
+                    selectedRatings={selectedRatings}
+                    toggleRating={toggleRating}
+                    selectedProgramTypes={selectedProgramTypes}
+                    toggleProgramType={toggleProgramType}
+                    mapCenter={mapCenter}
+                    onClearAll={clearAllFilters}
+                  />
+                </SheetContent>
+              </Sheet>
+            </div>
+          </div>
+
+          {/* Results Header */}
+          <div className="flex flex-col gap-4">
+            {!hideHeaderLocationSearch && (
+              <div className="hidden lg:block max-w-md">
+                <LocationSearch
+                  onLocationFound={(lat, lng) => setMapCenter([lat, lng])}
+                  onSearchSuccess={(query) => setLocationQuery(query)}
+                  clearSignal={locationSearchClearSignal}
+                  placeholder="Search by street, city, or ZIP in Ohio"
+                />
+              </div>
+            )}
+            <div className="flex items-baseline justify-between">
               <div>
-                <h2 className="text-sm font-semibold">Results</h2>
-                <p className="mt-1 text-xs text-neutral-600">
-                  Data source: Ohio early care & education programs.
-                </p>
-              </div>
-              <Badge variant="secondary" className="text-xs font-normal">
-                {filteredDaycares.length} found
-              </Badge>
-            </div>
-
-            <div className="p-4">
-              {displayList.length === 0 ? (
-                <div className="rounded-xl border border-dashed p-8 text-center">
-                  <p className="text-sm font-medium text-neutral-900">No daycares found</p>
+                <h2 className="text-xl font-bold">
+                  {filteredDaycares.length} Results
+                </h2>
+                {locationQuery && (
                   <p className="mt-1 text-sm text-neutral-500">
-                    Try adjusting your search or filters to see more results.
+                    Showing results near <span className="font-medium text-neutral-700">{locationQuery}</span>.
+                    <button
+                      type="button"
+                      onClick={clearLocationOnly}
+                      className="ml-2 underline hover:text-neutral-700"
+                    >
+                      Clear location
+                    </button>
                   </p>
-                  <button 
-                    onClick={() => {
-                      setSearchQuery("");
-                      setPfccEnabled(false);
-                      setSelectedRatings([]);
-                      setSelectedProgramTypes([]);
-                    }}
-                    className="mt-4 text-sm font-medium text-blue-600 hover:underline"
-                  >
-                    Clear all filters
-                  </button>
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  {displayList.map((d) => {
-                    const id = d["PROGRAM NUMBER"] || "";
-                    const name = d["PROGRAM NAME"] || "";
-                    // const county = d["COUNTY"] || ""; // Not using county in this view anymore to save space
-                    const sutq = d["SUTQ RATING"] || "—";
-                    const street = d["STREET ADDRESS"] || "";
-                    const zip = d["ZIP CODE"] || "";
-                    const programType = d["PROGRAM TYPE"] || "—";
-                    const city = d["CITY"] || cityDisplay;
-                    const pfcc = d["PFCC AGREEMENT"] === "Y";
-
-                    const slug = `${id}-${slugify(name)}-${slugify(city)}`;
-
-                    return (
-                      <div key={id} className="rounded-xl border p-4 hover:bg-neutral-50 transition-colors group">
-                        <div className="flex items-start justify-between gap-3">
-                          <div>
-                            <div className="text-sm font-semibold group-hover:text-blue-700 transition-colors">{name}</div>
-                            <div className="mt-1 text-sm text-neutral-600">
-                              {street}, {cityDisplay}, OH {zip}
-                            </div>
-                            <div className="mt-1 text-sm text-neutral-600 flex flex-wrap gap-2 items-center">
-                              <span>{programType}</span>
-                              {pfcc && (
-                                <Badge variant="outline" className="text-[10px] h-5 px-1.5 font-normal bg-green-50 text-green-700 border-green-200">
-                                  PFCC
-                                </Badge>
-                              )}
-                            </div>
-
-                            <div className="mt-3 inline-flex gap-2">
-                              <SutqBadge rating={sutq} />
-                            </div>
-                          </div>
-
-                          <Link
-                            href={`${basePath}/daycare/${slug}`}
-                            className="shrink-0 rounded-lg border px-3 py-2 text-xs font-medium hover:bg-white hover:text-blue-700 transition-colors"
-                          >
-                            View
-                          </Link>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-
-              {filteredDaycares.length > displayList.length && (
-                <div className="mt-6 text-center border-t pt-4">
-                  <p className="text-xs text-neutral-500 mb-2">
-                    Showing {displayList.length} of {filteredDaycares.length} results
-                  </p>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Map */}
-        <div className="lg:col-span-4 order-1 lg:order-3">
-          <div className="sticky top-6 space-y-4">
-            <div className="rounded-2xl border overflow-hidden">
-              <InteractiveMap
-                center={center}
-                zoom={markers.length > 0 ? 12 : 10}
-                markers={markers}
-                userLocation={mapCenter}
-                height="400px"
-                className="w-full h-full"
-              />
-              <div className="bg-neutral-50 px-4 py-2 text-xs text-neutral-500 border-t flex justify-between">
-                <span>{markers.length} Locations Mapped</span>
-                <span>OpenStreetMap</span>
+                )}
               </div>
             </div>
           </div>
+
+          {/* Map */}
+          <div className="rounded-xl border bg-neutral-50 shadow-sm relative z-0">
+            <InteractiveMap
+              center={center}
+              zoom={mapCenter ? 12 : 7}
+              markers={markers}
+              userLocation={mapCenter}
+              height="500px"
+              className="rounded-xl"
+            />
+          </div>
+
+          {/* Results List */}
+          <div className="space-y-4">
+            {displayList.map((d) => {
+              const id = d["PROGRAM NUMBER"] || "";
+              const name = d["PROGRAM NAME"] || "";
+              const sutq = d["SUTQ RATING"] || "—";
+              const street = d["STREET ADDRESS"] || "";
+              const city = d["CITY"] || cityDisplay;
+              const programType = d["PROGRAM TYPE"] || "—";
+              const pfcc = d["PFCC AGREEMENT"] === "Y";
+              const slug = `${id}-${slugify(name)}-${slugify(city)}`;
+
+              return (
+                <div
+                  key={id}
+                  className="group flex flex-col sm:flex-row sm:items-center justify-between rounded-xl border p-4 bg-white hover:border-black transition-colors gap-4"
+                >
+                  <div>
+                    <div className="flex items-start justify-between sm:hidden mb-2">
+                      <SutqBadge rating={sutq} className="scale-90 origin-left" />
+                    </div>
+                    <h3 className="font-bold text-lg leading-tight mb-1">
+                      <Link href={`${basePath}/daycare/${slug}`} className="hover:underline">
+                        {name}
+                      </Link>
+                    </h3>
+                    <p className="text-sm text-neutral-500 mb-1">
+                      {city && <span className="font-medium text-black">{city}</span>}
+                      {city && street && <span className="mx-1">•</span>}
+                      {street}
+                    </p>
+                    <div className="flex items-center gap-2 text-xs text-neutral-400">
+                      <span className="bg-neutral-100 px-2 py-0.5 rounded text-neutral-600">{programType}</span>
+                      {pfcc && (
+                        <span className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded font-medium">
+                          PFCC
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="hidden sm:flex flex-col items-end gap-3 min-w-[120px]">
+                    <SutqBadge rating={sutq} />
+                    <Link href={`${basePath}/daycare/${slug}`}>
+                      <Button variant="outline" size="sm" className="w-full">
+                        View Details
+                      </Button>
+                    </Link>
+                  </div>
+
+                  <div className="sm:hidden">
+                    <Link href={`${basePath}/daycare/${slug}`}>
+                      <Button variant="outline" size="sm" className="w-full">
+                        View Details
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
+              );
+            })}
+
+            {filteredDaycares.length > displayList.length && (
+              <div className="text-center py-8 text-neutral-500 border-t border-dashed">
+                Showing top 50 results. Use filters to narrow down your search.
+              </div>
+            )}
+
+            {filteredDaycares.length === 0 && (
+              <div className="text-center py-12 text-neutral-500 bg-neutral-50 rounded-xl border border-dashed">
+                <p className="font-medium">No daycares found</p>
+                <p className="text-sm mt-1">Try adjusting your search or filters.</p>
+                <Button variant="link" onClick={clearAllFilters} className="mt-2">
+                  Clear all filters
+                </Button>
+              </div>
+            )}
+          </div>
         </div>
-      </section>
+      </div>
     </div>
   );
 }
