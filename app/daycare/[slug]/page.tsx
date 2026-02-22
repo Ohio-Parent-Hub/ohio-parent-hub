@@ -4,12 +4,12 @@ import StaticMap from "@/components/StaticMap";
 import { slugify } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { Metadata } from "next";
 import fs from "node:fs";
 import path from "node:path";
 import Link from "next/link";
 import { ArrowLeft, ExternalLink } from "lucide-react";
+import { notFound, permanentRedirect } from "next/navigation";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -30,6 +30,13 @@ function findDaycareBySlug(slug: string): DaycareRow | null {
   return all.find((d) => d["PROGRAM NUMBER"] === programNumber) || null;
 }
 
+function canonicalDaycareSlug(daycare: DaycareRow) {
+  const programNumber = daycare["PROGRAM NUMBER"] || "";
+  const name = daycare["PROGRAM NAME"] || "";
+  const city = daycare["CITY"] || "";
+  return `${programNumber}-${slugify(name)}-${slugify(city)}`;
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const daycare = findDaycareBySlug(slug);
@@ -38,16 +45,29 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return {
       title: "Daycare Not Found",
       description: "Ohio Parent Hub daycare listing.",
+      robots: {
+        index: false,
+        follow: false,
+      },
     };
   }
 
   const name = daycare["PROGRAM NAME"] || "Daycare";
   const city = daycare["CITY"] || "";
   const sutq = daycare["SUTQ RATING"] || "Not Rated";
+  const canonicalSlug = canonicalDaycareSlug(daycare);
   
   return {
     title: `${name} - ${city}, OH | Ohio Parent Hub`,
     description: `${name} in ${city}, Ohio. SUTQ Rating: ${sutq}. View program details, address, license information, and contact info.`,
+    alternates: {
+      canonical: `/daycare/${canonicalSlug}`,
+    },
+    openGraph: {
+      title: `${name} - ${city}, Ohio Daycare`,
+      description: `${name} in ${city}, Ohio. SUTQ Rating: ${sutq}.`,
+      url: `https://ohioparenthub.com/daycare/${canonicalSlug}`,
+    },
   };
 }
 
@@ -56,23 +76,12 @@ export default async function DaycarePage({ params }: Props) {
   const daycare = findDaycareBySlug(slug);
 
   if (!daycare) {
-    return (
-      <main className="mx-auto max-w-3xl px-6 py-10">
-        <Card className="border-primary/20 bg-card text-center shadow-sm">
-          <CardHeader>
-            <CardTitle className="font-serif text-2xl text-primary">Daycare Not Found</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground">
-            The daycare you&apos;re looking for doesn&apos;t exist or may have been delisted.
-            </p>
-            <Button asChild className="mt-5">
-              <Link href="/">Go Home</Link>
-            </Button>
-          </CardContent>
-        </Card>
-      </main>
-    );
+    notFound();
+  }
+
+  const canonicalSlug = canonicalDaycareSlug(daycare);
+  if (slug !== canonicalSlug) {
+    permanentRedirect(`/daycare/${canonicalSlug}`);
   }
 
   const name = daycare["PROGRAM NAME"] || "Unknown";

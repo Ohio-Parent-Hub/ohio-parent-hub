@@ -3,9 +3,25 @@ import Image from "next/image";
 import fs from "node:fs";
 import path from "node:path";
 import type { CSSProperties } from "react";
+import type { Metadata } from "next";
 
 import { Button } from "@/components/ui/button";
 import { MapPin, Search, ShieldCheck, Baby, ArrowRight, Heart, Sparkles } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "Ohio Parent Hub | Find Licensed Daycares in Ohio",
+  description:
+    "Search licensed Ohio daycares by city, compare SUTQ quality ratings, and review provider details in one place.",
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title: "Ohio Parent Hub | Find Licensed Daycares in Ohio",
+    description:
+      "Search licensed Ohio daycares by city, compare SUTQ quality ratings, and review provider details in one place.",
+    url: "https://ohioparenthub.com/",
+  },
+};
 
 type DaycareRow = Record<string, string>;
 function loadDaycares(): DaycareRow[] {

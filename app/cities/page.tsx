@@ -11,8 +11,17 @@ import { ArrowLeft, MapPin } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Browse Daycares by City",
+  title: "Browse Daycares by Ohio City | Ohio Parent Hub",
   description: "Find licensed daycares and early childhood programs in cities across Ohio. Browse alphabetically to find care near you.",
+  alternates: {
+    canonical: "/cities",
+  },
+  openGraph: {
+    title: "Browse Ohio Cities for Licensed Daycares",
+    description:
+      "Explore Ohio cities and open local daycare listings with program details and quality information.",
+    url: "https://ohioparenthub.com/cities",
+  },
 };
 
 type DaycareRow = Record<string, string>;

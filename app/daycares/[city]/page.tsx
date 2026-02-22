@@ -4,6 +4,7 @@ import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import CityDashboard from "@/components/CityDashboard";
 import { Badge } from "@/components/ui/badge";
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 
 type Props = { params: Promise<{ city?: string }> };
 
@@ -38,13 +39,28 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   });
   
   const count = matches.length;
+
+  if (!citySlug || count === 0) {
+    return {
+      title: "City Not Found | Ohio Parent Hub",
+      description: "The requested city page was not found.",
+      robots: {
+        index: false,
+        follow: false,
+      },
+    };
+  }
   
   return {
     title: `${count} Licensed Daycares in ${cityDisplay}, Ohio | Ohio Parent Hub`,
     description: `Find ${count} licensed daycare and childcare programs in ${cityDisplay}, OH. Browse SUTQ-rated providers, view program details, addresses, and contact information.`,
+    alternates: {
+      canonical: `/daycares/${citySlug}`,
+    },
     openGraph: {
       title: `Daycares in ${cityDisplay}, Ohio`,
       description: `${count} licensed childcare programs in ${cityDisplay}`,
+      url: `https://ohioparenthub.com/daycares/${citySlug}`,
     },
   };
 }
@@ -64,6 +80,10 @@ export default async function CityDaycaresPage({ params }: Props) {
       .replace(/\s+/g, "-");
     return dataCitySlug === citySlug;
   });
+
+  if (!citySlug || matches.length === 0) {
+    notFound();
+  }
 
   return (
     <main className="mx-auto max-w-7xl px-6 py-8">

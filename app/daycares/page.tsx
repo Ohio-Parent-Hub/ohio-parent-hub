@@ -6,9 +6,13 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Find Daycares in Ohio | Search All Licensed Providers",
   description: "Search and filter over 8,000 licensed daycare and childcare programs in Ohio. Filter by city, county, SUTQ rating, and more.",
+  alternates: {
+    canonical: "/daycares",
+  },
   openGraph: {
     title: "Find Licensed Daycares in Ohio",
     description: "Search tool for all licensed childcare providers in Ohio.",
+    url: "https://ohioparenthub.com/daycares",
   },
 };
 
