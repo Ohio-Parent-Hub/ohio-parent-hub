@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import fs from "node:fs";
 import path from "node:path";
+import type { CSSProperties } from "react";
 
 type DaycareRow = Record<string, string>;
 function loadDaycares(): DaycareRow[] {
@@ -50,9 +51,9 @@ function WaveDivider({ fill, flip = false }: { fill: string; flip?: boolean }) {
   );
 }
 
-function SparkleDecor({ className }: { className?: string }) {
+function SparkleDecor({ className, style }: { className?: string; style?: CSSProperties }) {
   return (
-    <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className} style={style} aria-hidden="true">
       <path d="M12 0L13.5 9L24 12L13.5 15L12 24L10.5 15L0 12L10.5 9L12 0Z" />
     </svg>
   );
