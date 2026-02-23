@@ -642,11 +642,6 @@ export default function GlobalDashboard({
       <div className="flex-1 space-y-6">
         {/* Mobile Header / Controls */}
         <div className="lg:hidden flex flex-col gap-4">
-          <LocationSearch 
-            onLocationFound={(lat, lng) => setMapCenter([lat, lng])}
-            onSearchSuccess={(query) => setLocationQuery(query)}
-            clearSignal={locationSearchClearSignal}
-          />
           <div className="flex items-center gap-2">
             <Sheet>
               <SheetTrigger asChild>

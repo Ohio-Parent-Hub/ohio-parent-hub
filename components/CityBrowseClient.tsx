@@ -41,7 +41,7 @@ export default function CityBrowseClient({ allCities, basePath = "" }: CityBrows
 
   return (
     <>
-      <div className="sticky top-4 z-10 mb-12 rounded-2xl border border-border/40 bg-background/95 p-3 backdrop-blur">
+      <div className="sticky top-24 z-10 mb-12 rounded-2xl border border-border/40 bg-background/95 p-3 backdrop-blur">
         <div className="mb-4">
           <label htmlFor="city-search" className="mb-2 block text-sm font-medium text-foreground">
             Search for a city

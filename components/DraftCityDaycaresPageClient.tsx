@@ -36,6 +36,19 @@ const lightTeal = "#D5E5E3";
 const lightPink = "#FADED4";
 const lightGold = "#F5E9BE";
 
+function getCityValueClass(value: string) {
+  const words = value.trim().split(/\s+/).filter(Boolean);
+  const longestWordLength = words.reduce((maxLength, word) => Math.max(maxLength, word.length), 0);
+
+  if (longestWordLength >= 11) {
+    return "text-sm sm:text-base";
+  }
+  if (longestWordLength >= 9) {
+    return "text-base sm:text-lg";
+  }
+  return "text-[clamp(0.95rem,3vw,1.5rem)]";
+}
+
 export default function DraftCityDaycaresPageClient({
   cityDisplay,
   citySlug,
@@ -72,7 +85,7 @@ export default function DraftCityDaycaresPageClient({
 
           <div className="grid gap-8 lg:grid-cols-5 lg:items-end">
             <div className="lg:col-span-3">
-              <h1 className="font-serif text-4xl font-bold tracking-tight sm:text-5xl" style={{ color: dark }}>
+              <h1 className="pr-2 font-serif text-4xl font-bold tracking-tight text-balance sm:text-5xl" style={{ color: dark }}>
                 Best Daycares in {cityDisplay || "Ohio"}
               </h1>
               <p className="mt-4 max-w-2xl text-base leading-relaxed" style={{ color: `${dark}bb` }}>
@@ -90,12 +103,21 @@ export default function DraftCityDaycaresPageClient({
 
             <div className="lg:col-span-2 grid grid-cols-3 gap-3">
               {[
-                { value: cityCount.toLocaleString(), label: "Programs", bg: "#FFFFFF", accent: teal },
-                { value: cityDisplay || "Ohio", label: "City", bg: lightPink, accent: pink },
-                { value: "100%", label: "Licensed", bg: lightGold, accent: gold },
+                { value: cityCount.toLocaleString(), label: "Programs", bg: "#FFFFFF", accent: teal, type: "default" },
+                { value: cityDisplay || "Ohio", label: "City", bg: lightPink, accent: pink, type: "city" },
+                { value: "100%", label: "Licensed", bg: lightGold, accent: gold, type: "default" },
               ].map((stat) => (
-                <div key={stat.label} className="rounded-2xl border p-4 shadow-sm" style={{ background: stat.bg, borderColor: `${stat.accent}40` }}>
-                  <div className="text-2xl font-bold font-serif line-clamp-1" style={{ color: stat.accent }}>{stat.value}</div>
+                <div key={stat.label} className="h-[96px] rounded-2xl border p-4 shadow-sm" style={{ background: stat.bg, borderColor: `${stat.accent}40` }}>
+                  <div
+                    className={
+                      stat.type === "city"
+                        ? `min-h-[2.7rem] ${getCityValueClass(String(stat.value))} font-bold font-serif leading-tight line-clamp-2 whitespace-normal break-normal text-balance`
+                        : "text-2xl font-bold font-serif line-clamp-1"
+                    }
+                    style={{ color: stat.accent }}
+                  >
+                    {stat.value}
+                  </div>
                   <div className="text-[11px] uppercase tracking-widest mt-1" style={{ color: `${dark}88` }}>{stat.label}</div>
                 </div>
               ))}

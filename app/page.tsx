@@ -83,22 +83,6 @@ export default function HomePage() {
 
   return (
     <div className="flex min-h-screen flex-col" style={{ background: cream, color: dark }}>
-      <nav className="sticky top-0 z-40 backdrop-blur-xl" style={{ background: `${cream}ee` }}>
-        <div className="mx-auto flex h-20 max-w-6xl items-center justify-between px-6">
-          <Link href="/" className="flex items-center gap-3">
-            <Image src="/icon.png" alt="Ohio Parent Hub" width={44} height={44} />
-            <span className="font-serif text-xl font-bold" style={{ color: teal }}>Ohio Parent Hub</span>
-          </Link>
-          <div className="hidden items-center gap-6 md:flex">
-            <Link href="/daycares" className="text-sm font-medium" style={{ color: dark }}>Find Daycares</Link>
-            <Link href="/cities" className="text-sm font-medium" style={{ color: dark }}>Browse Cities</Link>
-            <Button size="sm" className="rounded-full px-5 font-bold" style={{ background: pink, color: "#fff" }} asChild>
-              <Link href="/daycares"><Search className="mr-1.5 h-3.5 w-3.5" />Search</Link>
-            </Button>
-          </div>
-        </div>
-      </nav>
-
       <section className="relative overflow-hidden px-6 py-28 sm:py-36" style={{ background: lightTeal }}>
         <SparkleDecor className="absolute top-10 left-[8%] h-6 w-6 text-gold/30 animate-pulse" style={{ color: gold }} />
         <SparkleDecor className="absolute top-20 right-[12%] h-4 w-4 text-pink/30 animate-pulse" style={{ color: pink }} />
