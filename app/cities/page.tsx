@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
-import { slugify } from "@/lib/utils";
+import { slugify, toTitleCaseIfAllCaps } from "@/lib/utils";
 import CityBrowseClient from "@/components/CityBrowseClient";
 import type { Metadata } from "next";
 import type { CSSProperties } from "react";
@@ -75,7 +75,7 @@ export default function CitiesPage() {
   // Convert to array and sort alphabetically
   const allCities: CityData[] = Array.from(cityMap.entries())
     .map(([name, count]) => ({
-      name,
+      name: toTitleCaseIfAllCaps(name),
       slug: slugify(name),
       count
     }))

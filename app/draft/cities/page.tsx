@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
-import { slugify } from "@/lib/utils";
+import { slugify, toTitleCaseIfAllCaps } from "@/lib/utils";
 import CityBrowseClient from "@/components/CityBrowseClient";
 import type { CSSProperties } from "react";
 
@@ -48,7 +48,7 @@ export default function DraftCitiesPage() {
   });
 
   const allCities: CityData[] = Array.from(cityMap.entries())
-    .map(([name, count]) => ({ name, slug: slugify(name), count }))
+    .map(([name, count]) => ({ name: toTitleCaseIfAllCaps(name), slug: slugify(name), count }))
     .sort((a, b) => a.name.localeCompare(b.name));
 
   return (

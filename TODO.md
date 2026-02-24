@@ -60,6 +60,7 @@
 - [ ] Check Google Analytics for user behavior patterns
 - [ ] Add "Last Updated" timestamp to pages (using CSV date)
 - [ ] Consider adding meta robots tags if needed
+- [ ] After fixing current SEO issues, evaluate IndexNow implementation for faster URL update discovery (Phase 2)
 - [ ] Write 1-2 blog posts about Ohio daycare resources (optional SEO boost)
 
 ---

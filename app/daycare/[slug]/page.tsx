@@ -1,5 +1,5 @@
 import DaycareDetailPageShell from "@/components/DaycareDetailPageShell";
-import { slugify } from "@/lib/utils";
+import { slugify, toTitleCaseIfAllCaps } from "@/lib/utils";
 import type { Metadata } from "next";
 import fs from "node:fs";
 import path from "node:path";
@@ -46,8 +46,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
 
-  const name = daycare["PROGRAM NAME"] || "Daycare";
-  const city = daycare["CITY"] || "";
+  const name = toTitleCaseIfAllCaps(daycare["PROGRAM NAME"] || "") || "Daycare";
+  const city = toTitleCaseIfAllCaps(daycare["CITY"] || "");
   const sutq = daycare["SUTQ RATING"] || "Not Rated";
   const canonicalSlug = canonicalDaycareSlug(daycare);
   
@@ -85,15 +85,15 @@ export default async function DaycarePage({ params }: Props) {
     permanentRedirect(`/daycare/${canonicalSlug}`);
   }
 
-  const name = daycare["PROGRAM NAME"] || "Unknown";
+  const name = toTitleCaseIfAllCaps(daycare["PROGRAM NAME"] || "") || "Unknown";
   const programNumber = daycare["PROGRAM NUMBER"] || "";
-  const programType = daycare["PROGRAM TYPE"] || "Not Specified";
+  const programType = toTitleCaseIfAllCaps(daycare["PROGRAM TYPE"] || "") || "Not Specified";
   const sutq = daycare["SUTQ RATING"] || "Not Rated";
   
-  const street = daycare["STREET ADDRESS"] || "";
-  const city = daycare["CITY"] || "";
+  const street = toTitleCaseIfAllCaps(daycare["STREET ADDRESS"] || "");
+  const city = toTitleCaseIfAllCaps(daycare["CITY"] || "");
   const zip = daycare["ZIP CODE"] || "";
-  const county = daycare["COUNTY"] || "";
+  const county = toTitleCaseIfAllCaps(daycare["COUNTY"] || "");
   
   const phone = daycare["PHONE"] || "";
   const email = daycare["EMAIL"] || "";
@@ -101,9 +101,9 @@ export default async function DaycarePage({ params }: Props) {
   const initialLicense = daycare["LICENSE/CERTIFICATION/REGISTRATION BEGIN DATE"] || "—";
   const licenseExpires = daycare["LICENSE/CERTIFICATION/REGISTRATION END DATE"] || "—";
   
-  const administrator1 = daycare["ADMINISTRATOR 1 NAME"] || "";
-  const administrator2 = daycare["ADMINISTRATOR 2 NAME"] || "";
-  const administrator3 = daycare["ADMINISTRATOR 3 NAME"] || "";
+  const administrator1 = toTitleCaseIfAllCaps(daycare["ADMINISTRATOR 1 NAME"] || "");
+  const administrator2 = toTitleCaseIfAllCaps(daycare["ADMINISTRATOR 2 NAME"] || "");
+  const administrator3 = toTitleCaseIfAllCaps(daycare["ADMINISTRATOR 3 NAME"] || "");
 
   const lat = Number.parseFloat(String(daycare["LAT"] ?? ""));
   const lng = Number.parseFloat(String(daycare["LNG"] ?? ""));

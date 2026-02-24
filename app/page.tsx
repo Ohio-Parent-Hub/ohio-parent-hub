@@ -6,6 +6,7 @@ import type { CSSProperties } from "react";
 import type { Metadata } from "next";
 
 import { Button } from "@/components/ui/button";
+import { toTitleCaseIfAllCaps } from "@/lib/utils";
 import { MapPin, Search, ShieldCheck, Baby, ArrowRight, Heart, Sparkles } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -79,7 +80,14 @@ export default function HomePage() {
   const daycares = loadDaycares();
   const cityCounts = new Map<string, number>();
   daycares.forEach((d) => { const c = d["CITY"]; if (c) cityCounts.set(c, (cityCounts.get(c) || 0) + 1); });
-  const topCities = Array.from(cityCounts.entries()).sort((a, b) => b[1] - a[1]).slice(0, 24).map(([city, count]) => ({ city, count, slug: slugify(city) }));
+  const topCities = Array.from(cityCounts.entries())
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 24)
+    .map(([city, count]) => ({
+      city: toTitleCaseIfAllCaps(city),
+      count,
+      slug: slugify(city),
+    }));
 
   return (
     <div className="flex min-h-screen flex-col" style={{ background: cream, color: dark }}>

@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/popover";
 import { Filter, Map as MapIcon, Info } from "lucide-react";
 import { FILTER_DEFINITIONS } from "@/data/filterDefinitions";
+import { toTitleCaseIfAllCaps } from "@/lib/utils";
 
 type Daycare = Record<string, string>;
 
@@ -334,17 +335,19 @@ export default function CityDashboard({
         const id = d["PROGRAM NUMBER"];
         const name = d["PROGRAM NAME"] || "Daycare";
         const city = d["CITY"] || cityDisplay;
+        const displayName = toTitleCaseIfAllCaps(name);
+        const displayCity = toTitleCaseIfAllCaps(city);
         const url = `${basePath}/daycare/${id}-${slugify(name)}-${slugify(city)}`;
         return {
           lat: Number(d["LAT"]),
           lng: Number(d["LNG"]),
-          title: name,
+          title: displayName,
           url,
           sutqRating: d["SUTQ RATING"] || "0",
-          programType: d["PROGRAM TYPE"] || "",
+          programType: toTitleCaseIfAllCaps(d["PROGRAM TYPE"] || ""),
           pfcc: d["PFCC AGREEMENT"] === "Y",
-          streetAddress: d["STREET ADDRESS"] || "",
-          city: city || "",
+          streetAddress: toTitleCaseIfAllCaps(d["STREET ADDRESS"] || ""),
+          city: displayCity || "",
           zipCode: d["ZIP CODE"] || "",
         };
       });
@@ -475,10 +478,14 @@ export default function CityDashboard({
             {displayList.map((d) => {
               const id = d["PROGRAM NUMBER"] || "";
               const name = d["PROGRAM NAME"] || "";
+              const displayName = toTitleCaseIfAllCaps(name);
               const sutq = d["SUTQ RATING"] || "—";
               const street = d["STREET ADDRESS"] || "";
+              const displayStreet = toTitleCaseIfAllCaps(street);
               const city = d["CITY"] || cityDisplay;
+              const displayCity = toTitleCaseIfAllCaps(city);
               const programType = d["PROGRAM TYPE"] || "—";
+              const displayProgramType = toTitleCaseIfAllCaps(programType);
               const pfcc = d["PFCC AGREEMENT"] === "Y";
               const slug = `${id}-${slugify(name)}-${slugify(city)}`;
 
@@ -493,16 +500,16 @@ export default function CityDashboard({
                     </div>
                     <h3 className="font-bold text-lg leading-tight mb-1">
                       <Link href={`${basePath}/daycare/${slug}`} className="hover:underline">
-                        {name}
+                        {displayName}
                       </Link>
                     </h3>
                     <p className="text-sm text-neutral-500 mb-1">
-                      {city && <span className="font-medium text-black">{city}</span>}
-                      {city && street && <span className="mx-1">•</span>}
-                      {street}
+                      {displayCity && <span className="font-medium text-black">{displayCity}</span>}
+                      {displayCity && displayStreet && <span className="mx-1">•</span>}
+                      {displayStreet}
                     </p>
                     <div className="flex items-center gap-2 text-xs text-neutral-400">
-                      <span className="bg-neutral-100 px-2 py-0.5 rounded text-neutral-600">{programType}</span>
+                      <span className="bg-neutral-100 px-2 py-0.5 rounded text-neutral-600">{displayProgramType}</span>
                       {pfcc && (
                         <span className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded font-medium">
                           PFCC

@@ -38,7 +38,7 @@ import {
   PopoverTrigger as ComboTrigger,
 } from "@/components/ui/popover";
 import { Filter, Map as MapIcon, Info, Check, ChevronsUpDown } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, toTitleCaseIfAllCaps } from "@/lib/utils";
 import { FILTER_DEFINITIONS } from "@/data/filterDefinitions";
 
 type Daycare = Record<string, string>;
@@ -556,18 +556,23 @@ export default function GlobalDashboard({
   const mapMarkers = useMemo(() => {
     return filteredDaycares
       .filter((d) => d.LAT && d.LNG)
-      .map((d) => ({
-        lat: typeof d.LAT === 'string' ? parseFloat(d.LAT) : d.LAT,
-        lng: typeof d.LNG === 'string' ? parseFloat(d.LNG) : d.LNG,
-        title: d["PROGRAM NAME"],
-        url: `/daycare/${slugify(d["PROGRAM NUMBER"] + "-" + d["PROGRAM NAME"])}`,
-        sutqRating: d["SUTQ RATING"] || "0",
-        programType: d["PROGRAM TYPE"] || "",
-        pfcc: d["PFCC"] === "Y" || d["PFCC AGREEMENT"] === "Y",
-        streetAddress: d["STREET ADDRESS"] || "",
-        city: d["CITY"] || "",
-        zipCode: d["ZIP CODE"] || "",
-      }));
+      .map((d) => {
+        const name = d["PROGRAM NAME"] || "";
+        const city = d["CITY"] || "";
+
+        return {
+          lat: typeof d.LAT === 'string' ? parseFloat(d.LAT) : d.LAT,
+          lng: typeof d.LNG === 'string' ? parseFloat(d.LNG) : d.LNG,
+          title: toTitleCaseIfAllCaps(name),
+          url: `/daycare/${slugify(d["PROGRAM NUMBER"] + "-" + name)}`,
+          sutqRating: d["SUTQ RATING"] || "0",
+          programType: toTitleCaseIfAllCaps(d["PROGRAM TYPE"] || ""),
+          pfcc: d["PFCC"] === "Y" || d["PFCC AGREEMENT"] === "Y",
+          streetAddress: toTitleCaseIfAllCaps(d["STREET ADDRESS"] || ""),
+          city: toTitleCaseIfAllCaps(city),
+          zipCode: d["ZIP CODE"] || "",
+        };
+      });
   }, [filteredDaycares]);
 
   // Ohio Center
@@ -740,55 +745,65 @@ export default function GlobalDashboard({
 
         {/* List */}
         <div className="space-y-4">
-          {filteredDaycares.slice(0, 50).map((d) => (
-             <div 
-               key={d["PROGRAM NUMBER"]} 
-               className="group flex flex-col sm:flex-row sm:items-center justify-between rounded-xl border p-4 bg-white hover:border-black transition-colors gap-4"
-             >
-               <div>
-                  <div className="flex items-start justify-between sm:hidden mb-2">
-                     <SutqBadge rating={d["SUTQ RATING"]} className="scale-90 origin-left" />
+          {filteredDaycares.slice(0, 50).map((d) => {
+            const name = d["PROGRAM NAME"] || "";
+            const city = d.CITY || "";
+            const displayName = toTitleCaseIfAllCaps(name);
+            const displayCity = toTitleCaseIfAllCaps(city);
+            const displayStreet = toTitleCaseIfAllCaps(d["STREET ADDRESS"] || "");
+            const displayProgramType = toTitleCaseIfAllCaps(d["PROGRAM TYPE"] || "");
+            const detailHref = `${basePath}/daycare/${slugify(d["PROGRAM NUMBER"] + "-" + name)}`;
+
+            return (
+              <div 
+                key={d["PROGRAM NUMBER"]} 
+                className="group flex flex-col sm:flex-row sm:items-center justify-between rounded-xl border p-4 bg-white hover:border-black transition-colors gap-4"
+              >
+                <div>
+                    <div className="flex items-start justify-between sm:hidden mb-2">
+                      <SutqBadge rating={d["SUTQ RATING"]} className="scale-90 origin-left" />
+                    </div>
+                  <h3 className="font-bold text-lg leading-tight mb-1">
+                    <Link href={detailHref} className="hover:underline">
+                      {displayName}
+                    </Link>
+                  </h3>
+                  <p className="text-sm text-neutral-500 mb-1">
+                    {displayCity && <span className="font-medium text-black">{displayCity}</span>}
+                    {displayCity && displayStreet && <span className="mx-1">•</span>}
+                    {displayStreet}
+                  </p>
+                  <div className="flex items-center gap-2 text-xs text-neutral-400">
+                      <span className="bg-neutral-100 px-2 py-0.5 rounded text-neutral-600">
+                          {displayProgramType}
+                      </span>
+                      {d["PFCC"] === "Y" && (
+                          <span className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded font-medium">
+                            PFCC
+                          </span>
+                      )}
                   </div>
-                 <h3 className="font-bold text-lg leading-tight mb-1">
-                   <Link href={`${basePath}/daycare/${slugify(d["PROGRAM NUMBER"] + "-" + d["PROGRAM NAME"])}`} className="hover:underline">
-                     {d["PROGRAM NAME"]}
-                   </Link>
-                 </h3>
-                 <p className="text-sm text-neutral-500 mb-1">
-                   {d.CITY && <span className="font-medium text-black">{prettyCity(d.CITY)}</span>}
-                   {d.CITY && d["STREET ADDRESS"] && <span className="mx-1">•</span>}
-                   {d["STREET ADDRESS"]}
-                 </p>
-                 <div className="flex items-center gap-2 text-xs text-neutral-400">
-                    <span className="bg-neutral-100 px-2 py-0.5 rounded text-neutral-600">
-                        {d["PROGRAM TYPE"]}
-                    </span>
-                    {d["PFCC"] === "Y" && (
-                         <span className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded font-medium">
-                           PFCC
-                         </span>
-                    )}
-                 </div>
-               </div>
-               
-               <div className="hidden sm:flex flex-col items-end gap-3 min-w-[120px]">
-                 <SutqBadge rating={d["SUTQ RATING"]} />
-                 <Link href={`${basePath}/daycare/${slugify(d["PROGRAM NUMBER"] + "-" + d["PROGRAM NAME"])}`}>
-                    <Button variant="outline" size="sm" className="w-full">
-                        View Details
-                    </Button>
-                 </Link>
-               </div>
-               
-               <div className="sm:hidden">
-                    <Link href={`${basePath}/daycare/${slugify(d["PROGRAM NUMBER"] + "-" + d["PROGRAM NAME"])}`}>
+                </div>
+                
+                <div className="hidden sm:flex flex-col items-end gap-3 min-w-[120px]">
+                  <SutqBadge rating={d["SUTQ RATING"]} />
+                  <Link href={detailHref}>
+                      <Button variant="outline" size="sm" className="w-full">
+                          View Details
+                      </Button>
+                  </Link>
+                </div>
+                
+                <div className="sm:hidden">
+                    <Link href={detailHref}>
                         <Button variant="outline" size="sm" className="w-full">
                             View Details
                         </Button>
                     </Link>
-               </div>
-             </div>
-          ))}
+                </div>
+              </div>
+            );
+          })}
           
           {filteredDaycares.length > 50 && (
             <div className="text-center py-8 text-neutral-500 border-t border-dashed">
