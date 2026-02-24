@@ -13,6 +13,8 @@ type DaycareRow = Record<string, string>;
 
 export const revalidate = 86400;
 
+const PRIORITY_CITY_SLUGS = new Set(["columbus", "cleveland", "cincinnati"]);
+
 function loadDaycares(): DaycareRow[] {
   const p = path.join(process.cwd(), "data", "daycares.json");
   if (!fs.existsSync(p)) return [];
@@ -31,6 +33,17 @@ function canonicalDaycareSlug(daycare: DaycareRow) {
   const name = daycare["PROGRAM NAME"] || "";
   const city = daycare["CITY"] || "";
   return `${programNumber}-${slugify(name)}-${slugify(city)}`;
+}
+
+export async function generateStaticParams() {
+  const all = loadDaycares();
+
+  return all
+    .filter((daycare) => {
+      const citySlug = slugify(daycare["CITY"] || "");
+      return Boolean(daycare["PROGRAM NUMBER"]) && PRIORITY_CITY_SLUGS.has(citySlug);
+    })
+    .map((daycare) => ({ slug: canonicalDaycareSlug(daycare) }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
