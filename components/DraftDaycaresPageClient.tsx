@@ -27,6 +27,7 @@ const lightGold = "#F5E9BE";
 interface DraftDaycaresPageClientProps {
   daycareCount: number;
   cityCount: number;
+  initialDaycares?: Record<string, string>[];
   basePath?: string;
   homeHref?: string;
   searchHref?: string;
@@ -35,6 +36,7 @@ interface DraftDaycaresPageClientProps {
 export default function DraftDaycaresPageClient({
   daycareCount,
   cityCount,
+  initialDaycares = [],
   basePath = "/draft",
   homeHref = "/draft",
   searchHref = "/draft/daycares",
@@ -99,6 +101,7 @@ export default function DraftDaycaresPageClient({
       <section className="px-6 py-8">
         <div className="mx-auto max-w-7xl rounded-3xl border p-4 sm:p-6 shadow-sm" style={{ background: "#fff", borderColor: `${sage}55` }}>
           <GlobalDashboard
+            initialDaycares={initialDaycares}
             basePath={basePath}
             externalMapCenter={mapCenter}
             onExternalMapCenterChange={setMapCenter}

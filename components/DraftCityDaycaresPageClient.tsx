@@ -12,7 +12,7 @@ interface DraftCityDaycaresPageClientProps {
   cityDisplay: string;
   citySlug: string;
   cityCount: number;
-  daycares: DaycareRow[];
+  initialDaycares: DaycareRow[];
   basePath?: string;
   homeHref?: string;
   citiesHref?: string;
@@ -53,7 +53,7 @@ export default function DraftCityDaycaresPageClient({
   cityDisplay,
   citySlug,
   cityCount,
-  daycares,
+  initialDaycares,
   basePath = "/draft",
   homeHref = "/draft",
   citiesHref = "/draft/cities",
@@ -129,7 +129,8 @@ export default function DraftCityDaycaresPageClient({
       <section className="px-6 py-8">
         <div className="mx-auto max-w-7xl rounded-3xl border p-4 sm:p-6 shadow-sm" style={{ background: "#fff", borderColor: `${sage}55` }}>
           <CityDashboard
-            daycares={daycares}
+            daycares={initialDaycares}
+            citySlug={citySlug}
             cityDisplay={cityDisplay}
             basePath={basePath}
             externalMapCenter={mapCenter}

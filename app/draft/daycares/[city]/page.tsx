@@ -43,7 +43,7 @@ export default async function DraftCityDaycaresPage({ params }: Props) {
       cityDisplay={cityDisplay}
       citySlug={citySlug}
       cityCount={matches.length}
-      daycares={matches}
+      initialDaycares={matches.slice(0, 15)}
       basePath="/draft"
       homeHref="/draft"
       citiesHref="/draft/cities"

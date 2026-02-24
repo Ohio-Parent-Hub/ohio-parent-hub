@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Homepage Draft | Ohio Parent Hub",
+  title: "Homepage Draft",
   description: "Draft preview of the redesigned homepage.",
   robots: {
     index: false,

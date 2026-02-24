@@ -11,6 +11,8 @@ type Props = {
 
 type DaycareRow = Record<string, string>;
 
+export const revalidate = 86400;
+
 function loadDaycares(): DaycareRow[] {
   const p = path.join(process.cwd(), "data", "daycares.json");
   if (!fs.existsSync(p)) return [];
@@ -29,6 +31,17 @@ function canonicalDaycareSlug(daycare: DaycareRow) {
   const name = daycare["PROGRAM NAME"] || "";
   const city = daycare["CITY"] || "";
   return `${programNumber}-${slugify(name)}-${slugify(city)}`;
+}
+
+export async function generateStaticParams() {
+  const slugSet = new Set(
+    loadDaycares()
+      .filter((d) => Boolean(d["PROGRAM NUMBER"]))
+      .map((d) => canonicalDaycareSlug(d))
+      .filter(Boolean)
+  );
+
+  return Array.from(slugSet).map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -52,7 +65,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const canonicalSlug = canonicalDaycareSlug(daycare);
   
   return {
-    title: `${name} in ${city}, OH | Daycare Profile | Ohio Parent Hub`,
+    title: `${name} in ${city}, OH | Daycare Profile`,
     description: `${name} is a licensed daycare in ${city}, Ohio. SUTQ Rating: ${sutq}. View address, contact details, and program information.`,
     keywords: [
       `${name}`,

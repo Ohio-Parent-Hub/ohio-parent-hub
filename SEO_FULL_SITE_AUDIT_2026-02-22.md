@@ -319,10 +319,10 @@ Merging variants alone is insufficient. The better architectural answer:
 
 ### 13) Missing `ItemList` schema on city pages
 
-**Why this matters:** `ItemList` schema on city pages with the top 10 daycares as `ListItem` entries ranked by SUTQ enables Google to render a rich result carousel or list for queries like "best daycares in Columbus Ohio." This is the primary SERP feature that lets a directory outperform individual business websites, which can only have `LocalBusiness` schema on their own pages.
+**Why this matters:** `ItemList` schema on city pages with 10 licensed programs as `ListItem` entries helps Google interpret the page as a structured local directory list. This can improve SERP understanding and click-through potential versus isolated single-provider pages.
 
 **Recommendation:**
-- Add `ItemList` JSON-LD to each city page with the top 10 SUTQ-rated daycares as ordered list items, each linking to their canonical detail URL
+- Add `ItemList` JSON-LD to each city page with 10 alphabetically ordered licensed daycares as `ListItem` entries linking to canonical detail URLs (neutral list framing; no "best" claim)
 
 ---
 
@@ -402,24 +402,24 @@ Merging variants alone is insufficient. The better architectural answer:
 ### Phase 1 — Technical Integrity (Days 1–3)
 Table stakes. Without these, everything else is undermined by 404s, duplicate titles, and redirect leaks.
 
-1. Fix city route matching — replace `replace(/\s+/g, '-')` with `slugify()` in `app/daycares/[city]/page.tsx`
-2. Fix title template duplication — strip `| Ohio Parent Hub` from all per-page title strings
-3. Fix `GlobalDashboard.tsx` links — include city slug in all three daycare link constructions (lines 753, 776, 784)
-4. Fix sitemap — add `/daycares` and `/cities`, deduplicate city entries, replace `new Date()` with a stable build timestamp
+1. [x] Fix city route matching — replace `replace(/\s+/g, '-')` with `slugify()` in `app/daycares/[city]/page.tsx`
+2. [x] Fix title template duplication — strip `| Ohio Parent Hub` from all per-page title strings
+3. [x] Fix `GlobalDashboard.tsx` links — include city slug in all three daycare link constructions (lines 753, 776, 784)
+4. [x] Fix sitemap — add `/daycares` and `/cities`, deduplicate city entries, replace `new Date()` with a stable build timestamp
 
 ### Phase 2 — Static Generation + Payload Reduction (Days 4–7)
 The largest silent drag on crawl quality and the fastest way to improve Googlebot's experience across 8,000+ pages.
 
-1. Add `generateStaticParams` + `revalidate` to `app/daycares/[city]/page.tsx` and `app/daycare/[slug]/page.tsx`
-2. Refactor city pages to server-render only editorial content + first 15 listings; defer full grid/map to client hydration
-3. Server-render first batch of listings in `app/daycares/page.tsx` as static HTML
-4. Ensure single H1 per page template — confirm `GlobalDashboard` results heading is `<h2>`
+1. [x] Add `generateStaticParams` + `revalidate` to `app/daycares/[city]/page.tsx` and `app/daycare/[slug]/page.tsx`
+2. [x] Refactor city pages to server-render the first 15 listings and defer full grid/map to client hydration
+3. [x] Server-render first batch of listings in `app/daycares/page.tsx` as static HTML
+4. [x] Ensure single H1 per page template — confirm `GlobalDashboard` results heading is `<h2>`
 
 ### Phase 3 — Editorial Content + Structured Data (Week 2)
 What actually lets the site outrank individual daycare websites. Technical fixes get the pages indexed cleanly; this phase makes them rank above businesses with Google Business Profiles.
 
 1. Add editorial content to city pages: intro paragraph, county context, SUTQ explainer, "how to choose" section
-2. Add `ItemList` schema to city pages (top 10 SUTQ-rated daycares as ordered list items)
+2. [x] Add `ItemList` schema to city pages (10 alphabetically ordered licensed programs as ordered list items)
 3. Add FAQ content on city pages; optionally add FAQ schema with conservative rich-result expectations
 4. Add `aggregateRating` to `ChildCare` schema on detail pages where SUTQ rating exists
 5. Add `Organization` + `WebSite` schema to `app/layout.tsx`

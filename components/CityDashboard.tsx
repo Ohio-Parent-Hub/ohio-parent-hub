@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { SutqBadge } from "@/components/SutqBadge";
 import InteractiveMap from "@/components/InteractiveMap";
@@ -32,6 +32,7 @@ type Daycare = Record<string, string>;
 
 interface CityDashboardProps {
   daycares: Daycare[];
+  citySlug?: string;
   cityDisplay: string;
   basePath?: string;
   externalMapCenter?: [number, number] | null;
@@ -231,6 +232,7 @@ const PROGRAM_TYPES = [
 
 export default function CityDashboard({
   daycares,
+  citySlug,
   cityDisplay,
   basePath = "",
   externalMapCenter,
@@ -247,6 +249,36 @@ export default function CityDashboard({
   const [pfccEnabled, setPfccEnabled] = useState(false);
   const [selectedRatings, setSelectedRatings] = useState<string[]>([]);
   const [selectedProgramTypes, setSelectedProgramTypes] = useState<string[]>([]);
+  const [hydratedDaycares, setHydratedDaycares] = useState<Daycare[]>(daycares);
+
+  useEffect(() => {
+    setHydratedDaycares(daycares);
+  }, [daycares]);
+
+  useEffect(() => {
+    if (!citySlug) return;
+    const citySlugValue = citySlug;
+
+    let isCancelled = false;
+
+    async function hydrateCityDaycares() {
+      try {
+        const response = await fetch(`/api/daycares?city=${encodeURIComponent(citySlugValue)}`);
+        if (!response.ok) return;
+        const data = await response.json();
+        if (!isCancelled && Array.isArray(data)) {
+          setHydratedDaycares(data);
+        }
+      } catch {
+      }
+    }
+
+    hydrateCityDaycares();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [citySlug]);
 
   const mapCenter = externalMapCenter !== undefined ? externalMapCenter : internalMapCenter;
   const setMapCenter = onExternalMapCenterChange ?? setInternalMapCenter;
@@ -289,7 +321,7 @@ export default function CityDashboard({
   };
 
   const filteredDaycares = useMemo(() => {
-    let result = daycares;
+    let result = hydratedDaycares;
 
     // 1. Filter by Search Query
     if (searchQuery) {
@@ -322,7 +354,7 @@ export default function CityDashboard({
     }
 
     return result;
-  }, [daycares, searchQuery, pfccEnabled, selectedRatings, selectedProgramTypes]);
+  }, [hydratedDaycares, searchQuery, pfccEnabled, selectedRatings, selectedProgramTypes]);
 
   // Limit rendered list for performance (pagination can come later)
   const displayList = filteredDaycares.slice(0, 50);

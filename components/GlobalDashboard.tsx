@@ -68,6 +68,13 @@ function slugify(s: string) {
     .replace(/(^-|-$)+/g, "");
 }
 
+function canonicalDaycarePath(daycare: Daycare, basePath: string) {
+  const programNumber = daycare["PROGRAM NUMBER"] || "";
+  const name = daycare["PROGRAM NAME"] || "";
+  const city = daycare["CITY"] || "";
+  return `${basePath}/daycare/${programNumber}-${slugify(name)}-${slugify(city)}`;
+}
+
 const RATINGS = ["3", "2", "1"];
 
 const PROGRAM_TYPES = [
@@ -398,6 +405,7 @@ function FilterContent({
 }
 
 interface GlobalDashboardProps {
+  initialDaycares?: Daycare[];
   basePath?: string;
   externalMapCenter?: [number, number] | null;
   onExternalMapCenterChange?: (coords: [number, number] | null) => void;
@@ -408,6 +416,7 @@ interface GlobalDashboardProps {
 }
 
 export default function GlobalDashboard({
+  initialDaycares = [],
   basePath = "",
   externalMapCenter,
   onExternalMapCenterChange,
@@ -417,9 +426,11 @@ export default function GlobalDashboard({
   hideDesktopLocationSearch = false,
 }: GlobalDashboardProps) {
   // State
-  const [daycares, setDaycares] = useState<Daycare[]>([]);
-  const [filteredIndices, setFilteredIndices] = useState<number[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [daycares, setDaycares] = useState<Daycare[]>(initialDaycares);
+  const [filteredIndices, setFilteredIndices] = useState<number[]>(
+    Array.from({ length: initialDaycares.length }, (_, index) => index)
+  );
+  const [loading, setLoading] = useState(initialDaycares.length === 0);
   const [workerInitialized, setWorkerInitialized] = useState(false);
   const workerRef = useRef<Worker | null>(null);
   const requestIdRef = useRef(0);
@@ -564,7 +575,7 @@ export default function GlobalDashboard({
           lat: typeof d.LAT === 'string' ? parseFloat(d.LAT) : d.LAT,
           lng: typeof d.LNG === 'string' ? parseFloat(d.LNG) : d.LNG,
           title: toTitleCaseIfAllCaps(name),
-          url: `/daycare/${slugify(d["PROGRAM NUMBER"] + "-" + name)}`,
+          url: canonicalDaycarePath(d, basePath),
           sutqRating: d["SUTQ RATING"] || "0",
           programType: toTitleCaseIfAllCaps(d["PROGRAM TYPE"] || ""),
           pfcc: d["PFCC"] === "Y" || d["PFCC AGREEMENT"] === "Y",
@@ -573,7 +584,7 @@ export default function GlobalDashboard({
           zipCode: d["ZIP CODE"] || "",
         };
       });
-  }, [filteredDaycares]);
+  }, [filteredDaycares, basePath]);
 
   // Ohio Center
   const defaultCenterCoords: [number, number] = [40.4173, -82.9071];
@@ -710,11 +721,11 @@ export default function GlobalDashboard({
           )}
           <div className="flex items-baseline justify-between">
             <div>
-              <h1 className="text-xl font-bold">
+              <h2 className="text-xl font-bold">
                 {filteredDaycares.length} Results
                 {selectedCity && <span className="font-normal text-neutral-500 ml-2">in {prettyCity(selectedCity)}</span>}
                 {selectedCounty && <span className="font-normal text-neutral-500 ml-2">in {prettyCity(selectedCounty)} County</span>}
-              </h1>
+              </h2>
               {locationQuery && (
                 <p className="mt-1 text-sm text-neutral-500">
                   Showing results near <span className="font-medium text-neutral-700">{locationQuery}</span>.
@@ -752,7 +763,7 @@ export default function GlobalDashboard({
             const displayCity = toTitleCaseIfAllCaps(city);
             const displayStreet = toTitleCaseIfAllCaps(d["STREET ADDRESS"] || "");
             const displayProgramType = toTitleCaseIfAllCaps(d["PROGRAM TYPE"] || "");
-            const detailHref = `${basePath}/daycare/${slugify(d["PROGRAM NUMBER"] + "-" + name)}`;
+            const detailHref = canonicalDaycarePath(d, basePath);
 
             return (
               <div 

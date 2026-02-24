@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Sparkles, Search } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Design Preview | Ohio Parent Hub",
+  title: "Design Preview",
   robots: {
     index: false,
     follow: false,

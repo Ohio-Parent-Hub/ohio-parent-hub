@@ -25,7 +25,7 @@ const lightPink = "#FADED4";
 const lightGold = "#F5E9BE";
 
 export const metadata: Metadata = {
-  title: "Best Daycares by Ohio City | Ohio Parent Hub",
+  title: "Best Daycares by Ohio City",
   description: "Browse licensed daycares and early childhood programs by city across Ohio to find child care near you.",
   keywords: [
     "best daycares by city ohio",
