@@ -33,17 +33,6 @@ function canonicalDaycareSlug(daycare: DaycareRow) {
   return `${programNumber}-${slugify(name)}-${slugify(city)}`;
 }
 
-export async function generateStaticParams() {
-  const slugSet = new Set(
-    loadDaycares()
-      .filter((d) => Boolean(d["PROGRAM NUMBER"]))
-      .map((d) => canonicalDaycareSlug(d))
-      .filter(Boolean)
-  );
-
-  return Array.from(slugSet).map((slug) => ({ slug }));
-}
-
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const daycare = findDaycareBySlug(slug);
