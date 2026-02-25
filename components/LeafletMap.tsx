@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef } from "react";
 import L from "leaflet";
-import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents } from "react-leaflet";
 import "leaflet.markercluster";
 import "leaflet/dist/leaflet.css";
 import "leaflet.markercluster/dist/MarkerCluster.css";
@@ -23,6 +23,7 @@ if (typeof window !== "undefined") {
 export interface MapProps {
   center: [number, number]; // [lat, lng]
   zoom?: number;
+  onZoomChange?: (zoom: number) => void;
   markers?: Array<{
     lat: number;
     lng: number;
@@ -50,6 +51,20 @@ function MapUpdater({ center, zoom }: { center: [number, number], zoom: number }
   useEffect(() => {
     map.setView([centerLat, centerLng], zoom);
   }, [centerLat, centerLng, zoom, map]);
+
+  return null;
+}
+
+function MapZoomListener({ onZoomChange }: { onZoomChange: (zoom: number) => void }) {
+  const map = useMapEvents({
+    zoomend: () => {
+      onZoomChange(map.getZoom());
+    },
+  });
+
+  useEffect(() => {
+    onZoomChange(map.getZoom());
+  }, [map, onZoomChange]);
 
   return null;
 }
@@ -206,6 +221,7 @@ function ClusteredMarkersLayer({ markers }: { markers: NonNullable<MapProps["mar
 export default function LeafletMap({
   center,
   zoom = 13,
+  onZoomChange,
   markers = [],
   userLocation,
   interactive = true,
@@ -270,6 +286,7 @@ export default function LeafletMap({
         {...mapOptions}
       >
         <MapUpdater center={center} zoom={zoom} />
+        {interactive && onZoomChange && <MapZoomListener onZoomChange={onZoomChange} />}
 
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'

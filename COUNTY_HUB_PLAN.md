@@ -64,23 +64,23 @@ If county data quality has gaps:
 
 ## County Hub Page MVP Content
 
-1. **Header block**
+1. **Header block** ✅
    - H1: `Licensed Daycares in [County] County, Ohio`
    - Short intro paragraph (2–3 sentences)
 
-2. **Summary stats**
+2. **Summary stats** ✅
    - Total licensed programs in county
    - Number of cities covered
    - Optional: count of SUTQ-rated programs
 
-3. **Top cities section**
+3. **Top cities section** ✅
    - City links with daycare counts
 
-4. **Program listing preview**
+4. **Program listing preview** ✅
    - First N daycare links to detail pages
    - Keep page lightweight (can progressively enhance later)
 
-5. **Upward/downward links**
+5. **Upward/downward links** ✅
    - Link to statewide daycares page
    - Link to city pages
 
@@ -88,18 +88,18 @@ If county data quality has gaps:
 
 ## Internal Linking Changes (County-First)
 
-1. **Daycare detail pages**
+1. **Daycare detail pages** ⏳
    - Add county link (`View all [County] County daycares`)
    - Keep city link (`View all [City] daycares`)
    - Keep context-aware back-to-results as primary CTA when available
 
-2. **City pages**
+2. **City pages** ⏳
    - Add county hub link near top content
 
-3. **County pages**
+3. **County pages** ✅
    - Link to state daycares and city pages
 
-4. **Sitemap**
+4. **Sitemap** ✅
    - Include county hub URLs
 
 ---
@@ -108,40 +108,40 @@ If county data quality has gaps:
 
 ## Phase 1 — Foundation (safe, no redirects)
 
-- Create county route and page template
-- Generate county slugs
-- Add county pages to sitemap
-- Add county links on detail/city templates
+- [x] Create county route and page template
+- [x] Generate county slugs
+- [x] Add county pages to sitemap
+- [ ] Add county links on detail/city templates
 
 **Exit criteria:**
-- Build passes
-- County pages render and are crawlable
-- No broken links
+- [x] Build passes
+- [x] County pages render and are crawlable
+- [x] No broken links
 
 ## Phase 2 — Context-aware uplinks
 
-- Apply `returnTo/context` contract from `UPLINK_MATRIX.md`
-- Ensure detail page primary CTA respects origin context
+- [ ] Apply `returnTo/context` contract from `UPLINK_MATRIX.md`
+- [ ] Ensure detail page primary CTA respects origin context
 
 **Exit criteria:**
-- State-origin visits return to state results
-- County/city fallbacks display correctly
+- [ ] State-origin visits return to state results
+- [ ] County/city fallbacks display correctly
 
 ## Phase 3 — Pilot thin-city redirects
 
-- Select small pilot set of thin city pages (e.g., 20–50)
-- 301 redirect to matching county hub
-- Monitor performance for 2–6 weeks
+- [ ] Select small pilot set of thin city pages (e.g., 20–50)
+- [ ] 301 redirect to matching county hub
+- [ ] Monitor performance for 2–6 weeks
 
 **Exit criteria:**
-- No adverse traffic collapse on pilot URLs
-- Improved engagement/navigation signals
-- Stable indexation and crawl behavior
+- [ ] No adverse traffic collapse on pilot URLs
+- [ ] Improved engagement/navigation signals
+- [ ] Stable indexation and crawl behavior
 
 ## Phase 4 — Scale decision
 
-- Expand redirect strategy only if pilot metrics are positive
-- Keep strong city pages live
+- [ ] Expand redirect strategy only if pilot metrics are positive
+- [ ] Keep strong city pages live
 
 ---
 
@@ -217,10 +217,9 @@ Pause and adjust if:
 
 ## Next Implementation Step
 
-Implement **Phase 1 only**:
+Implement remaining **Phase 1 + Phase 2** items:
 
-- county route/page template
 - county links on detail + city pages
-- sitemap inclusion
+- context-aware uplinks per `UPLINK_MATRIX.md`
 
 No redirects yet.

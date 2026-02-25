@@ -109,6 +109,15 @@ const METRO_AREAS: MetroArea[] = [
 
 const METRO_AREA_BY_SLUG = new Map(METRO_AREAS.map((metro) => [metro.slug, metro]));
 
+const METRO_CITY_ALIASES: Record<string, string[]> = {
+  "columbus-metro": ["columbus"],
+  "cleveland-metro": ["cleveland"],
+  "cincinnati-metro": ["cincinnati"],
+  "dayton-metro": ["dayton"],
+  "akron-metro": ["akron"],
+  "canton-massillon-metro": ["canton", "massillon"],
+};
+
 export const COLUMBUS_METRO_SLUG = "columbus-metro";
 
 function pointInPolygon(lat: number, lng: number, polygon: Array<[number, number]>) {
@@ -164,6 +173,38 @@ export function getMetroCitySlugs(daycares?: DaycareRow[]) {
 
 export function getMetroDisplayNameBySlug(citySlug: string) {
   return METRO_AREA_BY_SLUG.get(citySlug)?.name;
+}
+
+export function getMetroByCoordinates(lat: number, lng: number) {
+  for (const metroArea of METRO_AREAS) {
+    if (pointInPolygon(lat, lng, metroArea.polygon)) {
+      return { slug: metroArea.slug, name: metroArea.name };
+    }
+  }
+
+  return null;
+}
+
+export function getMetroByCitySlug(citySlug: string) {
+  if (!citySlug) return null;
+
+  for (const metroArea of METRO_AREAS) {
+    const aliases = METRO_CITY_ALIASES[metroArea.slug] || [];
+    if (aliases.includes(citySlug)) {
+      return { slug: metroArea.slug, name: metroArea.name };
+    }
+  }
+
+  return null;
+}
+
+export function getMetroForDaycare(daycare: DaycareRow) {
+  const coords = parseCoordinates(daycare);
+  const metroByCoordinates = coords ? getMetroByCoordinates(coords.lat, coords.lng) : null;
+  if (metroByCoordinates) return metroByCoordinates;
+
+  const citySlug = slugify(daycare["CITY"] || "");
+  return getMetroByCitySlug(citySlug);
 }
 
 export function getDaycaresForMetroSlug(daycares: DaycareRow[], metroSlug: string) {

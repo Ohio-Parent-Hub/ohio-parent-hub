@@ -2,14 +2,15 @@ import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { SutqBadge } from "@/components/SutqBadge";
 import StaticMap from "@/components/StaticMap";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import BackToResultsButton from "@/components/BackToResultsButton";
 import Link from "next/link";
-import { ArrowLeft, ExternalLink } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 
 type DaycareDetailPageShellProps = {
   breadcrumbs: Array<{ label: string; href: string }>;
   backHref: string;
   backLabel: string;
+  browseLinks?: Array<{ label: string; href: string; isActive?: boolean }>;
   profileBadgeLabel: string;
   name: string;
   city: string;
@@ -44,6 +45,7 @@ export default function DaycareDetailPageShell({
   breadcrumbs,
   backHref,
   backLabel,
+  browseLinks = [],
   profileBadgeLabel,
   name,
   city,
@@ -82,12 +84,24 @@ export default function DaycareDetailPageShell({
           <Breadcrumbs items={breadcrumbs} className="mb-6" />
 
           <div className="mb-6">
-            <Button variant="outline" className="border-primary/40 text-primary hover:bg-primary/10" asChild>
-              <Link href={backHref}>
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                {backLabel}
-              </Link>
-            </Button>
+            <BackToResultsButton fallbackHref={backHref} label={backLabel} />
+
+            {browseLinks.length > 0 && (
+              <div className="mt-3 text-sm text-muted-foreground">
+                <span className="font-medium">Browse more:</span>{" "}
+                {browseLinks.map((link, index) => (
+                  <span key={`${link.label}-${link.href}`}>
+                    {index > 0 && <span className="mx-1.5">•</span>}
+                    <Link
+                      href={link.href}
+                      className={link.isActive ? "font-semibold text-foreground" : "hover:text-foreground hover:underline"}
+                    >
+                      {link.label}
+                    </Link>
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
 
           <header className="rounded-2xl border p-6 sm:p-8" style={{ background: "#fff", borderColor: `${sage}55` }}>

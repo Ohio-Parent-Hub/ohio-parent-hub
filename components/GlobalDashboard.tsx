@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect, useRef, useCallback } from "react";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { SutqBadge } from "@/components/SutqBadge";
 import InteractiveMap from "@/components/InteractiveMap";
@@ -425,6 +426,9 @@ export default function GlobalDashboard({
   onClearAllFilters,
   hideDesktopLocationSearch = false,
 }: GlobalDashboardProps) {
+  const pathname = usePathname();
+  const storageKey = useMemo(() => `global-dashboard-state:${pathname}`, [pathname]);
+
   // State
   const [daycares, setDaycares] = useState<Daycare[]>(initialDaycares);
   const [filteredIndices, setFilteredIndices] = useState<number[]>(
@@ -438,6 +442,7 @@ export default function GlobalDashboard({
   
   const [searchQuery, setSearchQuery] = useState("");
   const [internalMapCenter, setInternalMapCenter] = useState<[number, number] | null>(null);
+  const [internalMapZoom, setInternalMapZoom] = useState<number | null>(null);
   const [internalLocationQuery, setInternalLocationQuery] = useState("");
   const [locationSearchClearSignal, setLocationSearchClearSignal] = useState(0);
   const mapCenter = externalMapCenter !== undefined ? externalMapCenter : internalMapCenter;
@@ -450,6 +455,75 @@ export default function GlobalDashboard({
   const [selectedProgramTypes, setSelectedProgramTypes] = useState<string[]>([]);
   const [selectedCity, setSelectedCity] = useState("");
   const [selectedCounty, setSelectedCounty] = useState("");
+  const [restoredStateReady, setRestoredStateReady] = useState(false);
+
+  useEffect(() => {
+    try {
+      const rawState = sessionStorage.getItem(storageKey);
+      if (!rawState) {
+        setRestoredStateReady(true);
+        return;
+      }
+
+      const parsed = JSON.parse(rawState) as {
+        searchQuery?: string;
+        pfccEnabled?: boolean;
+        selectedRatings?: string[];
+        selectedProgramTypes?: string[];
+        selectedCity?: string;
+        selectedCounty?: string;
+        mapCenter?: [number, number] | null;
+        mapZoom?: number | null;
+        locationQuery?: string;
+      };
+
+      if (typeof parsed.searchQuery === "string") setSearchQuery(parsed.searchQuery);
+      if (typeof parsed.pfccEnabled === "boolean") setPfccEnabled(parsed.pfccEnabled);
+      if (Array.isArray(parsed.selectedRatings)) setSelectedRatings(parsed.selectedRatings);
+      if (Array.isArray(parsed.selectedProgramTypes)) setSelectedProgramTypes(parsed.selectedProgramTypes);
+      if (typeof parsed.selectedCity === "string") setSelectedCity(parsed.selectedCity);
+      if (typeof parsed.selectedCounty === "string") setSelectedCounty(parsed.selectedCounty);
+      if (parsed.mapCenter === null || (Array.isArray(parsed.mapCenter) && parsed.mapCenter.length === 2)) {
+        setMapCenter(parsed.mapCenter as [number, number] | null);
+      }
+      if (typeof parsed.mapZoom === "number") setInternalMapZoom(parsed.mapZoom);
+      if (parsed.mapZoom === null) setInternalMapZoom(null);
+      if (typeof parsed.locationQuery === "string") setLocationQuery(parsed.locationQuery);
+    } catch {
+    } finally {
+      setRestoredStateReady(true);
+    }
+  }, [setLocationQuery, setMapCenter, storageKey]);
+
+  useEffect(() => {
+    if (!restoredStateReady) return;
+
+    const state = {
+      searchQuery,
+      pfccEnabled,
+      selectedRatings,
+      selectedProgramTypes,
+      selectedCity,
+      selectedCounty,
+      mapCenter,
+      mapZoom: internalMapZoom,
+      locationQuery,
+    };
+
+    sessionStorage.setItem(storageKey, JSON.stringify(state));
+  }, [
+    restoredStateReady,
+    searchQuery,
+    pfccEnabled,
+    selectedRatings,
+    selectedProgramTypes,
+    selectedCity,
+    selectedCounty,
+    mapCenter,
+    internalMapZoom,
+    locationQuery,
+    storageKey,
+  ]);
 
   const normalizedRows = useMemo<FilterWorkerRow[]>(() => {
     return daycares.map((d) => {
@@ -598,6 +672,7 @@ export default function GlobalDashboard({
     setSelectedCounty("");
     setSearchQuery("");
     setMapCenter(null);
+    setInternalMapZoom(null);
     setLocationQuery("");
     setLocationSearchClearSignal((value) => value + 1);
     onClearAllFilters?.();
@@ -605,6 +680,7 @@ export default function GlobalDashboard({
 
   const clearLocationOnly = useCallback(() => {
     setMapCenter(null);
+    setInternalMapZoom(null);
     setLocationQuery("");
     setLocationSearchClearSignal((value) => value + 1);
   }, [setLocationQuery, setMapCenter]);
@@ -712,7 +788,10 @@ export default function GlobalDashboard({
           {!hideDesktopLocationSearch && (
             <div className="hidden lg:block max-w-md">
               <LocationSearch
-                onLocationFound={(lat, lng) => setMapCenter([lat, lng])}
+                onLocationFound={(lat, lng) => {
+                  setMapCenter([lat, lng]);
+                  setInternalMapZoom(12);
+                }}
                 onSearchSuccess={(query) => setLocationQuery(query)}
                 clearSignal={locationSearchClearSignal}
                 placeholder="Search by street, city, or ZIP in Ohio"
@@ -746,7 +825,8 @@ export default function GlobalDashboard({
         <div className="rounded-xl border bg-neutral-50 shadow-sm relative z-0">
           <InteractiveMap 
             center={center}
-            zoom={mapCenter ? 12 : 7}
+            zoom={internalMapZoom ?? (mapCenter ? 12 : 7)}
+            onZoomChange={(zoomLevel) => setInternalMapZoom(zoomLevel)}
             markers={mapMarkers}
             userLocation={mapCenter}
             height="500px" // Taller map for global view

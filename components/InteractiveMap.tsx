@@ -14,6 +14,7 @@ const LeafletMap = dynamic(() => import("./LeafletMap"), {
 interface InteractiveMapProps {
   center: [number, number];
   zoom?: number;
+  onZoomChange?: (zoom: number) => void;
   markers?: Array<{
     lat: number;
     lng: number;

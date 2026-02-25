@@ -1,5 +1,6 @@
 import DaycareDetailPageShell from "@/components/DaycareDetailPageShell";
 import { slugify, toTitleCaseIfAllCaps } from "@/lib/utils";
+import { getMetroForDaycare } from "@/lib/metroAreas";
 import type { Metadata } from "next";
 import fs from "node:fs";
 import path from "node:path";
@@ -197,8 +198,11 @@ export default async function DaycarePage({ params }: Props) {
   
   const street = toTitleCaseIfAllCaps(daycare["STREET ADDRESS"] || "");
   const city = toTitleCaseIfAllCaps(daycare["CITY"] || "");
+  const citySlug = slugify(city);
   const zip = daycare["ZIP CODE"] || "";
   const county = toTitleCaseIfAllCaps(daycare["COUNTY"] || "");
+  const countySlug = slugify(county);
+  const metro = getMetroForDaycare(daycare);
   
   const phone = daycare["PHONE"] || "";
   const email = daycare["EMAIL"] || "";
@@ -214,6 +218,23 @@ export default async function DaycarePage({ params }: Props) {
   const lng = Number.parseFloat(String(daycare["LNG"] ?? ""));
   const hasCoordinates = Number.isFinite(lat) && Number.isFinite(lng);
   const sutqRatingValue = parseSutqRatingValue(sutq);
+
+  const stateHref = "/daycares";
+  const cityHref = `/daycares/${citySlug}`;
+  const countyHref = countySlug ? `/daycares/county/${countySlug}` : null;
+  const metroHref = metro ? `/daycares/${metro.slug}` : null;
+  const backHref = cityHref;
+
+  const browseLinks = [
+    { label: "Ohio", href: stateHref },
+    ...(countyHref
+      ? [{ label: `${county} County`, href: countyHref }]
+      : []),
+    ...(metroHref && metro
+      ? [{ label: metro.name, href: metroHref }]
+      : []),
+    { label: city, href: cityHref, isActive: true },
+  ];
 
   // Schema.org LocalBusiness structured data
   const schema = {
@@ -255,11 +276,12 @@ export default async function DaycarePage({ params }: Props) {
       breadcrumbs={[
         { label: "Home", href: "/" },
         { label: "Cities", href: "/cities" },
-        { label: city, href: `/daycares/${slugify(city)}` },
+        { label: city, href: cityHref },
         { label: "Daycare Details", href: `/daycare/${canonicalSlug}` },
       ]}
-      backHref={`/daycares/${slugify(city)}`}
-      backLabel={`Back to ${city} Daycares`}
+      backHref={backHref}
+      backLabel="Back to results"
+      browseLinks={browseLinks}
       profileBadgeLabel="Licensed Program Profile"
       name={name}
       city={city}

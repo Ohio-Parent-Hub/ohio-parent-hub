@@ -76,7 +76,11 @@ export default async function DraftDaycarePage({ params }: Props) {
         { label: "Daycare Details", href: `/draft/daycare/${canonicalSlug}` },
       ]}
       backHref={`/draft/daycares/${slugify(city)}`}
-      backLabel={`Back to ${city} Daycares`}
+      backLabel="Back to results"
+      browseLinks={[
+        { label: "Ohio", href: "/draft/daycares" },
+        { label: city, href: `/draft/daycares/${slugify(city)}`, isActive: true },
+      ]}
       profileBadgeLabel="Licensed Program Profile"
       name={name}
       city={city}

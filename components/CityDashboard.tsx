@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { SutqBadge } from "@/components/SutqBadge";
 import InteractiveMap from "@/components/InteractiveMap";
@@ -344,8 +345,12 @@ export default function CityDashboard({
   onClearAllFilters,
   hideHeaderLocationSearch = false,
 }: CityDashboardProps) {
+  const pathname = usePathname();
+  const storageKey = useMemo(() => `city-dashboard-state:${pathname}`, [pathname]);
+
   const [searchQuery, setSearchQuery] = useState("");
   const [internalMapCenter, setInternalMapCenter] = useState<[number, number] | null>(null);
+  const [internalMapZoom, setInternalMapZoom] = useState<number | null>(null);
   const [internalLocationQuery, setInternalLocationQuery] = useState("");
   const [locationSearchClearSignal, setLocationSearchClearSignal] = useState(0);
   const [pfccEnabled, setPfccEnabled] = useState(false);
@@ -353,6 +358,7 @@ export default function CityDashboard({
   const [selectedProgramTypes, setSelectedProgramTypes] = useState<string[]>([]);
   const [selectedCity, setSelectedCity] = useState("");
   const [hydratedDaycares, setHydratedDaycares] = useState<Daycare[]>(daycares);
+  const [restoredStateReady, setRestoredStateReady] = useState(false);
 
   useEffect(() => {
     setHydratedDaycares(daycares);
@@ -393,6 +399,70 @@ export default function CityDashboard({
   const setLocationQuery = onExternalLocationQueryChange ?? setInternalLocationQuery;
   const enableCityFilter = Boolean(countySlug) || isMetroCitySlug(citySlug);
 
+  useEffect(() => {
+    try {
+      const rawState = sessionStorage.getItem(storageKey);
+      if (!rawState) {
+        setRestoredStateReady(true);
+        return;
+      }
+
+      const parsed = JSON.parse(rawState) as {
+        searchQuery?: string;
+        pfccEnabled?: boolean;
+        selectedRatings?: string[];
+        selectedProgramTypes?: string[];
+        selectedCity?: string;
+        mapCenter?: [number, number] | null;
+        mapZoom?: number | null;
+        locationQuery?: string;
+      };
+
+      if (typeof parsed.searchQuery === "string") setSearchQuery(parsed.searchQuery);
+      if (typeof parsed.pfccEnabled === "boolean") setPfccEnabled(parsed.pfccEnabled);
+      if (Array.isArray(parsed.selectedRatings)) setSelectedRatings(parsed.selectedRatings);
+      if (Array.isArray(parsed.selectedProgramTypes)) setSelectedProgramTypes(parsed.selectedProgramTypes);
+      if (typeof parsed.selectedCity === "string") setSelectedCity(parsed.selectedCity);
+      if (parsed.mapCenter === null || (Array.isArray(parsed.mapCenter) && parsed.mapCenter.length === 2)) {
+        setMapCenter(parsed.mapCenter as [number, number] | null);
+      }
+      if (typeof parsed.mapZoom === "number") setInternalMapZoom(parsed.mapZoom);
+      if (parsed.mapZoom === null) setInternalMapZoom(null);
+      if (typeof parsed.locationQuery === "string") setLocationQuery(parsed.locationQuery);
+    } catch {
+    } finally {
+      setRestoredStateReady(true);
+    }
+  }, [setLocationQuery, setMapCenter, storageKey]);
+
+  useEffect(() => {
+    if (!restoredStateReady) return;
+
+    const state = {
+      searchQuery,
+      pfccEnabled,
+      selectedRatings,
+      selectedProgramTypes,
+      selectedCity,
+      mapCenter,
+      mapZoom: internalMapZoom,
+      locationQuery,
+    };
+
+    sessionStorage.setItem(storageKey, JSON.stringify(state));
+  }, [
+    restoredStateReady,
+    searchQuery,
+    pfccEnabled,
+    selectedRatings,
+    selectedProgramTypes,
+    selectedCity,
+    mapCenter,
+    internalMapZoom,
+    locationQuery,
+    storageKey,
+  ]);
+
   // Toggle rating filter
   const toggleRating = (rating: string) => {
     setSelectedRatings((prev) =>
@@ -418,6 +488,7 @@ export default function CityDashboard({
     setSelectedCity("");
     setSearchQuery("");
     setMapCenter(null);
+    setInternalMapZoom(null);
     setLocationQuery("");
     setLocationSearchClearSignal((value) => value + 1);
     onClearAllFilters?.();
@@ -425,6 +496,7 @@ export default function CityDashboard({
 
   const clearLocationOnly = () => {
     setMapCenter(null);
+    setInternalMapZoom(null);
     setLocationQuery("");
     setLocationSearchClearSignal((value) => value + 1);
   };
@@ -595,7 +667,10 @@ export default function CityDashboard({
             {!hideHeaderLocationSearch && (
               <div className="hidden lg:block max-w-md">
                 <LocationSearch
-                  onLocationFound={(lat, lng) => setMapCenter([lat, lng])}
+                  onLocationFound={(lat, lng) => {
+                    setMapCenter([lat, lng]);
+                    setInternalMapZoom(12);
+                  }}
                   onSearchSuccess={(query) => setLocationQuery(query)}
                   clearSignal={locationSearchClearSignal}
                   placeholder="Search by street, city, or ZIP in Ohio"
@@ -627,7 +702,8 @@ export default function CityDashboard({
           <div className="rounded-xl border bg-neutral-50 shadow-sm relative z-0">
             <InteractiveMap
               center={center}
-              zoom={mapCenter ? 12 : 7}
+              zoom={internalMapZoom ?? (mapCenter ? 12 : 7)}
+              onZoomChange={(zoomLevel) => setInternalMapZoom(zoomLevel)}
               markers={markers}
               userLocation={mapCenter}
               height="500px"
