@@ -1,10 +1,7 @@
 import { NextResponse } from 'next/server';
 import path from 'path';
 import fs from 'fs';
-import {
-  COLUMBUS_METRO_SLUG,
-  isColumbusMetroDaycare,
-} from '@/lib/metroAreas';
+import { getDaycaresForCitySlug } from '@/lib/metroAreas';
 
 function slugify(s: string) {
   return (s || '')
@@ -25,12 +22,7 @@ export async function GET(request: Request) {
   const countySlug = slugify(searchParams.get('county') || '');
 
   if (citySlug) {
-    if (citySlug === COLUMBUS_METRO_SLUG) {
-      const filtered = data.filter((d: Record<string, string>) => isColumbusMetroDaycare(d));
-      return NextResponse.json(filtered);
-    }
-
-    const filtered = data.filter((d: Record<string, string>) => slugify(d['CITY'] || '') === citySlug);
+    const filtered = getDaycaresForCitySlug(data, citySlug);
     return NextResponse.json(filtered);
   }
 

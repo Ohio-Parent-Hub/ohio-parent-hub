@@ -5,8 +5,9 @@ import { notFound } from "next/navigation";
 import DraftCityDaycaresPageClient from "@/components/DraftCityDaycaresPageClient";
 import { slugify, toTitleCaseIfAllCaps } from "@/lib/utils";
 import {
-  COLUMBUS_METRO_SLUG,
   getDaycaresForCitySlug,
+  getMetroCitySlugs,
+  getMetroDisplayNameBySlug,
 } from "@/lib/metroAreas";
 
 type Props = { params: Promise<{ city?: string }> };
@@ -44,15 +45,16 @@ function buildCitySnippetCopy(cityDisplay: string, count: number) {
 }
 
 export async function generateStaticParams() {
+  const allDaycares = loadDaycares();
   const citySlugs = Array.from(
     new Set(
-      loadDaycares()
+      allDaycares
         .map((d) => slugify(d["CITY"] || ""))
         .filter(Boolean)
     )
   );
 
-  citySlugs.push(COLUMBUS_METRO_SLUG);
+  citySlugs.push(...getMetroCitySlugs(allDaycares));
 
   return Array.from(new Set(citySlugs)).map((city) => ({ city }));
 }
@@ -61,7 +63,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { city } = await params;
   const cityParam = city ?? "";
   const citySlug = slugify(cityParam);
-  const cityDisplay = prettyCity(cityParam);
+  const cityDisplay = getMetroDisplayNameBySlug(citySlug) || prettyCity(cityParam);
   
   const all = loadDaycares();
   const matches = getDaycaresForCitySlug(all, citySlug);
@@ -120,7 +122,7 @@ export default async function CityDaycaresPage({ params }: Props) {
   const { city } = await params;
   const cityParam = city ?? "";
   const citySlug = slugify(cityParam);
-  const cityDisplay = prettyCity(cityParam);
+  const cityDisplay = getMetroDisplayNameBySlug(citySlug) || prettyCity(cityParam);
 
   const all = loadDaycares();
   const matches = getDaycaresForCitySlug(all, citySlug);
