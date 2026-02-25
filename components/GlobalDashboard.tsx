@@ -410,6 +410,8 @@ interface GlobalDashboardProps {
   basePath?: string;
   externalMapCenter?: [number, number] | null;
   onExternalMapCenterChange?: (coords: [number, number] | null) => void;
+  externalMapZoom?: number | null;
+  onExternalMapZoomChange?: (zoom: number | null) => void;
   externalLocationQuery?: string;
   onExternalLocationQueryChange?: (query: string) => void;
   onClearAllFilters?: () => void;
@@ -421,6 +423,8 @@ export default function GlobalDashboard({
   basePath = "",
   externalMapCenter,
   onExternalMapCenterChange,
+  externalMapZoom,
+  onExternalMapZoomChange,
   externalLocationQuery,
   onExternalLocationQueryChange,
   onClearAllFilters,
@@ -447,6 +451,8 @@ export default function GlobalDashboard({
   const [locationSearchClearSignal, setLocationSearchClearSignal] = useState(0);
   const mapCenter = externalMapCenter !== undefined ? externalMapCenter : internalMapCenter;
   const setMapCenter = onExternalMapCenterChange ?? setInternalMapCenter;
+  const mapZoom = externalMapZoom !== undefined ? externalMapZoom : internalMapZoom;
+  const setMapZoom = onExternalMapZoomChange ?? setInternalMapZoom;
   const locationQuery = externalLocationQuery !== undefined ? externalLocationQuery : internalLocationQuery;
   const setLocationQuery = onExternalLocationQueryChange ?? setInternalLocationQuery;
 
@@ -486,14 +492,14 @@ export default function GlobalDashboard({
       if (parsed.mapCenter === null || (Array.isArray(parsed.mapCenter) && parsed.mapCenter.length === 2)) {
         setMapCenter(parsed.mapCenter as [number, number] | null);
       }
-      if (typeof parsed.mapZoom === "number") setInternalMapZoom(parsed.mapZoom);
-      if (parsed.mapZoom === null) setInternalMapZoom(null);
+      if (typeof parsed.mapZoom === "number") setMapZoom(parsed.mapZoom);
+      if (parsed.mapZoom === null) setMapZoom(null);
       if (typeof parsed.locationQuery === "string") setLocationQuery(parsed.locationQuery);
     } catch {
     } finally {
       setRestoredStateReady(true);
     }
-  }, [setLocationQuery, setMapCenter, storageKey]);
+  }, [setLocationQuery, setMapCenter, setMapZoom, storageKey]);
 
   useEffect(() => {
     if (!restoredStateReady) return;
@@ -506,7 +512,7 @@ export default function GlobalDashboard({
       selectedCity,
       selectedCounty,
       mapCenter,
-      mapZoom: internalMapZoom,
+      mapZoom,
       locationQuery,
     };
 
@@ -520,7 +526,7 @@ export default function GlobalDashboard({
     selectedCity,
     selectedCounty,
     mapCenter,
-    internalMapZoom,
+    mapZoom,
     locationQuery,
     storageKey,
   ]);
@@ -672,18 +678,18 @@ export default function GlobalDashboard({
     setSelectedCounty("");
     setSearchQuery("");
     setMapCenter(null);
-    setInternalMapZoom(null);
+    setMapZoom(null);
     setLocationQuery("");
     setLocationSearchClearSignal((value) => value + 1);
     onClearAllFilters?.();
-  }, [onClearAllFilters, setLocationQuery, setMapCenter]);
+  }, [onClearAllFilters, setLocationQuery, setMapCenter, setMapZoom]);
 
   const clearLocationOnly = useCallback(() => {
     setMapCenter(null);
-    setInternalMapZoom(null);
+    setMapZoom(null);
     setLocationQuery("");
     setLocationSearchClearSignal((value) => value + 1);
-  }, [setLocationQuery, setMapCenter]);
+  }, [setLocationQuery, setMapCenter, setMapZoom]);
 
   const toggleRating = useCallback((r: string) => {
     setSelectedRatings(prev => 
@@ -790,7 +796,7 @@ export default function GlobalDashboard({
               <LocationSearch
                 onLocationFound={(lat, lng) => {
                   setMapCenter([lat, lng]);
-                  setInternalMapZoom(12);
+                  setMapZoom(12);
                 }}
                 onSearchSuccess={(query) => setLocationQuery(query)}
                 clearSignal={locationSearchClearSignal}
@@ -825,8 +831,8 @@ export default function GlobalDashboard({
         <div className="rounded-xl border bg-neutral-50 shadow-sm relative z-0">
           <InteractiveMap 
             center={center}
-            zoom={internalMapZoom ?? (mapCenter ? 12 : 7)}
-            onZoomChange={(zoomLevel) => setInternalMapZoom(zoomLevel)}
+            zoom={mapZoom ?? (mapCenter ? 12 : 7)}
+            onZoomChange={(zoomLevel) => setMapZoom(zoomLevel)}
             markers={mapMarkers}
             userLocation={mapCenter}
             height="500px" // Taller map for global view

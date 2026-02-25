@@ -88,7 +88,7 @@ If county data quality has gaps:
 
 ## Internal Linking Changes (County-First)
 
-1. **Daycare detail pages** ⏳
+1. **Daycare detail pages** ✅
    - Add county link (`View all [County] County daycares`)
    - Keep city link (`View all [City] daycares`)
    - Keep context-aware back-to-results as primary CTA when available
@@ -111,7 +111,8 @@ If county data quality has gaps:
 - [x] Create county route and page template
 - [x] Generate county slugs
 - [x] Add county pages to sitemap
-- [ ] Add county links on detail/city templates
+- [x] Add county links on detail templates
+- [ ] Add county links on city templates
 
 **Exit criteria:**
 - [x] Build passes
@@ -121,10 +122,10 @@ If county data quality has gaps:
 ## Phase 2 — Context-aware uplinks
 
 - [ ] Apply `returnTo/context` contract from `UPLINK_MATRIX.md`
-- [ ] Ensure detail page primary CTA respects origin context
+- [x] Ensure detail page primary CTA respects origin context (history-aware Back to results + fallback links)
 
 **Exit criteria:**
-- [ ] State-origin visits return to state results
+- [x] State-origin visits return to state results
 - [ ] County/city fallbacks display correctly
 
 ## Phase 3 — Pilot thin-city redirects
@@ -219,7 +220,7 @@ Pause and adjust if:
 
 Implement remaining **Phase 1 + Phase 2** items:
 
-- county links on detail + city pages
-- context-aware uplinks per `UPLINK_MATRIX.md`
+- county links on city pages
+- formal `returnTo/context` URL contract per `UPLINK_MATRIX.md`
 
 No redirects yet.

@@ -61,6 +61,7 @@ export default function DraftCityDaycaresPageClient({
   citiesHref = "/draft/cities",
 }: DraftCityDaycaresPageClientProps) {
   const [mapCenter, setMapCenter] = useState<[number, number] | null>(null);
+  const [mapZoom, setMapZoom] = useState<number | null>(null);
   const [locationQuery, setLocationQuery] = useState("");
   const [heroSearchClearSignal, setHeroSearchClearSignal] = useState(0);
   const cityHref = `${basePath}/daycares/${citySlug}`;
@@ -95,7 +96,10 @@ export default function DraftCityDaycaresPageClient({
               </p>
               <div className="mt-6 max-w-xl">
                 <LocationSearch
-                  onLocationFound={(lat, lng) => setMapCenter([lat, lng])}
+                  onLocationFound={(lat, lng) => {
+                    setMapCenter([lat, lng]);
+                    setMapZoom(12);
+                  }}
                   onSearchSuccess={(query) => setLocationQuery(query)}
                   clearSignal={heroSearchClearSignal}
                   placeholder="Search by street, city, or ZIP in Ohio"
@@ -137,6 +141,8 @@ export default function DraftCityDaycaresPageClient({
             basePath={basePath}
             externalMapCenter={mapCenter}
             onExternalMapCenterChange={setMapCenter}
+            externalMapZoom={mapZoom}
+            onExternalMapZoomChange={setMapZoom}
             externalLocationQuery={locationQuery}
             onExternalLocationQueryChange={setLocationQuery}
             onClearAllFilters={() => setHeroSearchClearSignal((value) => value + 1)}

@@ -52,6 +52,18 @@ Behavior on detail page:
 
 ---
 
+## Implementation Status (Current)
+
+- [x] Single primary CTA on detail pages: `Back to results`
+- [x] Secondary fallback/internal links shown as compact `Browse more` row (Ohio/county/city + metro when available)
+- [x] Origin-aware return behavior via browser history (global/county/city returns)
+- [x] Prior filter state restored on return (search text, checkboxes, city/county filters, location search)
+- [x] Prior map state restored on return (center + zoom)
+- [ ] Formal `context` + `returnTo` URL contract wired end-to-end on listing → detail links
+- [ ] Explicit uplink click instrumentation for state/county/city path analysis
+
+---
+
 ## UX Labels (Recommended)
 
 - `Back to results`
