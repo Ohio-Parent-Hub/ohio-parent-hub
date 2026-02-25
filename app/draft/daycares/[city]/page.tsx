@@ -39,6 +39,23 @@ export default async function DraftCityDaycaresPage({ params }: Props) {
   }
 
   const citySnippetCopy = `Compare ${matches.length} licensed daycare programs in ${cityDisplay}, OH. Review SUTQ ratings, locations, and contact details.`;
+  const countyLinks = Array.from(
+    new Map(
+      matches
+        .map((daycare) => (daycare["COUNTY"] || "").trim())
+        .filter(Boolean)
+        .map((countyName) => {
+          const countySlug = countyName
+            .toLowerCase()
+            .trim()
+            .replace(/&/g, "and")
+            .replace(/[^a-z0-9]+/g, "-")
+            .replace(/(^-|-$)+/g, "");
+          const countyLabel = `${prettyCity(countyName)} County`;
+          return [countySlug, { label: countyLabel, href: `/daycares/county/${countySlug}` }];
+        }),
+    ).values(),
+  ).slice(0, 5);
 
   return (
     <DraftCityDaycaresPageClient
@@ -46,6 +63,7 @@ export default async function DraftCityDaycaresPage({ params }: Props) {
       citySlug={citySlug}
       cityCount={matches.length}
       citySnippetCopy={citySnippetCopy}
+      countyLinks={countyLinks}
       initialDaycares={matches.slice(0, 15)}
       basePath="/draft"
       homeHref="/draft"

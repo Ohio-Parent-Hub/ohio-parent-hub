@@ -8,9 +8,20 @@ import { notFound, permanentRedirect } from "next/navigation";
 
 type Props = {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ context?: string | string[]; returnTo?: string | string[] }>;
 };
 
 type DaycareRow = Record<string, string>;
+type RelatedDaycareCard = {
+  href: string;
+  name: string;
+  city: string;
+  street: string;
+  programType: string;
+  sutq: string;
+  pfcc: boolean;
+  distanceMiles: number;
+};
 
 export const revalidate = 86400;
 
@@ -97,6 +108,47 @@ function parseSutqRatingValue(sutq: string): 1 | 2 | 3 | null {
   return null;
 }
 
+function firstQueryValue(value: string | string[] | undefined) {
+  if (Array.isArray(value)) return value[0] || "";
+  return value || "";
+}
+
+function normalizeContext(value: string): "state" | "county" | "city" | "unknown" {
+  if (value === "state" || value === "county" || value === "city") {
+    return value;
+  }
+  return "unknown";
+}
+
+function sanitizeReturnToPath(value: string): string | null {
+  if (!value) return null;
+  if (!value.startsWith("/")) return null;
+  if (value.startsWith("//")) return null;
+  return value;
+}
+
+function toRadians(value: number) {
+  return (value * Math.PI) / 180;
+}
+
+function distanceMiles(lat1: number, lng1: number, lat2: number, lng2: number) {
+  const earthRadiusMiles = 3958.8;
+  const dLat = toRadians(lat2 - lat1);
+  const dLng = toRadians(lng2 - lng1);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(toRadians(lat1)) *
+      Math.cos(toRadians(lat2)) *
+      Math.sin(dLng / 2) *
+      Math.sin(dLng / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return earthRadiusMiles * c;
+}
+
+function isPfccEnabled(row: DaycareRow) {
+  return row["PFCC"] === "Y" || row["PFCC AGREEMENT"] === "Y";
+}
+
 export async function generateStaticParams() {
   const all = loadDaycares();
 
@@ -178,8 +230,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default async function DaycarePage({ params }: Props) {
+export default async function DaycarePage({ params, searchParams }: Props) {
   const { slug } = await params;
+  const query = await searchParams;
   const daycare = findDaycareBySlug(slug);
 
   if (!daycare) {
@@ -223,7 +276,73 @@ export default async function DaycarePage({ params }: Props) {
   const cityHref = `/daycares/${citySlug}`;
   const countyHref = countySlug ? `/daycares/county/${countySlug}` : null;
   const metroHref = metro ? `/daycares/${metro.slug}` : null;
-  const backHref = cityHref;
+  const context = normalizeContext(firstQueryValue(query.context));
+  const returnTo = sanitizeReturnToPath(firstQueryValue(query.returnTo));
+  const contextFallbackHref =
+    context === "state"
+      ? stateHref
+      : context === "county"
+        ? (countyHref || cityHref)
+        : cityHref;
+  const backHref = returnTo || contextFallbackHref;
+
+  const allDaycares = loadDaycares();
+  const currentProgramType = (daycare["PROGRAM TYPE"] || "").trim().toLowerCase();
+  const currentSutq = (daycare["SUTQ RATING"] || "").trim().toLowerCase();
+  const currentPfcc = isPfccEnabled(daycare);
+  const nearbyCandidates = hasCoordinates
+    ? allDaycares
+        .filter((candidate) => candidate["PROGRAM NUMBER"] !== programNumber)
+        .map((candidate) => {
+          const candidateLat = Number.parseFloat(String(candidate["LAT"] ?? ""));
+          const candidateLng = Number.parseFloat(String(candidate["LNG"] ?? ""));
+          if (!Number.isFinite(candidateLat) || !Number.isFinite(candidateLng)) return null;
+
+          const miles = distanceMiles(lat, lng, candidateLat, candidateLng);
+          if (miles > 10) return null;
+
+          return {
+            daycare: candidate,
+            miles,
+          };
+        })
+        .filter((candidate): candidate is { daycare: DaycareRow; miles: number } => Boolean(candidate))
+        .sort((a, b) => a.miles - b.miles)
+    : [];
+
+  const nearbyDaycares: RelatedDaycareCard[] = nearbyCandidates.slice(0, 5).map(({ daycare: candidate, miles }) => ({
+    href: `/daycare/${canonicalDaycareSlug(candidate)}`,
+    name: toTitleCaseIfAllCaps(candidate["PROGRAM NAME"] || "Licensed Daycare"),
+    city: toTitleCaseIfAllCaps(candidate["CITY"] || "Ohio"),
+    street: toTitleCaseIfAllCaps(candidate["STREET ADDRESS"] || ""),
+    programType: toTitleCaseIfAllCaps(candidate["PROGRAM TYPE"] || "Not Specified"),
+    sutq: candidate["SUTQ RATING"] || "0",
+    pfcc: isPfccEnabled(candidate),
+    distanceMiles: miles,
+  }));
+
+  const similarDaycares: RelatedDaycareCard[] = nearbyCandidates
+    .filter(({ daycare: candidate }) => {
+      const candidateProgramType = (candidate["PROGRAM TYPE"] || "").trim().toLowerCase();
+      const candidateSutq = (candidate["SUTQ RATING"] || "").trim().toLowerCase();
+      const candidatePfcc = isPfccEnabled(candidate);
+      return (
+        candidateProgramType === currentProgramType &&
+        candidateSutq === currentSutq &&
+        candidatePfcc === currentPfcc
+      );
+    })
+    .slice(0, 5)
+    .map(({ daycare: candidate, miles }) => ({
+      href: `/daycare/${canonicalDaycareSlug(candidate)}`,
+      name: toTitleCaseIfAllCaps(candidate["PROGRAM NAME"] || "Licensed Daycare"),
+      city: toTitleCaseIfAllCaps(candidate["CITY"] || "Ohio"),
+      street: toTitleCaseIfAllCaps(candidate["STREET ADDRESS"] || ""),
+      programType: toTitleCaseIfAllCaps(candidate["PROGRAM TYPE"] || "Not Specified"),
+      sutq: candidate["SUTQ RATING"] || "0",
+      pfcc: isPfccEnabled(candidate),
+      distanceMiles: miles,
+    }));
 
   const browseLinks = [
     { label: "Ohio", href: stateHref },
@@ -281,7 +400,10 @@ export default async function DaycarePage({ params }: Props) {
       ]}
       backHref={backHref}
       backLabel="Back to results"
+      uplinkContext={context}
       browseLinks={browseLinks}
+      nearbyDaycares={nearbyDaycares}
+      similarDaycares={similarDaycares}
       profileBadgeLabel="Licensed Program Profile"
       name={name}
       city={city}

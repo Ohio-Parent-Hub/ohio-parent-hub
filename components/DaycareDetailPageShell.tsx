@@ -2,15 +2,31 @@ import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { SutqBadge } from "@/components/SutqBadge";
 import StaticMap from "@/components/StaticMap";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import BackToResultsButton from "@/components/BackToResultsButton";
 import Link from "next/link";
+import TrackedUplinkLink from "@/components/TrackedUplinkLink";
 import { ExternalLink } from "lucide-react";
+
+type RelatedDaycareCard = {
+  href: string;
+  name: string;
+  city: string;
+  street: string;
+  programType: string;
+  sutq: string;
+  pfcc: boolean;
+  distanceMiles: number;
+};
 
 type DaycareDetailPageShellProps = {
   breadcrumbs: Array<{ label: string; href: string }>;
   backHref: string;
   backLabel: string;
+  uplinkContext?: "state" | "county" | "city" | "unknown";
   browseLinks?: Array<{ label: string; href: string; isActive?: boolean }>;
+  nearbyDaycares?: RelatedDaycareCard[];
+  similarDaycares?: RelatedDaycareCard[];
   profileBadgeLabel: string;
   name: string;
   city: string;
@@ -45,7 +61,10 @@ export default function DaycareDetailPageShell({
   breadcrumbs,
   backHref,
   backLabel,
+  uplinkContext = "unknown",
   browseLinks = [],
+  nearbyDaycares = [],
+  similarDaycares = [],
   profileBadgeLabel,
   name,
   city,
@@ -67,6 +86,50 @@ export default function DaycareDetailPageShell({
   lng,
   schema,
 }: DaycareDetailPageShellProps) {
+  const renderDaycareCards = (items: RelatedDaycareCard[], keyPrefix: string) => (
+    <div className="space-y-3">
+      {items.map((item) => (
+        <div
+          key={`${keyPrefix}-${item.href}`}
+          className="group rounded-xl border bg-white p-4 transition-colors hover:border-black"
+        >
+          <div className="mb-2 flex items-start justify-between gap-3">
+            <h3 className="font-bold text-base leading-tight">
+              <Link href={item.href} className="hover:underline">
+                {item.name}
+              </Link>
+            </h3>
+            <SutqBadge rating={item.sutq} className="scale-90 origin-right" />
+          </div>
+
+          <p className="mb-2 text-sm text-neutral-500">
+            <span className="font-medium text-black">{item.city}</span>
+            {item.street && <span className="mx-1">•</span>}
+            {item.street}
+          </p>
+
+          <div className="mb-3 flex items-center gap-2 text-xs text-neutral-400">
+            <span className="rounded bg-neutral-100 px-2 py-0.5 text-neutral-600">
+              {item.programType}
+            </span>
+            {item.pfcc && (
+              <span className="rounded bg-blue-50 px-2 py-0.5 font-medium text-blue-700">
+                PFCC
+              </span>
+            )}
+            <span className="text-neutral-500">{item.distanceMiles.toFixed(1)} mi</span>
+          </div>
+
+          <Link href={item.href}>
+            <Button variant="outline" size="sm" className="w-full">
+              View Details
+            </Button>
+          </Link>
+        </div>
+      ))}
+    </div>
+  );
+
   return (
     <main className="min-h-screen" style={{ background: cream, color: dark }}>
       {schema && (
@@ -84,7 +147,7 @@ export default function DaycareDetailPageShell({
           <Breadcrumbs items={breadcrumbs} className="mb-6" />
 
           <div className="mb-6">
-            <BackToResultsButton fallbackHref={backHref} label={backLabel} />
+            <BackToResultsButton fallbackHref={backHref} label={backLabel} trackingContext={uplinkContext} />
 
             {browseLinks.length > 0 && (
               <div className="mt-3 text-sm text-muted-foreground">
@@ -92,12 +155,14 @@ export default function DaycareDetailPageShell({
                 {browseLinks.map((link, index) => (
                   <span key={`${link.label}-${link.href}`}>
                     {index > 0 && <span className="mx-1.5">•</span>}
-                    <Link
+                    <TrackedUplinkLink
                       href={link.href}
+                      target={link.label}
+                      context={uplinkContext}
                       className={link.isActive ? "font-semibold text-foreground" : "hover:text-foreground hover:underline"}
                     >
                       {link.label}
-                    </Link>
+                    </TrackedUplinkLink>
                   </span>
                 ))}
               </div>
@@ -217,6 +282,26 @@ export default function DaycareDetailPageShell({
             </section>
           </div>
         </div>
+
+        {nearbyDaycares.length > 0 && (
+          <div className={`mx-auto mt-6 grid max-w-7xl grid-cols-1 gap-6 ${similarDaycares.length > 0 ? "lg:grid-cols-2" : ""}`}>
+            <div className="rounded-3xl border p-4 sm:p-6 shadow-sm" style={{ background: "#fff", borderColor: `${sage}55` }}>
+              <section className="rounded-2xl border border-primary/20 bg-card p-6 shadow-sm">
+                <h2 className="mb-4 font-serif text-2xl font-bold text-primary">More Daycares Nearby</h2>
+                {renderDaycareCards(nearbyDaycares, "nearby")}
+              </section>
+            </div>
+
+            {similarDaycares.length > 0 && (
+              <div className="rounded-3xl border p-4 sm:p-6 shadow-sm" style={{ background: "#fff", borderColor: `${sage}55` }}>
+                <section className="rounded-2xl border border-primary/20 bg-card p-6 shadow-sm">
+                  <h2 className="mb-4 font-serif text-2xl font-bold text-primary">Similar Daycares</h2>
+                  {renderDaycareCards(similarDaycares, "similar")}
+                </section>
+              </div>
+            )}
+          </div>
+        )}
       </section>
     </main>
   );

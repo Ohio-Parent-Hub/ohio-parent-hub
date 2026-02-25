@@ -132,6 +132,17 @@ export default async function CityDaycaresPage({ params }: Props) {
   }
 
   const citySnippetCopy = buildCitySnippetCopy(cityDisplay, matches.length);
+  const countyLinks = Array.from(
+    new Map(
+      matches
+        .map((daycare) => (daycare["COUNTY"] || "").trim())
+        .filter(Boolean)
+        .map((countyName) => {
+          const countyLabel = `${toTitleCaseIfAllCaps(countyName)} County`;
+          return [slugify(countyName), { label: countyLabel, href: `/daycares/county/${slugify(countyName)}` }];
+        }),
+    ).values(),
+  ).slice(0, 5);
 
   const alphabeticalMatches = [...matches].sort((a, b) => {
     const aName = daycareDisplayName(a);
@@ -165,6 +176,7 @@ export default async function CityDaycaresPage({ params }: Props) {
         citySlug={citySlug}
         cityCount={matches.length}
         citySnippetCopy={citySnippetCopy}
+        countyLinks={countyLinks}
         initialDaycares={matches.slice(0, 15)}
         basePath=""
         homeHref="/"

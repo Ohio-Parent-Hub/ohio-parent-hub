@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import LocationSearch from "@/components/LocationSearch";
 import CityDashboard from "@/components/CityDashboard";
@@ -17,6 +18,7 @@ interface DraftCityDaycaresPageClientProps {
   basePath?: string;
   homeHref?: string;
   citiesHref?: string;
+  countyLinks?: Array<{ label: string; href: string }>;
 }
 
 function SparkleDecor({ className, style }: { className?: string; style?: CSSProperties }) {
@@ -59,6 +61,7 @@ export default function DraftCityDaycaresPageClient({
   basePath = "/draft",
   homeHref = "/draft",
   citiesHref = "/draft/cities",
+  countyLinks = [],
 }: DraftCityDaycaresPageClientProps) {
   const [mapCenter, setMapCenter] = useState<[number, number] | null>(null);
   const [mapZoom, setMapZoom] = useState<number | null>(null);
@@ -94,6 +97,19 @@ export default function DraftCityDaycaresPageClient({
               <p className="mt-4 max-w-2xl text-base leading-relaxed" style={{ color: `${dark}bb` }}>
                 {citySnippetCopy}
               </p>
+              {countyLinks.length > 0 && (
+                <p className="mt-3 text-sm" style={{ color: `${dark}bb` }}>
+                  <span className="font-medium">County hubs:</span>{" "}
+                  {countyLinks.map((countyLink, index) => (
+                    <span key={`${countyLink.label}-${countyLink.href}`}>
+                      {index > 0 && <span className="mx-1.5">•</span>}
+                      <Link href={countyLink.href} className="underline hover:no-underline">
+                        {countyLink.label}
+                      </Link>
+                    </span>
+                  ))}
+                </p>
+              )}
               <div className="mt-6 max-w-xl">
                 <LocationSearch
                   onLocationFound={(lat, lng) => {

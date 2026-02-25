@@ -4,15 +4,18 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { useMemo } from "react";
+import { trackUplinkClick } from "@/lib/trackUplink";
 
 type BackToResultsButtonProps = {
   fallbackHref: string;
   label: string;
+  trackingContext?: "state" | "county" | "city" | "unknown";
 };
 
 export default function BackToResultsButton({
   fallbackHref,
   label,
+  trackingContext = "unknown",
 }: BackToResultsButtonProps) {
   const router = useRouter();
 
@@ -29,6 +32,12 @@ export default function BackToResultsButton({
   }, []);
 
   function handleClick() {
+    trackUplinkClick({
+      linkType: "back_to_results",
+      target: canNavigateBackInternally ? "history" : fallbackHref,
+      context: trackingContext,
+    });
+
     if (canNavigateBackInternally) {
       router.back();
       return;

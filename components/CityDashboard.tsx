@@ -70,6 +70,14 @@ function slugify(s: string) {
     .replace(/(^-|-$)+/g, "");
 }
 
+function withListingContext(daycarePath: string, context: "city" | "county", returnTo: string) {
+  const query = new URLSearchParams({
+    context,
+    returnTo,
+  });
+  return `${daycarePath}?${query.toString()}`;
+}
+
 function prettyCity(city: string) {
   return (city || "")
     .toLowerCase()
@@ -351,6 +359,8 @@ export default function CityDashboard({
 }: CityDashboardProps) {
   const pathname = usePathname();
   const storageKey = useMemo(() => `city-dashboard-state:${pathname}`, [pathname]);
+  const linkContext: "city" | "county" = countySlug ? "county" : "city";
+  const returnTo = pathname;
 
   const [searchQuery, setSearchQuery] = useState("");
   const [internalMapCenter, setInternalMapCenter] = useState<[number, number] | null>(null);
@@ -569,7 +579,11 @@ export default function CityDashboard({
         const city = d["CITY"] || cityDisplay;
         const displayName = toTitleCaseIfAllCaps(name);
         const displayCity = toTitleCaseIfAllCaps(city);
-        const url = `${basePath}/daycare/${id}-${slugify(name)}-${slugify(city)}`;
+        const url = withListingContext(
+          `${basePath}/daycare/${id}-${slugify(name)}-${slugify(city)}`,
+          linkContext,
+          returnTo,
+        );
         return {
           lat: Number(d["LAT"]),
           lng: Number(d["LNG"]),
@@ -583,7 +597,7 @@ export default function CityDashboard({
           zipCode: d["ZIP CODE"] || "",
         };
       });
-  }, [filteredDaycares, cityDisplay, basePath]);
+  }, [filteredDaycares, cityDisplay, basePath, linkContext, returnTo]);
 
   // Center on the first result if available, otherwise default to a central Ohio coordinate (or the first original result)
   const markerCenter: [number, number] | null = markers.length > 0
@@ -732,6 +746,7 @@ export default function CityDashboard({
               const displayProgramType = toTitleCaseIfAllCaps(programType);
               const pfcc = d["PFCC AGREEMENT"] === "Y";
               const slug = `${id}-${slugify(name)}-${slugify(city)}`;
+              const detailHref = withListingContext(`${basePath}/daycare/${slug}`, linkContext, returnTo);
 
               return (
                 <div
@@ -743,7 +758,7 @@ export default function CityDashboard({
                       <SutqBadge rating={sutq} className="scale-90 origin-left" />
                     </div>
                     <h3 className="font-bold text-lg leading-tight mb-1">
-                      <Link href={`${basePath}/daycare/${slug}`} className="hover:underline">
+                      <Link href={detailHref} className="hover:underline">
                         {displayName}
                       </Link>
                     </h3>
@@ -764,7 +779,7 @@ export default function CityDashboard({
 
                   <div className="hidden sm:flex flex-col items-end gap-3 min-w-[120px]">
                     <SutqBadge rating={sutq} />
-                    <Link href={`${basePath}/daycare/${slug}`}>
+                    <Link href={detailHref}>
                       <Button variant="outline" size="sm" className="w-full">
                         View Details
                       </Button>
@@ -772,7 +787,7 @@ export default function CityDashboard({
                   </div>
 
                   <div className="sm:hidden">
-                    <Link href={`${basePath}/daycare/${slug}`}>
+                    <Link href={detailHref}>
                       <Button variant="outline" size="sm" className="w-full">
                         View Details
                       </Button>

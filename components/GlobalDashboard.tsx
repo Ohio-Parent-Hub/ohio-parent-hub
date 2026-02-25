@@ -76,6 +76,14 @@ function canonicalDaycarePath(daycare: Daycare, basePath: string) {
   return `${basePath}/daycare/${programNumber}-${slugify(name)}-${slugify(city)}`;
 }
 
+function withListingContext(daycarePath: string, context: "state" | "city" | "county", returnTo: string) {
+  const query = new URLSearchParams({
+    context,
+    returnTo,
+  });
+  return `${daycarePath}?${query.toString()}`;
+}
+
 const RATINGS = ["3", "2", "1"];
 
 const PROGRAM_TYPES = [
@@ -432,6 +440,7 @@ export default function GlobalDashboard({
 }: GlobalDashboardProps) {
   const pathname = usePathname();
   const storageKey = useMemo(() => `global-dashboard-state:${pathname}`, [pathname]);
+  const returnTo = pathname;
 
   // State
   const [daycares, setDaycares] = useState<Daycare[]>(initialDaycares);
@@ -655,7 +664,7 @@ export default function GlobalDashboard({
           lat: typeof d.LAT === 'string' ? parseFloat(d.LAT) : d.LAT,
           lng: typeof d.LNG === 'string' ? parseFloat(d.LNG) : d.LNG,
           title: toTitleCaseIfAllCaps(name),
-          url: canonicalDaycarePath(d, basePath),
+          url: withListingContext(canonicalDaycarePath(d, basePath), "state", returnTo),
           sutqRating: d["SUTQ RATING"] || "0",
           programType: toTitleCaseIfAllCaps(d["PROGRAM TYPE"] || ""),
           pfcc: d["PFCC"] === "Y" || d["PFCC AGREEMENT"] === "Y",
@@ -664,7 +673,7 @@ export default function GlobalDashboard({
           zipCode: d["ZIP CODE"] || "",
         };
       });
-  }, [filteredDaycares, basePath]);
+  }, [filteredDaycares, basePath, returnTo]);
 
   // Ohio Center
   const defaultCenterCoords: [number, number] = [40.4173, -82.9071];
@@ -849,7 +858,7 @@ export default function GlobalDashboard({
             const displayCity = toTitleCaseIfAllCaps(city);
             const displayStreet = toTitleCaseIfAllCaps(d["STREET ADDRESS"] || "");
             const displayProgramType = toTitleCaseIfAllCaps(d["PROGRAM TYPE"] || "");
-            const detailHref = canonicalDaycarePath(d, basePath);
+            const detailHref = withListingContext(canonicalDaycarePath(d, basePath), "state", returnTo);
 
             return (
               <div 
