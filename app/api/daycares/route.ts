@@ -18,9 +18,15 @@ export async function GET(request: Request) {
 
   const { searchParams } = new URL(request.url);
   const citySlug = slugify(searchParams.get('city') || '');
+  const countySlug = slugify(searchParams.get('county') || '');
 
   if (citySlug) {
     const filtered = data.filter((d: Record<string, string>) => slugify(d['CITY'] || '') === citySlug);
+    return NextResponse.json(filtered);
+  }
+
+  if (countySlug) {
+    const filtered = data.filter((d: Record<string, string>) => slugify(d['COUNTY'] || '') === countySlug);
     return NextResponse.json(filtered);
   }
   

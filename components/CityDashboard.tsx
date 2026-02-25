@@ -24,15 +24,29 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Filter, Map as MapIcon, Info } from "lucide-react";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover as ComboPopover,
+  PopoverContent as ComboContent,
+  PopoverTrigger as ComboTrigger,
+} from "@/components/ui/popover";
+import { Filter, Map as MapIcon, Info, Check, ChevronsUpDown } from "lucide-react";
 import { FILTER_DEFINITIONS } from "@/data/filterDefinitions";
-import { toTitleCaseIfAllCaps } from "@/lib/utils";
+import { cn, toTitleCaseIfAllCaps } from "@/lib/utils";
 
 type Daycare = Record<string, string>;
 
 interface CityDashboardProps {
   daycares: Daycare[];
   citySlug?: string;
+  countySlug?: string;
   cityDisplay: string;
   basePath?: string;
   externalMapCenter?: [number, number] | null;
@@ -52,6 +66,12 @@ function slugify(s: string) {
     .replace(/(^-|-$)+/g, "");
 }
 
+function prettyCity(city: string) {
+  return (city || "")
+    .toLowerCase()
+    .replace(/(?:^|\s)\S/g, (a) => a.toUpperCase());
+}
+
 const RATINGS = ["3", "2", "1"];
 
 // Helper component for filter content since it's used in both desktop sidebar and mobile sheet
@@ -64,6 +84,10 @@ function FilterContent({
   toggleRating,
   selectedProgramTypes,
   toggleProgramType,
+  selectedCity,
+  setSelectedCity,
+  cities,
+  enableCityFilter,
   mapCenter,
   onClearAll,
 }: {
@@ -75,15 +99,21 @@ function FilterContent({
   toggleRating: (v: string) => void;
   selectedProgramTypes: string[];
   toggleProgramType: (v: string) => void;
+  selectedCity: string;
+  setSelectedCity: (v: string) => void;
+  cities: string[];
+  enableCityFilter: boolean;
   mapCenter: [number, number] | null;
   onClearAll: () => void;
 }) {
+  const [cityOpen, setCityOpen] = useState(false);
   const hasActiveFilters =
     pfccEnabled ||
     selectedRatings.length > 0 ||
     selectedProgramTypes.length > 0 ||
     !!searchQuery ||
-    !!mapCenter;
+    !!mapCenter ||
+    !!selectedCity;
 
   return (
     <div className="space-y-6 px-4">      {/* Clear Filters Button (always rendered to prevent layout shift) */}
@@ -109,6 +139,76 @@ function FilterContent({
       </div>
 
       <Separator />
+
+      {enableCityFilter && (
+        <>
+          <div>
+            <h2 className="text-sm font-semibold mb-4">Location</h2>
+            <div className="flex flex-col space-y-1.5">
+              <Label className="text-sm font-medium">City</Label>
+              <ComboPopover open={cityOpen} onOpenChange={setCityOpen}>
+                <ComboTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={cityOpen}
+                    className="w-full justify-between"
+                  >
+                    {selectedCity ? prettyCity(selectedCity) : "Select city..."}
+                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  </Button>
+                </ComboTrigger>
+                <ComboContent className="w-[250px] p-0">
+                  <Command>
+                    <CommandInput placeholder="Search city..." />
+                    <CommandList>
+                      <CommandEmpty>No city found.</CommandEmpty>
+                      <CommandGroup>
+                        <CommandItem
+                          value="all_cities_reset"
+                          onSelect={() => {
+                            setSelectedCity("");
+                            setCityOpen(false);
+                          }}
+                        >
+                          <Check
+                            className={cn(
+                              "mr-2 h-4 w-4",
+                              selectedCity === "" ? "opacity-100" : "opacity-0"
+                            )}
+                          />
+                          All Cities
+                        </CommandItem>
+                        {cities.map((city) => (
+                          <CommandItem
+                            key={city}
+                            value={city}
+                            keywords={[city, prettyCity(city)]}
+                            onSelect={() => {
+                              setSelectedCity(city === selectedCity ? "" : city);
+                              setCityOpen(false);
+                            }}
+                          >
+                            <Check
+                              className={cn(
+                                "mr-2 h-4 w-4",
+                                selectedCity === city ? "opacity-100" : "opacity-0"
+                              )}
+                            />
+                            {prettyCity(city)}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </ComboContent>
+              </ComboPopover>
+            </div>
+          </div>
+
+          <Separator />
+        </>
+      )}
 
       <div>
         <h2 className="text-sm font-semibold mb-4">Program filters</h2>
@@ -233,6 +333,7 @@ const PROGRAM_TYPES = [
 export default function CityDashboard({
   daycares,
   citySlug,
+  countySlug,
   cityDisplay,
   basePath = "",
   externalMapCenter,
@@ -249,6 +350,7 @@ export default function CityDashboard({
   const [pfccEnabled, setPfccEnabled] = useState(false);
   const [selectedRatings, setSelectedRatings] = useState<string[]>([]);
   const [selectedProgramTypes, setSelectedProgramTypes] = useState<string[]>([]);
+  const [selectedCity, setSelectedCity] = useState("");
   const [hydratedDaycares, setHydratedDaycares] = useState<Daycare[]>(daycares);
 
   useEffect(() => {
@@ -256,14 +358,18 @@ export default function CityDashboard({
   }, [daycares]);
 
   useEffect(() => {
-    if (!citySlug) return;
+    if (!citySlug && !countySlug) return;
     const citySlugValue = citySlug;
+    const countySlugValue = countySlug;
 
     let isCancelled = false;
 
     async function hydrateCityDaycares() {
       try {
-        const response = await fetch(`/api/daycares?city=${encodeURIComponent(citySlugValue)}`);
+        const queryString = citySlugValue
+          ? `city=${encodeURIComponent(citySlugValue)}`
+          : `county=${encodeURIComponent(countySlugValue || "")}`;
+        const response = await fetch(`/api/daycares?${queryString}`);
         if (!response.ok) return;
         const data = await response.json();
         if (!isCancelled && Array.isArray(data)) {
@@ -278,7 +384,7 @@ export default function CityDashboard({
     return () => {
       isCancelled = true;
     };
-  }, [citySlug]);
+  }, [citySlug, countySlug]);
 
   const mapCenter = externalMapCenter !== undefined ? externalMapCenter : internalMapCenter;
   const setMapCenter = onExternalMapCenterChange ?? setInternalMapCenter;
@@ -307,6 +413,7 @@ export default function CityDashboard({
     setPfccEnabled(false);
     setSelectedRatings([]);
     setSelectedProgramTypes([]);
+    setSelectedCity("");
     setSearchQuery("");
     setMapCenter(null);
     setLocationQuery("");
@@ -320,6 +427,15 @@ export default function CityDashboard({
     setLocationSearchClearSignal((value) => value + 1);
   };
 
+  const cities = useMemo(() => {
+    const citySet = new Set<string>();
+    hydratedDaycares.forEach((daycare) => {
+      const city = daycare["CITY"];
+      if (city) citySet.add(city);
+    });
+    return Array.from(citySet).sort((a, b) => prettyCity(a).localeCompare(prettyCity(b)));
+  }, [hydratedDaycares]);
+
   const filteredDaycares = useMemo(() => {
     let result = hydratedDaycares;
 
@@ -330,6 +446,10 @@ export default function CityDashboard({
         const name = (d["PROGRAM NAME"] || "").toLowerCase();
         return name.includes(lowerQuery);
       });
+    }
+
+    if (selectedCity) {
+      result = result.filter((d) => (d["CITY"] || "") === selectedCity);
     }
 
     // 2. Filter by PFCC Agreement (Publicly Funded)
@@ -354,7 +474,7 @@ export default function CityDashboard({
     }
 
     return result;
-  }, [hydratedDaycares, searchQuery, pfccEnabled, selectedRatings, selectedProgramTypes]);
+  }, [hydratedDaycares, searchQuery, selectedCity, pfccEnabled, selectedRatings, selectedProgramTypes]);
 
   // Limit rendered list for performance (pagination can come later)
   const displayList = filteredDaycares.slice(0, 50);
@@ -411,6 +531,10 @@ export default function CityDashboard({
             toggleRating={toggleRating}
             selectedProgramTypes={selectedProgramTypes}
             toggleProgramType={toggleProgramType}
+            selectedCity={selectedCity}
+            setSelectedCity={setSelectedCity}
+            cities={cities}
+            enableCityFilter={Boolean(countySlug)}
             mapCenter={mapCenter}
             onClearAll={clearAllFilters}
           />
@@ -452,6 +576,10 @@ export default function CityDashboard({
                     toggleRating={toggleRating}
                     selectedProgramTypes={selectedProgramTypes}
                     toggleProgramType={toggleProgramType}
+                    selectedCity={selectedCity}
+                    setSelectedCity={setSelectedCity}
+                    cities={cities}
+                    enableCityFilter={Boolean(countySlug)}
                     mapCenter={mapCenter}
                     onClearAll={clearAllFilters}
                   />

@@ -38,6 +38,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
       .filter(Boolean)
   )
   const citySlugs = Array.from(citySlugSet).sort()
+
+  const countySlugSet = new Set(
+    daycares
+      .map(d => slugify(d['COUNTY'] || ''))
+      .filter(Boolean)
+  )
+  const countySlugs = Array.from(countySlugSet).sort()
   
   const urls: MetadataRoute.Sitemap = [
     {
@@ -58,7 +65,22 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'weekly',
       priority: 0.9,
     },
+    {
+      url: `${baseUrl}/counties`,
+      lastModified,
+      changeFrequency: 'weekly',
+      priority: 0.9,
+    },
   ]
+
+  for (const countySlug of countySlugs) {
+    urls.push({
+      url: `${baseUrl}/daycares/county/${countySlug}`,
+      lastModified,
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    })
+  }
   
   for (const citySlug of citySlugs) {
     urls.push({
