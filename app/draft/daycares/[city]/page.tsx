@@ -38,11 +38,14 @@ export default async function DraftCityDaycaresPage({ params }: Props) {
     notFound();
   }
 
+  const citySnippetCopy = `Compare ${matches.length} licensed daycare programs in ${cityDisplay}, OH. Review SUTQ ratings, locations, and contact details.`;
+
   return (
     <DraftCityDaycaresPageClient
       cityDisplay={cityDisplay}
       citySlug={citySlug}
       cityCount={matches.length}
+      citySnippetCopy={citySnippetCopy}
       initialDaycares={matches.slice(0, 15)}
       basePath="/draft"
       homeHref="/draft"

@@ -19,8 +19,35 @@ const inter = Inter({
   display: "swap",
 });
 
+const siteUrl = "https://ohioparenthub.com";
+const siteName = "Ohio Parent Hub";
+const siteDescription =
+  "Find licensed daycares, preschools, and trusted parenting resources across Ohio.";
+
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "@id": `${siteUrl}/#organization`,
+  name: siteName,
+  url: siteUrl,
+  description: siteDescription,
+  sameAs: [],
+};
+
+const websiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "@id": `${siteUrl}/#website`,
+  name: siteName,
+  url: siteUrl,
+  description: siteDescription,
+  publisher: {
+    "@id": `${siteUrl}/#organization`,
+  },
+};
+
 export const metadata: Metadata = {
-  metadataBase: new URL('https://ohioparenthub.com'),
+  metadataBase: new URL(siteUrl),
   title: {
     default: 'Ohio Parent Hub | Daycare & Family Resources',
     template: '%s | Ohio Parent Hub',
@@ -35,12 +62,21 @@ export const metadata: Metadata = {
     siteName: 'Ohio Parent Hub',
     locale: 'en_US',
     type: 'website',
+    images: [
+      {
+        url: '/og-default.png',
+        width: 1200,
+        height: 630,
+        alt: 'Ohio Parent Hub — Licensed Daycare & Family Resources',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Ohio Parent Hub',
     description:
       'Find licensed daycares and trusted parenting resources across Ohio.',
+    images: ['/og-default.png'],
   },
 };
 
@@ -56,6 +92,9 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${dmSerif.variable} font-sans antialiased bg-background text-foreground`}
       >
+        <Script id="site-jsonld" type="application/ld+json" strategy="afterInteractive">
+          {JSON.stringify([organizationSchema, websiteSchema])}
+        </Script>
         {gaMeasurementId && (
           <>
             <Script

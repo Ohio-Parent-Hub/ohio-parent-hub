@@ -12,6 +12,7 @@ interface DraftCityDaycaresPageClientProps {
   cityDisplay: string;
   citySlug: string;
   cityCount: number;
+  citySnippetCopy: string;
   initialDaycares: DaycareRow[];
   basePath?: string;
   homeHref?: string;
@@ -53,6 +54,7 @@ export default function DraftCityDaycaresPageClient({
   cityDisplay,
   citySlug,
   cityCount,
+  citySnippetCopy,
   initialDaycares,
   basePath = "/draft",
   homeHref = "/draft",
@@ -89,7 +91,7 @@ export default function DraftCityDaycaresPageClient({
                 Best Daycares in {cityDisplay || "Ohio"}
               </h1>
               <p className="mt-4 max-w-2xl text-base leading-relaxed" style={{ color: `${dark}bb` }}>
-                Compare licensed childcare providers in {cityDisplay || "your city"} and explore program details, quality ratings, and nearby options.
+                {citySnippetCopy}
               </p>
               <div className="mt-6 max-w-xl">
                 <LocationSearch

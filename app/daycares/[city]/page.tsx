@@ -35,6 +35,10 @@ function daycareDisplayName(daycare: DaycareRow) {
   return toTitleCaseIfAllCaps(daycare["PROGRAM NAME"] || "") || "Licensed Daycare";
 }
 
+function buildCitySnippetCopy(cityDisplay: string, count: number) {
+  return `Compare ${count} licensed daycare programs in ${cityDisplay}, OH. Review SUTQ ratings, locations, and contact details.`;
+}
+
 export async function generateStaticParams() {
   const citySlugs = Array.from(
     new Set(
@@ -71,10 +75,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       },
     };
   }
+
+  const citySnippetCopy = buildCitySnippetCopy(cityDisplay, count);
   
   return {
     title: `Best Daycares in ${cityDisplay}, Ohio`,
-    description: `Compare ${count} licensed daycare and childcare programs in ${cityDisplay}, OH. Explore SUTQ ratings, locations, and key provider details.`,
+    description: citySnippetCopy,
     keywords: [
       `best daycares in ${cityDisplay}`,
       `${cityDisplay} daycare`,
@@ -87,8 +93,22 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     openGraph: {
       title: `Best Daycares in ${cityDisplay}, Ohio`,
-      description: `Compare ${count} licensed childcare programs in ${cityDisplay}, Ohio.`,
+      description: citySnippetCopy,
       url: `https://ohioparenthub.com/daycares/${citySlug}`,
+      images: [
+        {
+          url: "/og-default.png",
+          width: 1200,
+          height: 630,
+          alt: `Best Daycares in ${cityDisplay}, Ohio | Ohio Parent Hub`,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `Best Daycares in ${cityDisplay}, Ohio`,
+      description: citySnippetCopy,
+      images: ["/og-default.png"],
     },
   };
 }
@@ -109,6 +129,8 @@ export default async function CityDaycaresPage({ params }: Props) {
   if (!citySlug || matches.length === 0) {
     notFound();
   }
+
+  const citySnippetCopy = buildCitySnippetCopy(cityDisplay, matches.length);
 
   const alphabeticalMatches = [...matches].sort((a, b) => {
     const aName = daycareDisplayName(a);
@@ -141,6 +163,7 @@ export default async function CityDaycaresPage({ params }: Props) {
         cityDisplay={cityDisplay}
         citySlug={citySlug}
         cityCount={matches.length}
+        citySnippetCopy={citySnippetCopy}
         initialDaycares={matches.slice(0, 15)}
         basePath=""
         homeHref="/"

@@ -162,6 +162,10 @@ The site has real structural advantages as a statewide daycare directory — cle
 
 ### 5) Snippet-control signals are weak on city and daycare pages, increasing rewrite/truncation risk
 
+Status (Feb 25, 2026):
+- ✅ Completed (daycare detail template): Meta descriptions were tightened to a dynamic template capped to a safer length band to reduce truncation and repetitive phrasing.
+- ✅ Completed (city pages): City metadata and first visible intro snippet copy now use concise, intent-aligned phrasing to reduce rewrite risk and snippet noise.
+
 **Observed:**
 - Google snippets for city pages are frequently pulled from dense listing text (ratings, addresses, labels), not clean summary text
 - This is consistent with over-noisy body content and weak snippet anchor placement near the top of page content
@@ -339,6 +343,9 @@ Merging variants alone is insufficient. The better architectural answer:
 
 ### 15) Missing `aggregateRating` on daycare detail pages
 
+Status (Feb 25, 2026):
+- ✅ Completed: `aggregateRating` now ships on daycare detail `ChildCare` JSON-LD when a valid SUTQ rating (1–3) exists.
+
 **Observed:** Daycare detail pages have `ChildCare` schema but no `aggregateRating`. SUTQ ratings are state-verified, 1–3 star scores — exactly the kind of authoritative rating data Google will render as star badges in SERPs.
 
 **Impact:** Star badges increase CTR significantly. No individual daycare website has a state-verified rating structured into their schema. This is a competitive advantage unique to this site.
@@ -352,6 +359,9 @@ Merging variants alone is insufficient. The better architectural answer:
 ---
 
 ### 16) Missing `WebSite`/`Organization` schema
+
+Status (Feb 25, 2026):
+- ✅ Completed: site-level `Organization` + `WebSite` JSON-LD added in `app/layout.tsx`.
 
 **Observed:** Breadcrumb schema and daycare `ChildCare` schema exist. No site-level entity schema.
 
@@ -371,6 +381,10 @@ Merging variants alone is insufficient. The better architectural answer:
 
 ### 18) Open Graph image missing on key templates
 
+Status (Feb 25, 2026):
+- ✅ Completed: branded OG image created and layout-level `og:image` + Twitter image defaults added
+- ✅ Completed: route-specific Twitter card fields and route-specific OG image overrides on city/detail metadata
+
 **Additional validation (Ahrefs OG sample, Feb 24):**
 - Ahrefs reported 5,842 URLs with incomplete Open Graph tags in this partial crawl sample (crawl was not confirmed complete)
 - The reported OG pattern was consistent across all sampled URLs: `og:url`, `og:description`, and `og:title` present, with `og:image` (and typically `og:type`) missing
@@ -380,6 +394,15 @@ Merging variants alone is insufficient. The better architectural answer:
 
 **Recommendation:**
 - Create a branded 1200×630 OG image and define it in the layout-level Open Graph metadata, then override with page-specific images on city and detail templates
+
+**Preview cache refresh note (operational):**
+- Social platforms cache OG/Twitter preview data per URL, so updated title/description/image may not appear immediately after deploy.
+- Use platform debuggers to force re-scrape after metadata changes:
+	- Facebook Sharing Debugger (also helps many Meta-linked preview surfaces)
+	- LinkedIn Post Inspector
+	- X/Twitter Card Validator
+- Include at least one representative URL from each template type (`/`, one city page, one daycare detail page) in post-deploy checks.
+- This does not change SEO rankings directly; it ensures users see the newest preview card and avoids stale thumbnails/snippets during sharing.
 
 ---
 
@@ -406,6 +429,7 @@ Table stakes. Without these, everything else is undermined by 404s, duplicate ti
 2. [x] Fix title template duplication — strip `| Ohio Parent Hub` from all per-page title strings
 3. [x] Fix `GlobalDashboard.tsx` links — include city slug in all three daycare link constructions (lines 753, 776, 784)
 4. [x] Fix sitemap — add `/daycares` and `/cities`, deduplicate city entries, replace `new Date()` with a stable build timestamp
+5. [x] Shorten daycare detail meta-description template and reduce repetitive phrasing
 
 ### Phase 2 — Static Generation + Payload Reduction (Days 4–7)
 The largest silent drag on crawl quality and the fastest way to improve Googlebot's experience across 8,000+ pages.
@@ -421,15 +445,18 @@ What actually lets the site outrank individual daycare websites. Technical fixes
 1. Add editorial content to city pages: intro paragraph, county context, SUTQ explainer, "how to choose" section
 2. [x] Add `ItemList` schema to city pages (10 alphabetically ordered licensed programs as ordered list items)
 3. Add FAQ content on city pages; optionally add FAQ schema with conservative rich-result expectations
-4. Add `aggregateRating` to `ChildCare` schema on detail pages where SUTQ rating exists
-5. Add `Organization` + `WebSite` schema to `app/layout.tsx`
+4. [x] Add `aggregateRating` to `ChildCare` schema on detail pages where SUTQ rating exists
+5. [x] Add `Organization` + `WebSite` schema to `app/layout.tsx`
 
 ### Phase 4 — Architecture + Authority (Week 3+)
 
 1. Build county hub pages (`/daycares/county/[county-slug]`) to consolidate the 270 single-listing city stubs
 2. Redirect city pages with fewer than 3 listings to their county hub
 3. Add upward internal links: detail → city, city → county, county → `/cities`
-4. Add Twitter card and OG image fields to city and detail page metadata
+4. Social metadata rollout
+	- [x] Add branded OG image and layout-level social image defaults
+	- [x] Add route-specific Twitter card fields on city/detail metadata
+	- [x] Add route-specific OG image overrides on city/detail metadata
 5. Merge confirmed city name variant groups in the data pipeline
 6. After Phases 1–3 are stable, evaluate IndexNow as a crawl-speed optimization (primarily for Bing/IndexNow partners) and submit only changed/new/removed URLs per data publish
 

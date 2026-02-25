@@ -35,6 +35,67 @@ function canonicalDaycareSlug(daycare: DaycareRow) {
   return `${programNumber}-${slugify(name)}-${slugify(city)}`;
 }
 
+function normalizeProgramType(programType: string) {
+  const cleanType = toTitleCaseIfAllCaps(programType || "").trim();
+  if (!cleanType || cleanType.toLowerCase() === "not specified") {
+    return "daycare program";
+  }
+  return cleanType.toLowerCase();
+}
+
+function trimForMeta(text: string, maxLength = 155) {
+  if (text.length <= maxLength) return text;
+
+  const trimmed = text.slice(0, maxLength - 1);
+  const lastSpace = trimmed.lastIndexOf(" ");
+  if (lastSpace > 100) {
+    return `${trimmed.slice(0, lastSpace)}…`;
+  }
+
+  return `${trimmed}…`;
+}
+
+function buildDaycareDescription(params: {
+  name: string;
+  city: string;
+  sutq: string;
+  programType: string;
+  maxLength?: number;
+}) {
+  const { name, city, sutq, programType, maxLength = 155 } = params;
+  const location = city ? `${city}, Ohio` : "Ohio";
+  const sutqValue = (sutq || "").trim();
+  const hasRatedSutq = Boolean(sutqValue) && sutqValue.toLowerCase() !== "not rated";
+  const sutqSnippet = hasRatedSutq ? ` SUTQ: ${sutqValue}.` : "";
+  const normalizedType = normalizeProgramType(programType);
+
+  const templates = [
+    `${name} is a licensed ${normalizedType} in ${location}.${sutqSnippet} View licensing, address, and contact details.`,
+    `${name} is a licensed daycare in ${location}.${sutqSnippet} View licensing, address, and contact details.`,
+    `Licensed daycare profile in ${location}.${sutqSnippet} View licensing, address, and contact details.`,
+  ];
+
+  for (const template of templates) {
+    if (template.length <= maxLength) {
+      return template;
+    }
+  }
+
+  return trimForMeta(templates[templates.length - 1], maxLength);
+}
+
+function parseSutqRatingValue(sutq: string): 1 | 2 | 3 | null {
+  const match = (sutq || "").match(/\d+/);
+  if (!match) return null;
+
+  const numericValue = Number.parseInt(match[0], 10);
+  if (numericValue >= 1 && numericValue <= 3) {
+    return numericValue as 1 | 2 | 3;
+  }
+
+  return null;
+}
+
 export async function generateStaticParams() {
   const all = loadDaycares();
 
@@ -64,11 +125,26 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const name = toTitleCaseIfAllCaps(daycare["PROGRAM NAME"] || "") || "Daycare";
   const city = toTitleCaseIfAllCaps(daycare["CITY"] || "");
   const sutq = daycare["SUTQ RATING"] || "Not Rated";
+  const programType = daycare["PROGRAM TYPE"] || "";
   const canonicalSlug = canonicalDaycareSlug(daycare);
+  const pageDescription = buildDaycareDescription({
+    name,
+    city,
+    sutq,
+    programType,
+    maxLength: 155,
+  });
+  const socialDescription = buildDaycareDescription({
+    name,
+    city,
+    sutq,
+    programType,
+    maxLength: 140,
+  });
   
   return {
     title: `${name} in ${city}, OH | Daycare Profile`,
-    description: `${name} is a licensed daycare in ${city}, Ohio. SUTQ Rating: ${sutq}. View address, contact details, and program information.`,
+    description: pageDescription,
     keywords: [
       `${name}`,
       `${city} daycare`,
@@ -81,8 +157,22 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     openGraph: {
       title: `${name} in ${city}, Ohio | Daycare Profile`,
-      description: `${name} is a licensed daycare in ${city}, Ohio. SUTQ Rating: ${sutq}.`,
+      description: socialDescription,
       url: `https://ohioparenthub.com/daycare/${canonicalSlug}`,
+      images: [
+        {
+          url: "/og-default.png",
+          width: 1200,
+          height: 630,
+          alt: `${name} daycare profile in ${city}, Ohio | Ohio Parent Hub`,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${name} in ${city}, Ohio | Daycare Profile`,
+      description: socialDescription,
+      images: ["/og-default.png"],
     },
   };
 }
@@ -123,6 +213,7 @@ export default async function DaycarePage({ params }: Props) {
   const lat = Number.parseFloat(String(daycare["LAT"] ?? ""));
   const lng = Number.parseFloat(String(daycare["LNG"] ?? ""));
   const hasCoordinates = Number.isFinite(lat) && Number.isFinite(lng);
+  const sutqRatingValue = parseSutqRatingValue(sutq);
 
   // Schema.org LocalBusiness structured data
   const schema = {
@@ -145,6 +236,15 @@ export default async function DaycarePage({ params }: Props) {
         longitude: lng,
       },
       hasMap: `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`,
+    }),
+    ...(sutqRatingValue !== null && {
+      aggregateRating: {
+        "@type": "AggregateRating",
+        ratingValue: sutqRatingValue,
+        bestRating: 3,
+        worstRating: 1,
+        ratingCount: 1,
+      },
     }),
     ...(phone && { telephone: phone }),
     ...(email && { email }),
