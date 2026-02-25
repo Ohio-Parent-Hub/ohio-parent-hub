@@ -7,6 +7,7 @@ import type { Metadata } from "next";
 
 import { Button } from "@/components/ui/button";
 import { toTitleCaseIfAllCaps } from "@/lib/utils";
+import { getCitiesWithMetroEntry } from "@/lib/metroAreas";
 import { MapPin, Search, ShieldCheck, Baby, ArrowRight, Heart, Sparkles } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -80,13 +81,13 @@ export default function HomePage() {
   const daycares = loadDaycares();
   const cityCounts = new Map<string, number>();
   daycares.forEach((d) => { const c = d["CITY"]; if (c) cityCounts.set(c, (cityCounts.get(c) || 0) + 1); });
-  const topCities = Array.from(cityCounts.entries())
-    .sort((a, b) => b[1] - a[1])
+  const topCities = getCitiesWithMetroEntry(daycares)
+    .sort((a, b) => b.count - a.count)
     .slice(0, 24)
-    .map(([city, count]) => ({
-      city: toTitleCaseIfAllCaps(city),
+    .map(({ name, count, slug }) => ({
+      city: toTitleCaseIfAllCaps(name),
       count,
-      slug: slugify(city),
+      slug,
     }));
 
   return (

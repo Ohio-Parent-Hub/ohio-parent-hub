@@ -1,8 +1,8 @@
 import fs from "node:fs";
 import path from "node:path";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
-import { slugify, toTitleCaseIfAllCaps } from "@/lib/utils";
 import CityBrowseClient from "@/components/CityBrowseClient";
+import { getCitiesWithMetroEntry } from "@/lib/metroAreas";
 import type { Metadata } from "next";
 import type { CSSProperties } from "react";
 
@@ -61,25 +61,7 @@ interface CityData {
 
 export default function CitiesPage() {
   const daycares = loadDaycares();
-  
-  // Aggregate by city
-  const cityMap = new Map<string, number>();
-  daycares.forEach((d) => {
-    const city = d["CITY"];
-    if (city) {
-      // Normalize city name (e.g., proper casing if inconsistent, but usually raw is fine)
-      cityMap.set(city, (cityMap.get(city) || 0) + 1);
-    }
-  });
-
-  // Convert to array and sort alphabetically
-  const allCities: CityData[] = Array.from(cityMap.entries())
-    .map(([name, count]) => ({
-      name: toTitleCaseIfAllCaps(name),
-      slug: slugify(name),
-      count
-    }))
-    .sort((a, b) => a.name.localeCompare(b.name));
+  const allCities: CityData[] = getCitiesWithMetroEntry(daycares);
 
   return (
     <div className="min-h-screen" style={{ background: cream, color: dark }}>

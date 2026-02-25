@@ -40,6 +40,7 @@ import {
 import { Filter, Map as MapIcon, Info, Check, ChevronsUpDown } from "lucide-react";
 import { FILTER_DEFINITIONS } from "@/data/filterDefinitions";
 import { cn, toTitleCaseIfAllCaps } from "@/lib/utils";
+import { isMetroCitySlug } from "@/lib/metroAreas";
 
 type Daycare = Record<string, string>;
 
@@ -390,6 +391,7 @@ export default function CityDashboard({
   const setMapCenter = onExternalMapCenterChange ?? setInternalMapCenter;
   const locationQuery = externalLocationQuery !== undefined ? externalLocationQuery : internalLocationQuery;
   const setLocationQuery = onExternalLocationQueryChange ?? setInternalLocationQuery;
+  const enableCityFilter = Boolean(countySlug) || isMetroCitySlug(citySlug);
 
   // Toggle rating filter
   const toggleRating = (rating: string) => {
@@ -534,7 +536,7 @@ export default function CityDashboard({
             selectedCity={selectedCity}
             setSelectedCity={setSelectedCity}
             cities={cities}
-            enableCityFilter={Boolean(countySlug)}
+            enableCityFilter={enableCityFilter}
             mapCenter={mapCenter}
             onClearAll={clearAllFilters}
           />
@@ -551,7 +553,7 @@ export default function CityDashboard({
                     <span className="flex items-center">
                       <Filter className="mr-2 h-4 w-4" /> Filters
                     </span>
-                    {(pfccEnabled || selectedRatings.length > 0 || selectedProgramTypes.length > 0 || searchQuery || mapCenter) && (
+                    {(pfccEnabled || selectedRatings.length > 0 || selectedProgramTypes.length > 0 || searchQuery || mapCenter || selectedCity) && (
                       <Badge variant="secondary" className="h-5 px-1.5 text-xs">Active</Badge>
                     )}
                   </Button>
@@ -579,7 +581,7 @@ export default function CityDashboard({
                     selectedCity={selectedCity}
                     setSelectedCity={setSelectedCity}
                     cities={cities}
-                    enableCityFilter={Boolean(countySlug)}
+                    enableCityFilter={enableCityFilter}
                     mapCenter={mapCenter}
                     onClearAll={clearAllFilters}
                   />

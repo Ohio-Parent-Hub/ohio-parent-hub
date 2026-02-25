@@ -4,6 +4,10 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import DraftCityDaycaresPageClient from "@/components/DraftCityDaycaresPageClient";
 import { slugify, toTitleCaseIfAllCaps } from "@/lib/utils";
+import {
+  COLUMBUS_METRO_SLUG,
+  getDaycaresForCitySlug,
+} from "@/lib/metroAreas";
 
 type Props = { params: Promise<{ city?: string }> };
 
@@ -48,7 +52,9 @@ export async function generateStaticParams() {
     )
   );
 
-  return citySlugs.map((city) => ({ city }));
+  citySlugs.push(COLUMBUS_METRO_SLUG);
+
+  return Array.from(new Set(citySlugs)).map((city) => ({ city }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -58,10 +64,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const cityDisplay = prettyCity(cityParam);
   
   const all = loadDaycares();
-  const matches = all.filter((d) => {
-    const dataCitySlug = slugify(d["CITY"] || "");
-    return dataCitySlug === citySlug;
-  });
+  const matches = getDaycaresForCitySlug(all, citySlug);
   
   const count = matches.length;
 
@@ -120,11 +123,7 @@ export default async function CityDaycaresPage({ params }: Props) {
   const cityDisplay = prettyCity(cityParam);
 
   const all = loadDaycares();
-
-  const matches = all.filter((d) => {
-    const dataCitySlug = slugify(d["CITY"] || "");
-    return dataCitySlug === citySlug;
-  });
+  const matches = getDaycaresForCitySlug(all, citySlug);
 
   if (!citySlug || matches.length === 0) {
     notFound();
