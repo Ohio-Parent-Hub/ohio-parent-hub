@@ -1,13 +1,16 @@
 import fs from "node:fs";
 import path from "node:path";
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import DraftCityDaycaresPageClient from "@/components/DraftCityDaycaresPageClient";
 import { slugify, toTitleCaseIfAllCaps } from "@/lib/utils";
 import {
   getDaycaresForCitySlug,
   getMetroCitySlugs,
   getMetroDisplayNameBySlug,
+  resolveCanonicalCityName,
+  resolveCanonicalCitySlugFromName,
+  resolveCanonicalCitySlugFromSlug,
 } from "@/lib/metroAreas";
 
 type Props = { params: Promise<{ city?: string }> };
@@ -32,8 +35,8 @@ function loadDaycares(): DaycareRow[] {
 function canonicalDaycareSlug(daycare: DaycareRow) {
   const programNumber = daycare["PROGRAM NUMBER"] || "";
   const name = daycare["PROGRAM NAME"] || "";
-  const city = daycare["CITY"] || "";
-  return `${programNumber}-${slugify(name)}-${slugify(city)}`;
+  const citySlug = resolveCanonicalCitySlugFromName(daycare["CITY"] || "");
+  return `${programNumber}-${slugify(name)}-${citySlug}`;
 }
 
 function daycareDisplayName(daycare: DaycareRow) {
@@ -49,7 +52,7 @@ export async function generateStaticParams() {
   const citySlugs = Array.from(
     new Set(
       allDaycares
-        .map((d) => slugify(d["CITY"] || ""))
+        .map((d) => resolveCanonicalCitySlugFromName(d["CITY"] || ""))
         .filter(Boolean)
     )
   );
@@ -62,11 +65,15 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { city } = await params;
   const cityParam = city ?? "";
-  const citySlug = slugify(cityParam);
-  const cityDisplay = getMetroDisplayNameBySlug(citySlug) || prettyCity(cityParam);
+  const requestedCitySlug = slugify(cityParam);
+  const citySlug = resolveCanonicalCitySlugFromSlug(requestedCitySlug);
   
   const all = loadDaycares();
   const matches = getDaycaresForCitySlug(all, citySlug);
+  const cityDisplay =
+    getMetroDisplayNameBySlug(citySlug)
+    || toTitleCaseIfAllCaps(resolveCanonicalCityName(matches[0]?.["CITY"] || cityParam))
+    || prettyCity(cityParam);
   
   const count = matches.length;
 
@@ -121,11 +128,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function CityDaycaresPage({ params }: Props) {
   const { city } = await params;
   const cityParam = city ?? "";
-  const citySlug = slugify(cityParam);
-  const cityDisplay = getMetroDisplayNameBySlug(citySlug) || prettyCity(cityParam);
+  const requestedCitySlug = slugify(cityParam);
+  const citySlug = resolveCanonicalCitySlugFromSlug(requestedCitySlug);
+
+  if (requestedCitySlug && citySlug && requestedCitySlug !== citySlug) {
+    permanentRedirect(`/daycares/${citySlug}`);
+  }
 
   const all = loadDaycares();
   const matches = getDaycaresForCitySlug(all, citySlug);
+  const cityDisplay =
+    getMetroDisplayNameBySlug(citySlug)
+    || toTitleCaseIfAllCaps(resolveCanonicalCityName(matches[0]?.["CITY"] || cityParam))
+    || prettyCity(cityParam);
 
   if (!citySlug || matches.length === 0) {
     notFound();

@@ -40,8 +40,8 @@ import {
 } from "@/components/ui/popover";
 import { Filter, Map as MapIcon, Info, Check, ChevronsUpDown } from "lucide-react";
 import { FILTER_DEFINITIONS } from "@/data/filterDefinitions";
-import { cn, toTitleCaseIfAllCaps } from "@/lib/utils";
-import { isMetroCitySlug } from "@/lib/metroAreas";
+import { cn, slugify, toTitleCaseIfAllCaps } from "@/lib/utils";
+import { isMetroCitySlug, resolveCanonicalCityName, resolveCanonicalCitySlugFromName } from "@/lib/metroAreas";
 
 type Daycare = Record<string, string>;
 
@@ -59,15 +59,6 @@ interface CityDashboardProps {
   onExternalLocationQueryChange?: (query: string) => void;
   onClearAllFilters?: () => void;
   hideHeaderLocationSearch?: boolean;
-}
-
-function slugify(s: string) {
-  return (s || "")
-    .toLowerCase()
-    .trim()
-    .replace(/&/g, "and")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)+/g, "");
 }
 
 function withListingContext(daycarePath: string, context: "city" | "county", returnTo: string) {
@@ -520,7 +511,7 @@ export default function CityDashboard({
   const cities = useMemo(() => {
     const citySet = new Set<string>();
     hydratedDaycares.forEach((daycare) => {
-      const city = daycare["CITY"];
+      const city = resolveCanonicalCityName(daycare["CITY"] || "");
       if (city) citySet.add(city);
     });
     return Array.from(citySet).sort((a, b) => prettyCity(a).localeCompare(prettyCity(b)));
@@ -539,7 +530,7 @@ export default function CityDashboard({
     }
 
     if (selectedCity) {
-      result = result.filter((d) => (d["CITY"] || "") === selectedCity);
+      result = result.filter((d) => resolveCanonicalCityName(d["CITY"] || "") === selectedCity);
     }
 
     // 2. Filter by PFCC Agreement (Publicly Funded)
@@ -576,11 +567,12 @@ export default function CityDashboard({
       .map((d) => {
         const id = d["PROGRAM NUMBER"];
         const name = d["PROGRAM NAME"] || "Daycare";
-        const city = d["CITY"] || cityDisplay;
+        const city = resolveCanonicalCityName(d["CITY"] || cityDisplay);
         const displayName = toTitleCaseIfAllCaps(name);
         const displayCity = toTitleCaseIfAllCaps(city);
+        const citySlug = resolveCanonicalCitySlugFromName(city);
         const url = withListingContext(
-          `${basePath}/daycare/${id}-${slugify(name)}-${slugify(city)}`,
+          `${basePath}/daycare/${id}-${slugify(name)}-${citySlug}`,
           linkContext,
           returnTo,
         );
@@ -740,12 +732,12 @@ export default function CityDashboard({
               const sutq = d["SUTQ RATING"] || "—";
               const street = d["STREET ADDRESS"] || "";
               const displayStreet = toTitleCaseIfAllCaps(street);
-              const city = d["CITY"] || cityDisplay;
+                const city = resolveCanonicalCityName(d["CITY"] || cityDisplay);
               const displayCity = toTitleCaseIfAllCaps(city);
               const programType = d["PROGRAM TYPE"] || "—";
               const displayProgramType = toTitleCaseIfAllCaps(programType);
               const pfcc = d["PFCC AGREEMENT"] === "Y";
-              const slug = `${id}-${slugify(name)}-${slugify(city)}`;
+                const slug = `${id}-${slugify(name)}-${resolveCanonicalCitySlugFromName(city)}`;
               const detailHref = withListingContext(`${basePath}/daycare/${slug}`, linkContext, returnTo);
 
               return (

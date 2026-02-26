@@ -2,7 +2,7 @@ import type { MetadataRoute } from 'next'
 import fs from 'node:fs'
 import path from 'node:path'
 import { slugify } from '@/lib/utils'
-import { getMetroCitySlugs } from '@/lib/metroAreas'
+import { getMetroCitySlugs, resolveCanonicalCitySlugFromName } from '@/lib/metroAreas'
 
 type DaycareRow = Record<string, string>
 
@@ -35,7 +35,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   
   const citySlugSet = new Set(
     daycares
-      .map(d => slugify(d['CITY'] || ''))
+      .map(d => resolveCanonicalCitySlugFromName(d['CITY'] || ''))
       .filter(Boolean)
   )
   getMetroCitySlugs(daycares).forEach((metroSlug) => citySlugSet.add(metroSlug))
@@ -96,11 +96,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
   for (const daycare of daycares) {
     const programNumber = daycare['PROGRAM NUMBER'] || ''
     const name = daycare['PROGRAM NAME'] || ''
-    const city = daycare['CITY'] || ''
+    const citySlug = resolveCanonicalCitySlugFromName(daycare['CITY'] || '')
     
     if (!programNumber) continue
     
-    const slug = `${programNumber}-${slugify(name)}-${slugify(city)}`
+    const slug = `${programNumber}-${slugify(name)}-${citySlug}`
     urls.push({
       url: `${baseUrl}/daycare/${slug}`,
       lastModified,

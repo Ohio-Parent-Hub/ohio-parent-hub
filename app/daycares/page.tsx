@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import DraftDaycaresPageClient from "@/components/DraftDaycaresPageClient";
 import fs from "node:fs";
 import path from "node:path";
+import { resolveCanonicalCityName } from "@/lib/metroAreas";
 
 export const metadata: Metadata = {
   title: "Best Daycares in Ohio | Search Licensed Child Care Near You",
@@ -47,7 +48,7 @@ function getInitialDaycares(daycares: DaycareRow[]) {
 
 export default function GlobalSearchPage() {
   const daycares = loadDaycares();
-  const cityCount = new Set(daycares.map((d) => d.CITY).filter(Boolean)).size;
+  const cityCount = new Set(daycares.map((d) => resolveCanonicalCityName(d.CITY || "")).filter(Boolean)).size;
   const initialDaycares = getInitialDaycares(daycares);
 
   return (

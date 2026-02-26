@@ -1,0 +1,190 @@
+confidence,city_a,city_b,city_a_slug,city_b_slug,city_a_counties,city_b_counties,county_overlap,normalized_a,normalized_b,edit_distance,blocked_pair,approved_alias_exists,suggested_action,reason
+high,BEDFORD HEIGHTS,BEDFORD HTS,bedford-heights,bedford-hts,CUYAHOGA,CUYAHOGA,yes,bedford heights,bedford heights,0,no,no,REVIEW,Same normalized city with county overlap.
+high,BROADVIEW HEIGHTS,BROADVIEW HTS,broadview-heights,broadview-hts,CUYAHOGA,CUYAHOGA,yes,broadview heights,broadview heights,0,no,no,REVIEW,Same normalized city with county overlap.
+high,CLEVELAND HEIGHTS,CLEVELAND HTS,cleveland-heights,cleveland-hts,CUYAHOGA,CUYAHOGA,yes,cleveland heights,cleveland heights,0,no,no,REVIEW,Same normalized city with county overlap.
+high,CLEVELAND HEIGHTS,CLEVELAND HTS.,cleveland-heights,cleveland-hts,CUYAHOGA,CUYAHOGA,yes,cleveland heights,cleveland heights,0,no,no,REVIEW,Same normalized city with county overlap.
+high,CLEVELAND HTS,CLEVELAND HTS.,cleveland-hts,cleveland-hts,CUYAHOGA,CUYAHOGA,yes,cleveland heights,cleveland heights,0,no,no,REVIEW,Same normalized city with county overlap.
+high,CONCORD TWNSHP,CONCORD TWP,concord-twnshp,concord-twp,LAKE,LAKE,yes,concord township,concord township,0,no,no,REVIEW,Same normalized city with county overlap.
+high,CONCORD TWNSHP,CONCORD TWSP,concord-twnshp,concord-twsp,LAKE,LAKE,yes,concord township,concord township,0,no,no,REVIEW,Same normalized city with county overlap.
+high,CONCORD TWP,CONCORD TWSP,concord-twp,concord-twsp,LAKE,LAKE,yes,concord township,concord township,0,no,no,REVIEW,Same normalized city with county overlap.
+high,GARFIELD HEIGHTS,GARFIELD HTS,garfield-heights,garfield-hts,CUYAHOGA,CUYAHOGA,yes,garfield heights,garfield heights,0,no,no,REVIEW,Same normalized city with county overlap.
+high,GARFIELD HEIGHTS,GARFIELD HTS.,garfield-heights,garfield-hts,CUYAHOGA,CUYAHOGA,yes,garfield heights,garfield heights,0,no,no,REVIEW,Same normalized city with county overlap.
+high,GARFIELD HTS,GARFIELD HTS.,garfield-hts,garfield-hts,CUYAHOGA,CUYAHOGA,yes,garfield heights,garfield heights,0,no,no,REVIEW,Same normalized city with county overlap.
+high,HIGHLAND HEIGHTS,HIGHLAND HGHTS,highland-heights,highland-hghts,CUYAHOGA,CUYAHOGA,yes,highland heights,highland heights,0,no,no,REVIEW,Same normalized city with county overlap.
+high,HIGHLAND HEIGHTS,HIGHLAND HTS,highland-heights,highland-hts,CUYAHOGA,CUYAHOGA,yes,highland heights,highland heights,0,no,no,REVIEW,Same normalized city with county overlap.
+high,HIGHLAND HGHTS,HIGHLAND HTS,highland-hghts,highland-hts,CUYAHOGA,CUYAHOGA,yes,highland heights,highland heights,0,no,no,REVIEW,Same normalized city with county overlap.
+high,LIBERTY TOWNSHIP,LIBERTY TWP,liberty-township,liberty-twp,BUTLER,BUTLER|TRUMBULL,yes,liberty township,liberty township,0,no,no,REVIEW,Same normalized city with county overlap.
+high,MAPLE HEIGHTS,MAPLE HTS,maple-heights,maple-hts,CUYAHOGA,CUYAHOGA,yes,maple heights,maple heights,0,no,no,REVIEW,Same normalized city with county overlap.
+high,MAPLE HEIGHTS,MAPLE HTS.,maple-heights,maple-hts,CUYAHOGA,CUYAHOGA,yes,maple heights,maple heights,0,no,no,REVIEW,Same normalized city with county overlap.
+high,MAPLE HTS,MAPLE HTS.,maple-hts,maple-hts,CUYAHOGA,CUYAHOGA,yes,maple heights,maple heights,0,no,no,REVIEW,Same normalized city with county overlap.
+high,MAYFIELD HEIGHTS,MAYFIELD HTS,mayfield-heights,mayfield-hts,CUYAHOGA,CUYAHOGA,yes,mayfield heights,mayfield heights,0,no,no,REVIEW,Same normalized city with county overlap.
+high,MAYFIELD HEIGHTS,MAYFIELD HTS.,mayfield-heights,mayfield-hts,CUYAHOGA,CUYAHOGA,yes,mayfield heights,mayfield heights,0,no,no,REVIEW,Same normalized city with county overlap.
+high,MAYFIELD HTS,MAYFIELD HTS.,mayfield-hts,mayfield-hts,CUYAHOGA,CUYAHOGA,yes,mayfield heights,mayfield heights,0,no,no,REVIEW,Same normalized city with county overlap.
+high,MIDDLEBURG HEIGHTS,MIDDLEBURG HTS,middleburg-heights,middleburg-hts,CUYAHOGA,CUYAHOGA,yes,middleburg heights,middleburg heights,0,no,no,REVIEW,Same normalized city with county overlap.
+high,MOUNT GILEAD,MT. GILEAD,mount-gilead,mt-gilead,MORROW,MORROW,yes,mount gilead,mount gilead,0,no,no,REVIEW,Same normalized city with county overlap.
+high,MOUNT ORAB,MT ORAB,mount-orab,mt-orab,BROWN,BROWN,yes,mount orab,mount orab,0,no,no,REVIEW,Same normalized city with county overlap.
+high,MOUNT STERLING,MT STERLING,mount-sterling,mt-sterling,MADISON,MADISON,yes,mount sterling,mount sterling,0,no,no,REVIEW,Same normalized city with county overlap.
+high,MOUNT VERNON,MT VERNON,mount-vernon,mt-vernon,KNOX,KNOX,yes,mount vernon,mount vernon,0,no,no,REVIEW,Same normalized city with county overlap.
+high,MOUNT VERNON,MT. VERNON,mount-vernon,mt-vernon,KNOX,KNOX,yes,mount vernon,mount vernon,0,no,no,REVIEW,Same normalized city with county overlap.
+high,MT VERNON,MT. VERNON,mt-vernon,mt-vernon,KNOX,KNOX,yes,mount vernon,mount vernon,0,no,no,REVIEW,Same normalized city with county overlap.
+high,PARMA HEIGHTS,PARMA HTS,parma-heights,parma-hts,CUYAHOGA,CUYAHOGA,yes,parma heights,parma heights,0,no,no,REVIEW,Same normalized city with county overlap.
+high,RICHMOND HEIGHTS,RICHMOND HTS,richmond-heights,richmond-hts,CUYAHOGA,CUYAHOGA,yes,richmond heights,richmond heights,0,no,no,REVIEW,Same normalized city with county overlap.
+high,RICHMOND HEIGHTS,RICHMOND HTS.,richmond-heights,richmond-hts,CUYAHOGA,CUYAHOGA,yes,richmond heights,richmond heights,0,no,no,REVIEW,Same normalized city with county overlap.
+high,RICHMOND HTS,RICHMOND HTS.,richmond-hts,richmond-hts,CUYAHOGA,CUYAHOGA,yes,richmond heights,richmond heights,0,no,no,REVIEW,Same normalized city with county overlap.
+high,SAINT CLAIRSVILLE,ST. CLAIRSVILLE,saint-clairsville,st-clairsville,BELMONT,BELMONT,yes,saint clairsville,saint clairsville,0,no,no,REVIEW,Same normalized city with county overlap.
+high,SAINT HENRY,ST HENRY,saint-henry,st-henry,MERCER,MERCER,yes,saint henry,saint henry,0,no,no,REVIEW,Same normalized city with county overlap.
+high,SAINT MARYS,ST MARYS,saint-marys,st-marys,AUGLAIZE,AUGLAIZE,yes,saint marys,saint marys,0,no,no,REVIEW,Same normalized city with county overlap.
+high,SAINT PARIS,ST. PARIS,saint-paris,st-paris,CHAMPAIGN,CHAMPAIGN,yes,saint paris,saint paris,0,no,no,REVIEW,Same normalized city with county overlap.
+high,SHAKER HEIGHTS,SHAKER HTS,shaker-heights,shaker-hts,CUYAHOGA,CUYAHOGA,yes,shaker heights,shaker heights,0,no,no,REVIEW,Same normalized city with county overlap.
+high,UNIVERSITY HEIGHTS,UNIVERSITY HTS,university-heights,university-hts,CUYAHOGA,CUYAHOGA,yes,university heights,university heights,0,no,no,REVIEW,Same normalized city with county overlap.
+high,WARRENSVILLE HEIGHTS,WARRENSVILLE HTS,warrensville-heights,warrensville-hts,CUYAHOGA,CUYAHOGA,yes,warrensville heights,warrensville heights,0,no,no,REVIEW,Same normalized city with county overlap.
+high,WARRENSVILLE HEIGHTS,WARRENSVILLE HTS.,warrensville-heights,warrensville-hts,CUYAHOGA,CUYAHOGA,yes,warrensville heights,warrensville heights,0,no,no,REVIEW,Same normalized city with county overlap.
+high,WARRENSVILLE HTS,WARRENSVILLE HTS.,warrensville-hts,warrensville-hts,CUYAHOGA,CUYAHOGA,yes,warrensville heights,warrensville heights,0,no,no,REVIEW,Same normalized city with county overlap.
+high,WASH C.H.,WASH. C.H.,wash-c-h,wash-c-h,FAYETTE,FAYETTE,yes,wash ch,wash ch,0,no,no,REVIEW,Same normalized city with county overlap.
+high,WASHINGTON C.H.,WASHINGTON CH,washington-c-h,washington-ch,FAYETTE,FAYETTE,yes,washington ch,washington ch,0,no,no,REVIEW,Same normalized city with county overlap.
+medium,AKRN,AKRON,akrn,akron,SUMMIT,SUMMIT,yes,akrn,akron,1,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,AUSTINTOWN,AUSTINTWON,austintown,austintwon,MAHONING,MAHONING,yes,austintown,austintwon,2,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,BEAVERCREEK,BEAVERVREEK,beavercreek,beavervreek,GREENE,GREENE,yes,beavercreek,beavervreek,1,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,BROOK PARK,BROOKPARK,brook-park,brookpark,CUYAHOGA,CUYAHOGA,yes,brook park,brookpark,1,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,CANAL WINCHESTE,CANAL WINCHESTER,canal-wincheste,canal-winchester,FRANKLIN,FRANKLIN,yes,canal wincheste,canal winchester,1,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,CANAL WINCHESTE,CANALWINCHESTER,canal-wincheste,canalwinchester,FRANKLIN,FRANKLIN,yes,canal wincheste,canalwinchester,2,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,CANAL WINCHESTER,CANALWINCHESTER,canal-winchester,canalwinchester,FRANKLIN,FRANKLIN,yes,canal winchester,canalwinchester,1,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,CINCINAATI,CINCINANTI,cincinaati,cincinanti,HAMILTON,HAMILTON,yes,cincinaati,cincinanti,1,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,CINCINAATI,CINCINATI,cincinaati,cincinati,HAMILTON,HAMILTON,yes,cincinaati,cincinati,1,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,CINCINAATI,CINCINATTI,cincinaati,cincinatti,HAMILTON,HAMILTON,yes,cincinaati,cincinatti,1,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,CINCINAATI,CINCINNATI,cincinaati,cincinnati,HAMILTON,BUTLER|CLERMONT|HAMILTON|WARREN,yes,cincinaati,cincinnati,1,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,CINCINAATI,CINCINNATTI,cincinaati,cincinnatti,HAMILTON,HAMILTON,yes,cincinaati,cincinnatti,2,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,CINCINAATI,CINCINNNATI,cincinaati,cincinnnati,HAMILTON,HAMILTON,yes,cincinaati,cincinnnati,2,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,CINCINAATI,CLNCINNATI,cincinaati,clncinnati,HAMILTON,HAMILTON,yes,cincinaati,clncinnati,2,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,CINCINANTI,CINCINATI,cincinanti,cincinati,HAMILTON,HAMILTON,yes,cincinanti,cincinati,1,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,CINCINANTI,CINCINATTI,cincinanti,cincinatti,HAMILTON,HAMILTON,yes,cincinanti,cincinatti,1,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,CINCINANTI,CINCINNATI,cincinanti,cincinnati,HAMILTON,BUTLER|CLERMONT|HAMILTON|WARREN,yes,cincinanti,cincinnati,2,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,CINCINANTI,CINCINNATTI,cincinanti,cincinnatti,HAMILTON,HAMILTON,yes,cincinanti,cincinnatti,2,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,CINCINANTI,CINCINNNATI,cincinanti,cincinnnati,HAMILTON,HAMILTON,yes,cincinanti,cincinnnati,2,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,CINCINATI,CINCINATTI,cincinati,cincinatti,HAMILTON,HAMILTON,yes,cincinati,cincinatti,1,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,CINCINATI,CINCINNATI,cincinati,cincinnati,HAMILTON,BUTLER|CLERMONT|HAMILTON|WARREN,yes,cincinati,cincinnati,1,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,CINCINATI,CINCINNATTI,cincinati,cincinnatti,HAMILTON,HAMILTON,yes,cincinati,cincinnatti,2,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,CINCINATI,CINCINNNATI,cincinati,cincinnnati,HAMILTON,HAMILTON,yes,cincinati,cincinnnati,2,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,CINCINATI,CINICNNATI,cincinati,cinicnnati,HAMILTON,HAMILTON,yes,cincinati,cinicnnati,2,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,CINCINATI,CLNCINNATI,cincinati,clncinnati,HAMILTON,HAMILTON,yes,cincinati,clncinnati,2,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,CINCINATTI,CINCINNATI,cincinatti,cincinnati,HAMILTON,BUTLER|CLERMONT|HAMILTON|WARREN,yes,cincinatti,cincinnati,2,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,CINCINATTI,CINCINNATTI,cincinatti,cincinnatti,HAMILTON,HAMILTON,yes,cincinatti,cincinnatti,1,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,CINCINNATI,CINCINNATTI,cincinnati,cincinnatti,BUTLER|CLERMONT|HAMILTON|WARREN,HAMILTON,yes,cincinnati,cincinnatti,1,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,CINCINNATI,CINCINNNATI,cincinnati,cincinnnati,BUTLER|CLERMONT|HAMILTON|WARREN,HAMILTON,yes,cincinnati,cincinnnati,1,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,CINCINNATI,CINICNNATI,cincinnati,cinicnnati,BUTLER|CLERMONT|HAMILTON|WARREN,HAMILTON,yes,cincinnati,cinicnnati,2,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,CINCINNATI,CLNCINNATI,cincinnati,clncinnati,BUTLER|CLERMONT|HAMILTON|WARREN,HAMILTON,yes,cincinnati,clncinnati,1,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,CINCINNATTI,CINCINNNATI,cincinnatti,cincinnnati,HAMILTON,HAMILTON,yes,cincinnatti,cincinnnati,2,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,CINCINNATTI,CLNCINNATI,cincinnatti,clncinnati,HAMILTON,HAMILTON,yes,cincinnatti,clncinnati,2,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,CINCINNNATI,CINICNNATI,cincinnnati,cinicnnati,HAMILTON,HAMILTON,yes,cincinnnati,cinicnnati,2,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,CINCINNNATI,CLNCINNATI,cincinnnati,clncinnati,HAMILTON,HAMILTON,yes,cincinnnati,clncinnati,2,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,CLEVELAND,CLEVLAND,cleveland,clevland,CUYAHOGA,CUYAHOGA,yes,cleveland,clevland,1,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,COLUBUS,COLUMBUS,colubus,columbus,FRANKLIN,DELAWARE|FRANKLIN,yes,colubus,columbus,1,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,COLUBUS,COUMBUS,colubus,coumbus,FRANKLIN,FRANKLIN,yes,colubus,coumbus,2,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,COLUMBIA STATIO,COLUMBIA STATION,columbia-statio,columbia-station,LORAIN,LORAIN,yes,columbia statio,columbia station,1,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,COLUMBUS,COUMBUS,columbus,coumbus,DELAWARE|FRANKLIN,FRANKLIN,yes,columbus,coumbus,1,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,COMMERCIAL POIN,COMMERCIAL POINT,commercial-poin,commercial-point,PICKAWAY,FRANKLIN|PICKAWAY,yes,commercial poin,commercial point,1,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,DUBIN,DUBLIN,dubin,dublin,FRANKLIN,DELAWARE|FRANKLIN|UNION,yes,dubin,dublin,1,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,FAIFIELD,FAIRFIELD,faifield,fairfield,BUTLER,BUTLER|HAMILTON,yes,faifield,fairfield,1,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,FAIRBORN,FAIRBRON,fairborn,fairbron,CLARK|GREENE,GREENE,yes,fairborn,fairbron,2,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,GARRETSVILLE,GARRETTSVILLE,garretsville,garrettsville,PORTAGE,PORTAGE,yes,garretsville,garrettsville,1,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,GROVE CITY,GROVECITY,grove-city,grovecity,FRANKLIN,FRANKLIN,yes,grove city,grovecity,1,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,HAMILITON,HAMILTON,hamiliton,hamilton,BUTLER,BUTLER|HAMILTON,yes,hamiliton,hamilton,1,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,HILLARD,HILLIARD,hillard,hilliard,FRANKLIN,FRANKLIN,yes,hillard,hilliard,1,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,LIBERTY TOWNSHIP,LIBERTY TOWNSHP,liberty-township,liberty-townshp,BUTLER,BUTLER,yes,liberty township,liberty townshp,1,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,LIBERTY TOWNSHP,LIBERTY TWNSP.,liberty-townshp,liberty-twnsp,BUTLER,BUTLER,yes,liberty townshp,liberty twnsp,2,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,LIBERTY TOWNSHP,LIBERTY TWP,liberty-townshp,liberty-twp,BUTLER,BUTLER|TRUMBULL,yes,liberty townshp,liberty township,1,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,MANSFIED,MANSFIELD,mansfied,mansfield,RICHLAND,RICHLAND,yes,mansfied,mansfield,1,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,MAPLE  HEIGHT,MAPLE HEIGHTS,maple-height,maple-heights,CUYAHOGA,CUYAHOGA,yes,maple height,maple heights,1,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,MAPLE  HEIGHT,MAPLE HTS,maple-height,maple-hts,CUYAHOGA,CUYAHOGA,yes,maple height,maple heights,1,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,MAPLE  HEIGHT,MAPLE HTS.,maple-height,maple-hts,CUYAHOGA,CUYAHOGA,yes,maple height,maple heights,1,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,MAPLE  HEIGHT,MAPLEHEIGHTS,maple-height,mapleheights,CUYAHOGA,CUYAHOGA,yes,maple height,mapleheights,2,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,MAPLE HEIGHTS,MAPLEHEIGHTS,maple-heights,mapleheights,CUYAHOGA,CUYAHOGA,yes,maple heights,mapleheights,1,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,MAPLE HTS,MAPLEHEIGHTS,maple-hts,mapleheights,CUYAHOGA,CUYAHOGA,yes,maple heights,mapleheights,1,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,MAPLE HTS.,MAPLEHEIGHTS,maple-hts,mapleheights,CUYAHOGA,CUYAHOGA,yes,maple heights,mapleheights,1,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,MASSILION,MASSILLON,massilion,massillon,STARK,STARK,yes,massilion,massillon,1,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,MC ARTHUR,MCARTHUR,mc-arthur,mcarthur,VINTON,VINTON,yes,mc arthur,mcarthur,1,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,MC COMB,MCCOMB,mc-comb,mccomb,HANCOCK,HANCOCK,yes,mc comb,mccomb,1,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,MC CONNELSVILLE,MCCONNELSVILLE,mc-connelsville,mcconnelsville,MORGAN,MORGAN,yes,mc connelsville,mcconnelsville,1,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,MC DERMOTT,MCDERMOTT,mc-dermott,mcdermott,SCIOTO,SCIOTO,yes,mc dermott,mcdermott,1,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,MC DONALD,MCDONALD,mc-donald,mcdonald,TRUMBULL,TRUMBULL,yes,mc donald,mcdonald,1,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,NEW MIDDELTOWN,NEW MIDDLETOWN,new-middeltown,new-middletown,MAHONING,MAHONING,yes,new middeltown,new middletown,2,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,NEW PHILADELPHI,NEW PHILADELPHIA,new-philadelphi,new-philadelphia,TUSCARAWAS,TUSCARAWAS,yes,new philadelphi,new philadelphia,1,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,NEW PHILADELPHIA,NEW PHILADLEPHIA,new-philadelphia,new-philadlephia,TUSCARAWAS,TUSCARAWAS,yes,new philadelphia,new philadlephia,2,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,NORTH BEND,NORTHBEND,north-bend,northbend,HAMILTON,HAMILTON,yes,north bend,northbend,1,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,NORTH RIDGEVILL,NORTH RIDGEVILLE,north-ridgevill,north-ridgeville,LORAIN,LORAIN,yes,north ridgevill,north ridgeville,1,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,PAINESVILLE,PAINESVILLIE,painesville,painesvillie,LAKE,LAKE,yes,painesville,painesvillie,1,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,PATASKALA,PATASKTALA,pataskala,patasktala,LICKING,LICKING,yes,pataskala,patasktala,1,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,PORTMSOUTH,PORTSMOUTH,portmsouth,portsmouth,SCIOTO,SCIOTO,yes,portmsouth,portsmouth,2,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,REYNOLDBURG,REYNOLDSBURG,reynoldburg,reynoldsburg,FRANKLIN,FAIRFIELD|FRANKLIN|LICKING,yes,reynoldburg,reynoldsburg,1,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,REYNOLDBURG,REYONOLDSBURG,reynoldburg,reyonoldsburg,FRANKLIN,FRANKLIN,yes,reynoldburg,reyonoldsburg,2,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,REYNOLDSBURG,REYONOLDSBURG,reynoldsburg,reyonoldsburg,FAIRFIELD|FRANKLIN|LICKING,FRANKLIN,yes,reynoldsburg,reyonoldsburg,1,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,SAINT CLAIRSVIL,SAINT CLAIRSVILLE,saint-clairsvil,saint-clairsville,BELMONT,BELMONT,yes,saint clairsvil,saint clairsville,2,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,SAINT CLAIRSVIL,ST. CLAIRSVILLE,saint-clairsvil,st-clairsville,BELMONT,BELMONT,yes,saint clairsvil,saint clairsville,2,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,STONGSVILLE,STRONGSVILLE,stongsville,strongsville,CUYAHOGA,CUYAHOGA,yes,stongsville,strongsville,1,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,STONGSVILLE,STRONGVILLE,stongsville,strongville,CUYAHOGA,CUYAHOGA,yes,stongsville,strongville,2,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,STRONGSVILLE,STRONGVILLE,strongsville,strongville,CUYAHOGA,CUYAHOGA,yes,strongsville,strongville,1,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,TOELDO,TOLEDO,toeldo,toledo,LUCAS,LUCAS,yes,toeldo,toledo,2,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,W WORTHINGTON,WORTHINGTON,w-worthington,worthington,FRANKLIN,FRANKLIN,yes,w worthington,worthington,2,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,WASHINGTON C H,WASHINGTON C.H.,washington-c-h,washington-c-h,FAYETTE,FAYETTE,yes,washington c h,washington ch,1,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,WASHINGTON C H,WASHINGTON CH,washington-c-h,washington-ch,FAYETTE,FAYETTE,yes,washington c h,washington ch,1,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,WASHINGTON COURT HOU,WASHINGTON COURT HOUSE,washington-court-hou,washington-court-house,FAYETTE,FAYETTE,yes,washington court hou,washington court house,2,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,WASHINGTON COURT HOUSE,WASHINGTON COURTHOUSE,washington-court-house,washington-courthouse,FAYETTE,FAYETTE,yes,washington court house,washington courthouse,1,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,WAYNESVILLE,WAYNEVILLE,waynesville,wayneville,WARREN,WARREN,yes,waynesville,wayneville,1,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,WILLOUGBY HILLS,WILLOUGHBY HILL,willougby-hills,willoughby-hill,LAKE,LAKE,yes,willougby hills,willoughby hill,2,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,WILLOUGBY HILLS,WILLOUGHBY HILLS,willougby-hills,willoughby-hills,LAKE,LAKE,yes,willougby hills,willoughby hills,1,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,WILLOUGBY HILLS,WILLOUGHBYHILLS,willougby-hills,willoughbyhills,LAKE,LAKE,yes,willougby hills,willoughbyhills,2,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,WILLOUGHBY HILL,WILLOUGHBY HILLS,willoughby-hill,willoughby-hills,LAKE,LAKE,yes,willoughby hill,willoughby hills,1,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,WILLOUGHBY HILL,WILLOUGHBYHILLS,willoughby-hill,willoughbyhills,LAKE,LAKE,yes,willoughby hill,willoughbyhills,2,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+medium,WILLOUGHBY HILLS,WILLOUGHBYHILLS,willoughby-hills,willoughbyhills,LAKE,LAKE,yes,willoughby hills,willoughbyhills,1,no,no,REVIEW,Small edit-distance typo candidate with county overlap.
+low,ADA,ADENA,ada,adena,HANCOCK|HARDIN,JEFFERSON,no,ada,adena,2,no,no,REVIEW,"Potential similarity, manual review required."
+low,ADA,ANNA,ada,anna,HANCOCK|HARDIN,SHELBY,no,ada,anna,2,no,no,REVIEW,"Potential similarity, manual review required."
+low,ADENA,ANNA,adena,anna,JEFFERSON,SHELBY,no,adena,anna,2,no,no,REVIEW,"Potential similarity, manual review required."
+low,AKRN,AVON,akrn,avon,SUMMIT,LORAIN,no,akrn,avon,2,no,no,REVIEW,"Potential similarity, manual review required."
+low,AKRON,AVON,akron,avon,SUMMIT,LORAIN,no,akron,avon,2,no,no,REVIEW,"Potential similarity, manual review required."
+low,BEALLSVILLE,BELLVILLE,beallsville,bellville,MONROE,MORROW|RICHLAND,no,beallsville,bellville,2,no,no,REVIEW,"Potential similarity, manual review required."
+low,BEDFORD,BRADFORD,bedford,bradford,CUYAHOGA,DARKE,no,bedford,bradford,2,no,no,REVIEW,"Potential similarity, manual review required."
+low,BEREA,BERKEY,berea,berkey,CUYAHOGA,LUCAS,no,berea,berkey,2,no,no,REVIEW,"Potential similarity, manual review required."
+low,BERKEY,BEXLEY,berkey,bexley,LUCAS,FRANKLIN,no,berkey,bexley,2,no,no,REVIEW,"Potential similarity, manual review required."
+low,BLOOMVILLE,BROOKVILLE,bloomville,brookville,SENECA,MONTGOMERY,no,bloomville,brookville,2,no,no,REVIEW,"Potential similarity, manual review required."
+low,CANTON,CLAYTON,canton,clayton,STARK,MONTGOMERY,no,canton,clayton,2,no,no,REVIEW,"Potential similarity, manual review required."
+low,CIN,COL,cin,col,HAMILTON,FRANKLIN,no,cin,col,2,no,no,REVIEW,"Potential similarity, manual review required."
+low,DALTON,DAYTON,dalton,dayton,WAYNE,GREENE|MONTGOMERY,no,dalton,dayton,1,no,no,REVIEW,"Potential similarity, manual review required."
+low,DELTA,DOLA,delta,dola,FULTON,HARDIN,no,delta,dola,2,no,no,REVIEW,"Potential similarity, manual review required."
+low,EATON,EDON,eaton,edon,PREBLE,WILLIAMS,no,eaton,edon,2,no,no,REVIEW,"Potential similarity, manual review required."
+low,EATON,ENON,eaton,enon,PREBLE,CLARK,no,eaton,enon,2,no,no,REVIEW,"Potential similarity, manual review required."
+low,EDON,ENON,edon,enon,WILLIAMS,CLARK,no,edon,enon,1,no,no,REVIEW,"Potential similarity, manual review required."
+low,GENEVA,GENOA,geneva,genoa,ASHTABULA,OTTAWA,no,geneva,genoa,2,no,no,REVIEW,"Potential similarity, manual review required."
+low,GRAFTON,GRAYTOWN,grafton,graytown,LORAIN,OTTAWA,no,grafton,graytown,2,no,no,REVIEW,"Potential similarity, manual review required."
+low,GRANVILLE,GRAYSVILLE,granville,graysville,LICKING,MONROE,no,granville,graysville,2,no,no,REVIEW,"Potential similarity, manual review required."
+low,GRANVILLE,GREENVILLE,granville,greenville,LICKING,DARKE,no,granville,greenville,2,no,no,REVIEW,"Potential similarity, manual review required."
+low,GREEN SPRINGS,GREENSPRINGS,green-springs,greensprings,SANDUSKY,SENECA,no,green springs,greensprings,1,no,no,REVIEW,"Potential similarity, manual review required."
+low,HAMDEN,HAMLER,hamden,hamler,VINTON,HENRY,no,hamden,hamler,2,no,no,REVIEW,"Potential similarity, manual review required."
+low,HEBRON,HURON,hebron,huron,LICKING,ERIE,no,hebron,huron,2,no,no,REVIEW,"Potential similarity, manual review required."
+low,HILLARD,HOLLAND,hillard,holland,FRANKLIN,LUCAS,no,hillard,holland,2,no,no,REVIEW,"Potential similarity, manual review required."
+low,HUDSON,HURON,hudson,huron,SUMMIT,ERIE,no,hudson,huron,2,no,no,REVIEW,"Potential similarity, manual review required."
+low,KENT,KENTON,kent,kenton,PORTAGE,HARDIN,no,kent,kenton,2,no,no,REVIEW,"Potential similarity, manual review required."
+low,LEESBURG,LEWISBURG,leesburg,lewisburg,HIGHLAND,PREBLE,no,leesburg,lewisburg,2,no,no,REVIEW,"Potential similarity, manual review required."
+low,LOGAN,LORAIN,logan,lorain,HOCKING,LORAIN,no,logan,lorain,2,no,no,REVIEW,"Potential similarity, manual review required."
+low,MADISON,MARION,madison,marion,LAKE,MARION,no,madison,marion,2,no,no,REVIEW,"Potential similarity, manual review required."
+low,MADISON,MASON,madison,mason,LAKE,WARREN,no,madison,mason,2,no,no,REVIEW,"Potential similarity, manual review required."
+low,MALTA,MANTUA,malta,mantua,MORGAN,PORTAGE,no,malta,mantua,2,no,no,REVIEW,"Potential similarity, manual review required."
+low,MANSFIELD,MAYFIELD,mansfield,mayfield,RICHLAND,CUYAHOGA,no,mansfield,mayfield,2,no,no,REVIEW,"Potential similarity, manual review required."
+low,MARION,MARTIN,marion,martin,MARION,OTTAWA,no,marion,martin,2,no,no,REVIEW,"Potential similarity, manual review required."
+low,MARION,MASON,marion,mason,MARION,WARREN,no,marion,mason,2,no,no,REVIEW,"Potential similarity, manual review required."
+low,MARTIN,MARTINS,martin,martins,OTTAWA,BELMONT,no,martin,martins,1,no,no,REVIEW,"Potential similarity, manual review required."
+low,MILFORD,MINFORD,milford,minford,CLERMONT,SCIOTO,no,milford,minford,1,no,no,REVIEW,"Potential similarity, manual review required."
+low,MONROE,MORROW,monroe,morrow,BUTLER,WARREN,no,monroe,morrow,2,no,no,REVIEW,"Potential similarity, manual review required."
+low,MORRAL,MORROW,morral,morrow,MARION,WARREN,no,morral,morrow,2,no,no,REVIEW,"Potential similarity, manual review required."
+low,NORTHWOOD,NORWOOD,northwood,norwood,WOOD,HAMILTON,no,northwood,norwood,2,no,no,REVIEW,"Potential similarity, manual review required."
+low,PEDRO,PERRY,pedro,perry,LAWRENCE,LAKE,no,pedro,perry,2,no,no,REVIEW,"Potential similarity, manual review required."
+low,ROCKFORD,ROSSFORD,rockford,rossford,MERCER,WOOD,no,rockford,rossford,2,no,no,REVIEW,"Potential similarity, manual review required."
+low,ROSEVILLE,RUSHVILLE,roseville,rushville,MUSKINGUM|PERRY,FAIRFIELD,no,roseville,rushville,2,no,no,REVIEW,"Potential similarity, manual review required."
+low,SABINA,SAINT,sabina,saint,CLINTON,BELMONT,no,sabina,saint,2,no,no,REVIEW,"Potential similarity, manual review required."
+low,SAINT MARYS,SAINT PARIS,saint-marys,saint-paris,AUGLAIZE,CHAMPAIGN,no,saint marys,saint paris,2,no,no,REVIEW,"Potential similarity, manual review required."
+low,SAINT MARYS,ST. PARIS,saint-marys,st-paris,AUGLAIZE,CHAMPAIGN,no,saint marys,saint paris,2,no,no,REVIEW,"Potential similarity, manual review required."
+low,SAINT PARIS,ST MARYS,saint-paris,st-marys,CHAMPAIGN,AUGLAIZE,no,saint paris,saint marys,2,no,no,REVIEW,"Potential similarity, manual review required."
+low,ST MARYS,ST. PARIS,st-marys,st-paris,AUGLAIZE,CHAMPAIGN,no,saint marys,saint paris,2,no,no,REVIEW,"Potential similarity, manual review required."
+low,WATERVILLE,WESTERVILLE,waterville,westerville,LUCAS,DELAWARE|FRANKLIN,no,waterville,westerville,2,no,no,REVIEW,"Potential similarity, manual review required."
+low,WELLINGTON,WILMINGTON,wellington,wilmington,LORAIN,CLINTON,no,wellington,wilmington,2,no,no,REVIEW,"Potential similarity, manual review required."
+low,WEST UNION,WEST UNITY,west-union,west-unity,ADAMS,WILLIAMS,no,west union,west unity,2,no,no,REVIEW,"Potential similarity, manual review required."
+low,WESTERVILLE,WESTVILLE,westerville,westville,DELAWARE|FRANKLIN,CHAMPAIGN,no,westerville,westville,2,no,no,REVIEW,"Potential similarity, manual review required."

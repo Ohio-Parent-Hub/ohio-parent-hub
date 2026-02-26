@@ -7,7 +7,7 @@ import type { Metadata } from "next";
 
 import { Button } from "@/components/ui/button";
 import { toTitleCaseIfAllCaps } from "@/lib/utils";
-import { getCitiesWithMetroEntry } from "@/lib/metroAreas";
+import { getCitiesWithMetroEntry, resolveCanonicalCityName } from "@/lib/metroAreas";
 import { MapPin, Search, ShieldCheck, Baby, ArrowRight, Heart, Sparkles } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -37,9 +37,6 @@ function loadDaycares(): DaycareRow[] {
   const p = path.join(process.cwd(), "data", "daycares.json");
   if (!fs.existsSync(p)) return [];
   return JSON.parse(fs.readFileSync(p, "utf8"));
-}
-function slugify(s: string) {
-  return (s || "").toLowerCase().trim().replace(/&/g, "and").replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "");
 }
 
 const teal = "#7EA8A4";
@@ -80,7 +77,10 @@ function SparkleDecor({ className, style }: { className?: string; style?: CSSPro
 export default function HomePage() {
   const daycares = loadDaycares();
   const cityCounts = new Map<string, number>();
-  daycares.forEach((d) => { const c = d["CITY"]; if (c) cityCounts.set(c, (cityCounts.get(c) || 0) + 1); });
+  daycares.forEach((d) => {
+    const c = resolveCanonicalCityName(d["CITY"] || "");
+    if (c) cityCounts.set(c, (cityCounts.get(c) || 0) + 1);
+  });
   const topCities = getCitiesWithMetroEntry(daycares)
     .sort((a, b) => b.count - a.count)
     .slice(0, 24)

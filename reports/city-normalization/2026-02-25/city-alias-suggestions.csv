@@ -1,0 +1,72 @@
+city_in_question,suggested_canonical_city,confidence,suggestion_type,source_count,target_basis_city,county_overlap,source_counties,target_counties,approved_alias_exists,reason
+BEDFORD HTS,BEDFORD HEIGHTS,high,normalized-group,5,BEDFORD HEIGHTS,yes,CUYAHOGA,CUYAHOGA,no,Same normalized city spelling; using full-word canonical format.
+BROADVIEW HTS,BROADVIEW HEIGHTS,high,normalized-group,1,BROADVIEW HEIGHTS,yes,CUYAHOGA,CUYAHOGA,no,Same normalized city spelling; using full-word canonical format.
+CLEVELAND HTS,CLEVELAND HEIGHTS,high,normalized-group,13,CLEVELAND HEIGHTS,yes,CUYAHOGA,CUYAHOGA,no,Same normalized city spelling; using full-word canonical format.
+CLEVELAND HTS.,CLEVELAND HEIGHTS,high,normalized-group,2,CLEVELAND HEIGHTS,yes,CUYAHOGA,CUYAHOGA,no,Same normalized city spelling; using full-word canonical format.
+CONCORD TWNSHP,CONCORD TOWNSHIP,high,normalized-group,1,CONCORD TWNSHP,yes,LAKE,LAKE,no,Same normalized city spelling; using full-word canonical format.
+CONCORD TWP,CONCORD TOWNSHIP,high,normalized-group,1,CONCORD TWNSHP,yes,LAKE,LAKE,no,Same normalized city spelling; using full-word canonical format.
+CONCORD TWSP,CONCORD TOWNSHIP,high,normalized-group,1,CONCORD TWNSHP,yes,LAKE,LAKE,no,Same normalized city spelling; using full-word canonical format.
+GARFIELD HTS,GARFIELD HEIGHTS,high,normalized-group,13,GARFIELD HEIGHTS,yes,CUYAHOGA,CUYAHOGA,no,Same normalized city spelling; using full-word canonical format.
+GARFIELD HTS.,GARFIELD HEIGHTS,high,normalized-group,1,GARFIELD HEIGHTS,yes,CUYAHOGA,CUYAHOGA,no,Same normalized city spelling; using full-word canonical format.
+HIGHLAND HGHTS,HIGHLAND HEIGHTS,high,normalized-group,1,HIGHLAND HEIGHTS,yes,CUYAHOGA,CUYAHOGA,no,Same normalized city spelling; using full-word canonical format.
+HIGHLAND HTS,HIGHLAND HEIGHTS,high,normalized-group,2,HIGHLAND HEIGHTS,yes,CUYAHOGA,CUYAHOGA,no,Same normalized city spelling; using full-word canonical format.
+LIBERTY TWP,LIBERTY TOWNSHIP,high,normalized-group,8,LIBERTY TOWNSHIP,yes,BUTLER|TRUMBULL,BUTLER,no,Same normalized city spelling; using full-word canonical format.
+MAPLE HTS,MAPLE HEIGHTS,high,normalized-group,10,MAPLE HEIGHTS,yes,CUYAHOGA,CUYAHOGA,no,Same normalized city spelling; using full-word canonical format.
+MAPLE HTS.,MAPLE HEIGHTS,high,normalized-group,2,MAPLE HEIGHTS,yes,CUYAHOGA,CUYAHOGA,no,Same normalized city spelling; using full-word canonical format.
+MAYFIELD HTS,MAYFIELD HEIGHTS,high,normalized-group,3,MAYFIELD HEIGHTS,yes,CUYAHOGA,CUYAHOGA,no,Same normalized city spelling; using full-word canonical format.
+MAYFIELD HTS.,MAYFIELD HEIGHTS,high,normalized-group,1,MAYFIELD HEIGHTS,yes,CUYAHOGA,CUYAHOGA,no,Same normalized city spelling; using full-word canonical format.
+MIDDLEBURG HTS,MIDDLEBURG HEIGHTS,high,normalized-group,3,MIDDLEBURG HEIGHTS,yes,CUYAHOGA,CUYAHOGA,no,Same normalized city spelling; using full-word canonical format.
+MT. GILEAD,MOUNT GILEAD,high,normalized-group,1,MOUNT GILEAD,yes,MORROW,MORROW,no,Same normalized city spelling; using full-word canonical format.
+MT ORAB,MOUNT ORAB,high,normalized-group,3,MOUNT ORAB,yes,BROWN,BROWN,no,Same normalized city spelling; using full-word canonical format.
+MT STERLING,MOUNT STERLING,high,normalized-group,1,MOUNT STERLING,yes,MADISON,MADISON,no,Same normalized city spelling; using full-word canonical format.
+MT VERNON,MOUNT VERNON,high,normalized-group,2,MOUNT VERNON,yes,KNOX,KNOX,no,Same normalized city spelling; using full-word canonical format.
+MT. VERNON,MOUNT VERNON,high,normalized-group,1,MOUNT VERNON,yes,KNOX,KNOX,no,Same normalized city spelling; using full-word canonical format.
+PARMA HTS,PARMA HEIGHTS,high,normalized-group,4,PARMA HEIGHTS,yes,CUYAHOGA,CUYAHOGA,no,Same normalized city spelling; using full-word canonical format.
+RICHMOND HTS,RICHMOND HEIGHTS,high,normalized-group,3,RICHMOND HEIGHTS,yes,CUYAHOGA,CUYAHOGA,no,Same normalized city spelling; using full-word canonical format.
+RICHMOND HTS.,RICHMOND HEIGHTS,high,normalized-group,1,RICHMOND HEIGHTS,yes,CUYAHOGA,CUYAHOGA,no,Same normalized city spelling; using full-word canonical format.
+ST. CLAIRSVILLE,SAINT CLAIRSVILLE,high,normalized-group,2,SAINT CLAIRSVILLE,yes,BELMONT,BELMONT,no,Same normalized city spelling; using full-word canonical format.
+ST HENRY,SAINT HENRY,high,normalized-group,1,SAINT HENRY,yes,MERCER,MERCER,no,Same normalized city spelling; using full-word canonical format.
+ST MARYS,SAINT MARYS,high,normalized-group,1,SAINT MARYS,yes,AUGLAIZE,AUGLAIZE,no,Same normalized city spelling; using full-word canonical format.
+ST. PARIS,SAINT PARIS,high,normalized-group,1,SAINT PARIS,yes,CHAMPAIGN,CHAMPAIGN,no,Same normalized city spelling; using full-word canonical format.
+SHAKER HTS,SHAKER HEIGHTS,high,normalized-group,2,SHAKER HEIGHTS,yes,CUYAHOGA,CUYAHOGA,no,Same normalized city spelling; using full-word canonical format.
+UNIVERSITY HTS,UNIVERSITY HEIGHTS,high,normalized-group,1,UNIVERSITY HEIGHTS,yes,CUYAHOGA,CUYAHOGA,no,Same normalized city spelling; using full-word canonical format.
+WARRENSVILLE HTS,WARRENSVILLE HEIGHTS,high,normalized-group,7,WARRENSVILLE HEIGHTS,yes,CUYAHOGA,CUYAHOGA,no,Same normalized city spelling; using full-word canonical format.
+WARRENSVILLE HTS.,WARRENSVILLE HEIGHTS,high,normalized-group,1,WARRENSVILLE HEIGHTS,yes,CUYAHOGA,CUYAHOGA,no,Same normalized city spelling; using full-word canonical format.
+WASH C.H.,WASH CH,high,normalized-group,1,WASH. C.H.,yes,FAYETTE,FAYETTE,no,Same normalized city spelling; using full-word canonical format.
+WASH. C.H.,WASH CH,high,normalized-group,1,WASH. C.H.,yes,FAYETTE,FAYETTE,no,Same normalized city spelling; using full-word canonical format.
+WASHINGTON C.H.,WASHINGTON CH,high,normalized-group,1,WASHINGTON CH,yes,FAYETTE,FAYETTE,no,Same normalized city spelling; using full-word canonical format.
+AKRN,AKRON,medium,typo-match,1,AKRON,yes,SUMMIT,SUMMIT,no,Small typo candidate (edit distance 1) with county overlap.
+AUSTINTWON,AUSTINTOWN,medium,typo-match,1,AUSTINTOWN,yes,MAHONING,MAHONING,no,Small typo candidate (edit distance 2) with county overlap.
+BEAVERVREEK,BEAVERCREEK,medium,typo-match,1,BEAVERCREEK,yes,GREENE,GREENE,no,Small typo candidate (edit distance 1) with county overlap.
+CANAL WINCHESTE,CANAL WINCHESTER,medium,typo-match,6,CANAL WINCHESTER,yes,FRANKLIN,FRANKLIN,no,Small typo candidate (edit distance 1) with county overlap.
+CANALWINCHESTER,CANAL WINCHESTER,medium,typo-match,1,CANAL WINCHESTER,yes,FRANKLIN,FRANKLIN,no,Small typo candidate (edit distance 1) with county overlap.
+CIN,CINCINNATI,medium,shorthand-match,1,CINCINNATI,yes,HAMILTON,BUTLER|CLERMONT|HAMILTON|WARREN,no,Known shorthand city token matched to canonical full city with county overlap.
+CINCINAATI,CINCINNATI,medium,typo-match,1,CINCINNATI,yes,HAMILTON,BUTLER|CLERMONT|HAMILTON|WARREN,no,Small typo candidate (edit distance 1) with county overlap.
+CINCINANTI,CINCINNATI,medium,typo-match,1,CINCINNATI,yes,HAMILTON,BUTLER|CLERMONT|HAMILTON|WARREN,no,Small typo candidate (edit distance 2) with county overlap.
+CINCINATI,CINCINNATI,medium,typo-match,2,CINCINNATI,yes,HAMILTON,BUTLER|CLERMONT|HAMILTON|WARREN,no,Small typo candidate (edit distance 1) with county overlap.
+CINCINATTI,CINCINNATI,medium,typo-match,1,CINCINNATI,yes,HAMILTON,BUTLER|CLERMONT|HAMILTON|WARREN,no,Small typo candidate (edit distance 2) with county overlap.
+CINICNNATI,CINCINNATI,medium,typo-match,1,CINCINNATI,yes,HAMILTON,BUTLER|CLERMONT|HAMILTON|WARREN,no,Small typo candidate (edit distance 2) with county overlap.
+CLEVLAND,CLEVELAND,medium,typo-match,2,CLEVELAND,yes,CUYAHOGA,CUYAHOGA,no,Small typo candidate (edit distance 1) with county overlap.
+COLUMBIA STATIO,COLUMBIA STATION,medium,typo-match,3,COLUMBIA STATION,yes,LORAIN,LORAIN,no,Small typo candidate (edit distance 1) with county overlap.
+COL,COLUMBUS,medium,shorthand-match,1,COLUMBUS,yes,FRANKLIN,DELAWARE|FRANKLIN,no,Known shorthand city token matched to canonical full city with county overlap.
+COLUBUS,COLUMBUS,medium,typo-match,1,COLUMBUS,yes,FRANKLIN,DELAWARE|FRANKLIN,no,Small typo candidate (edit distance 1) with county overlap.
+COMMERCIAL POIN,COMMERCIAL POINT,medium,typo-match,1,COMMERCIAL POINT,yes,PICKAWAY,FRANKLIN|PICKAWAY,no,Small typo candidate (edit distance 1) with county overlap.
+DUBIN,DUBLIN,medium,typo-match,1,DUBLIN,yes,FRANKLIN,DELAWARE|FRANKLIN|UNION,no,Small typo candidate (edit distance 1) with county overlap.
+FAIRBRON,FAIRBORN,medium,typo-match,1,FAIRBORN,yes,GREENE,CLARK|GREENE,no,Small typo candidate (edit distance 2) with county overlap.
+FAIFIELD,FAIRFIELD,medium,typo-match,1,FAIRFIELD,yes,BUTLER,BUTLER|HAMILTON,no,Small typo candidate (edit distance 1) with county overlap.
+GROVECITY,GROVE CITY,medium,typo-match,1,GROVE CITY,yes,FRANKLIN,FRANKLIN,no,Small typo candidate (edit distance 1) with county overlap.
+HILLARD,HILLIARD,medium,typo-match,1,HILLIARD,yes,FRANKLIN,FRANKLIN,no,Small typo candidate (edit distance 1) with county overlap.
+LIBERTY TOWNSHP,LIBERTY TOWNSHIP,medium,typo-match,2,LIBERTY TOWNSHIP,yes,BUTLER,BUTLER,no,Small typo candidate (edit distance 1) with county overlap.
+MANSFIED,MANSFIELD,medium,typo-match,1,MANSFIELD,yes,RICHLAND,RICHLAND,no,Small typo candidate (edit distance 1) with county overlap.
+MAPLE  HEIGHT,MAPLE HEIGHTS,medium,typo-match,1,MAPLE HEIGHTS,yes,CUYAHOGA,CUYAHOGA,no,Small typo candidate (edit distance 1) with county overlap.
+MAPLEHEIGHTS,MAPLE HEIGHTS,medium,typo-match,1,MAPLE HEIGHTS,yes,CUYAHOGA,CUYAHOGA,no,Small typo candidate (edit distance 1) with county overlap.
+MASSILION,MASSILLON,medium,typo-match,1,MASSILLON,yes,STARK,STARK,no,Small typo candidate (edit distance 1) with county overlap.
+MCARTHUR,MC ARTHUR,medium,typo-match,2,MC ARTHUR,yes,VINTON,VINTON,no,Small typo candidate (edit distance 1) with county overlap.
+NEW PHILADELPHI,NEW PHILADELPHIA,medium,typo-match,3,NEW PHILADELPHIA,yes,TUSCARAWAS,TUSCARAWAS,no,Small typo candidate (edit distance 1) with county overlap.
+NEW PHILADLEPHIA,NEW PHILADELPHIA,medium,typo-match,1,NEW PHILADELPHIA,yes,TUSCARAWAS,TUSCARAWAS,no,Small typo candidate (edit distance 2) with county overlap.
+NORTH RIDGEVILL,NORTH RIDGEVILLE,medium,typo-match,1,NORTH RIDGEVILLE,yes,LORAIN,LORAIN,no,Small typo candidate (edit distance 1) with county overlap.
+PORTMSOUTH,PORTSMOUTH,medium,typo-match,1,PORTSMOUTH,yes,SCIOTO,SCIOTO,no,Small typo candidate (edit distance 2) with county overlap.
+REYNOLDBURG,REYNOLDSBURG,medium,typo-match,2,REYNOLDSBURG,yes,FRANKLIN,FAIRFIELD|FRANKLIN|LICKING,no,Small typo candidate (edit distance 1) with county overlap.
+SAINT CLAIRSVIL,SAINT CLAIRSVILLE,medium,typo-match,1,SAINT CLAIRSVILLE,yes,BELMONT,BELMONT,no,Small typo candidate (edit distance 2) with county overlap.
+STRONGVILLE,STRONGSVILLE,medium,typo-match,3,STRONGSVILLE,yes,CUYAHOGA,CUYAHOGA,no,Small typo candidate (edit distance 1) with county overlap.
+WILLOUGHBY HILL,WILLOUGHBY HILLS,medium,typo-match,1,WILLOUGHBY HILLS,yes,LAKE,LAKE,no,Small typo candidate (edit distance 1) with county overlap.

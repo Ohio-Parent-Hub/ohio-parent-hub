@@ -1,0 +1,16 @@
+{
+  "date": "2026-02-25",
+  "totalRecords": 8074,
+  "uniqueCities": 829,
+  "slugCollisionCityCount": 18,
+  "pairwiseCandidateCount": 189,
+  "oneWaySuggestionCount": 71,
+  "uniqueCanonicalTargets": 48,
+  "highConfidenceSuggestions": 36,
+  "mediumConfidenceSuggestions": 35,
+  "lowConfidenceSuggestions": 0,
+  "ambiguousSuggestionCount": 0,
+  "blockedPairsConfigured": 0,
+  "approvedAliasCount": 0,
+  "note": "Report only. No aliases were applied to source data."
+}

@@ -47,6 +47,11 @@ function formatCapsToken(token: string) {
   if (!token) return token;
 
   const uppercase = token.toUpperCase();
+
+  if (/^MC[A-Z]{2,}$/.test(uppercase)) {
+    return `Mc${uppercase.charAt(2)}${uppercase.slice(3).toLowerCase()}`;
+  }
+
   if (PRESERVE_UPPER_TOKENS.has(uppercase)) {
     return uppercase;
   }

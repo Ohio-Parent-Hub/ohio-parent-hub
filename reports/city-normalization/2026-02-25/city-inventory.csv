@@ -1,0 +1,830 @@
+city,slug,normalized,count,counties,zip_count
+ABERDEEN,aberdeen,aberdeen,1,BROWN,1
+ADA,ada,ada,4,HANCOCK|HARDIN,1
+ADAMSVILLE,adamsville,adamsville,1,MUSKINGUM,1
+ADENA,adena,adena,3,JEFFERSON,1
+AKRN,akrn,akrn,1,SUMMIT,1
+AKRON,akron,akron,203,SUMMIT,16
+ALBANY,albany,albany,4,ATHENS,1
+ALLIANCE,alliance,alliance,15,COLUMBIANA|STARK,1
+AMANDA,amanda,amanda,2,FAIRFIELD,1
+AMELIA,amelia,amelia,6,CLERMONT,1
+AMESVILLE,amesville,amesville,1,ATHENS,1
+AMHERST,amherst,amherst,8,LORAIN,1
+ANDOVER,andover,andover,3,ASHTABULA,1
+ANNA,anna,anna,3,SHELBY,1
+ANSONIA,ansonia,ansonia,1,DARKE,1
+ANTWERP,antwerp,antwerp,1,PAULDING,1
+APPLE CREEK,apple-creek,apple creek,4,WAYNE,1
+ARCADIA,arcadia,arcadia,2,HANCOCK,1
+ARCANUM,arcanum,arcanum,4,DARKE,1
+ARCHBOLD,archbold,archbold,8,FULTON|HENRY,1
+ARLINGTON,arlington,arlington,3,HANCOCK,1
+ASHLAND,ashland,ashland,16,ASHLAND,1
+ASHLEY,ashley,ashley,2,DELAWARE,1
+ASHTABULA,ashtabula,ashtabula,31,ASHTABULA,1
+ASHVILLE,ashville,ashville,7,PICKAWAY,1
+ATHENS,athens,athens,13,ATHENS,1
+ATTICA,attica,attica,2,SENECA,1
+ATWATER,atwater,atwater,4,PORTAGE,1
+AURORA,aurora,aurora,8,PORTAGE,1
+AUSTINBURG,austinburg,austinburg,3,ASHTABULA,1
+AUSTINTOWN,austintown,austintown,8,MAHONING,1
+AUSTINTWON,austintwon,austintwon,1,MAHONING,1
+AVON,avon,avon,14,LORAIN,1
+AVON LAKE,avon-lake,avon lake,14,LORAIN,1
+BAINBRIDGE,bainbridge,bainbridge,4,GEAUGA|HIGHLAND|ROSS,2
+BAINBRIDGE TWSP,bainbridge-twsp,bainbridge township,1,GEAUGA,1
+BALTIC,baltic,baltic,1,TUSCARAWAS,1
+BALTIMORE,baltimore,baltimore,4,FAIRFIELD|LICKING,1
+BARBERTON,barberton,barberton,12,SUMMIT,1
+BARNESVILLE,barnesville,barnesville,4,BELMONT,1
+BASCOM,bascom,bascom,1,SENECA,1
+BATAVIA,batavia,batavia,9,CLERMONT,1
+BATH,bath,bath,2,SUMMIT,2
+BAY VILLAGE,bay-village,bay village,6,CUYAHOGA,1
+BEACHWOOD,beachwood,beachwood,14,CUYAHOGA,1
+BEALLSVILLE,beallsville,beallsville,1,MONROE,1
+BEAVER,beaver,beaver,1,PIKE,1
+BEAVERCREEK,beavercreek,beavercreek,23,GREENE,5
+BEAVERCREEK TOWNSHIP,beavercreek-township,beavercreek township,1,GREENE,1
+BEAVERVREEK,beavervreek,beavervreek,1,GREENE,1
+BEDFORD,bedford,bedford,16,CUYAHOGA,2
+BEDFORD HEIGHTS,bedford-heights,bedford heights,8,CUYAHOGA,1
+BEDFORD HTS,bedford-hts,bedford heights,5,CUYAHOGA,1
+BELLAIRE,bellaire,bellaire,5,BELMONT,1
+BELLBROOK,bellbrook,bellbrook,5,GREENE,1
+BELLEFONTAINE,bellefontaine,bellefontaine,8,LOGAN,1
+BELLEVUE,bellevue,bellevue,10,HURON|SANDUSKY,1
+BELLVILLE,bellville,bellville,3,MORROW|RICHLAND,1
+BELMONT,belmont,belmont,1,BELMONT,1
+BELPRE,belpre,belpre,6,WASHINGTON,1
+BEREA,berea,berea,6,CUYAHOGA,1
+BERGHOLZ,bergholz,bergholz,2,JEFFERSON,1
+BERKEY,berkey,berkey,2,LUCAS,1
+BETHEL,bethel,bethel,6,CLERMONT,1
+BETHESDA,bethesda,bethesda,1,BELMONT,1
+BETTSVILLE,bettsville,bettsville,1,SENECA,1
+BEVERLY,beverly,beverly,2,WASHINGTON,2
+BEXLEY,bexley,bexley,7,FRANKLIN,1
+BIDWELL,bidwell,bidwell,2,GALLIA,1
+BLACKLICK,blacklick,blacklick,8,FRANKLIN,1
+BLANCHESTER,blanchester,blanchester,3,CLINTON|WARREN,2
+BLOOMDALE,bloomdale,bloomdale,1,WOOD,1
+BLOOMINGBURG,bloomingburg,bloomingburg,1,FAYETTE,1
+BLOOMINGDALE,bloomingdale,bloomingdale,1,JEFFERSON,1
+BLOOMVILLE,bloomville,bloomville,1,SENECA,1
+BLUE ASH,blue-ash,blue ash,2,HAMILTON,1
+BLUFFTON,bluffton,bluffton,3,ALLEN|HANCOCK,1
+BOARDMAN,boardman,boardman,28,MAHONING,1
+BOLIVAR,bolivar,bolivar,3,TUSCARAWAS,1
+BOTKINS,botkins,botkins,2,SHELBY,1
+BOWERSTON,bowerston,bowerston,1,CARROLL,1
+BOWLING GREEN,bowling-green,bowling green,19,WOOD,1
+BRADFORD,bradford,bradford,2,DARKE,1
+BRECKSVILLE,brecksville,brecksville,7,CUYAHOGA,1
+BREMEN,bremen,bremen,2,FAIRFIELD,1
+BRIDGEPORT,bridgeport,bridgeport,4,BELMONT,1
+BRILLIANT,brilliant,brilliant,3,JEFFERSON,1
+BRISTOLVILLE,bristolville,bristolville,1,TRUMBULL,1
+BROADVIEW HEIGHTS,broadview-heights,broadview heights,4,CUYAHOGA,1
+BROADVIEW HTS,broadview-hts,broadview heights,1,CUYAHOGA,1
+BROOK PARK,brook-park,brook park,3,CUYAHOGA,1
+BROOKFIELD,brookfield,brookfield,2,TRUMBULL,1
+BROOKLYN,brooklyn,brooklyn,10,CUYAHOGA,1
+BROOKLYN HEIGHTS,brooklyn-heights,brooklyn heights,1,CUYAHOGA,1
+BROOKPARK,brookpark,brookpark,2,CUYAHOGA,2
+BROOKVILLE,brookville,brookville,4,MONTGOMERY,1
+BRUNSWICK,brunswick,brunswick,21,MEDINA,1
+BRUNSWICK HILLS,brunswick-hills,brunswick hills,1,MEDINA,1
+BRYAN,bryan,bryan,6,WILLIAMS,1
+BUCYRUS,bucyrus,bucyrus,9,CRAWFORD,1
+BURTON,burton,burton,3,GEAUGA,1
+BUTLER,butler,butler,2,RICHLAND,1
+BYESVILLE,byesville,byesville,5,GUERNSEY,1
+CADIZ,cadiz,cadiz,3,HARRISON,1
+CALDWELL,caldwell,caldwell,4,NOBLE,1
+CALEDONIA,caledonia,caledonia,2,MARION,1
+CAMBRIDGE,cambridge,cambridge,13,GUERNSEY,1
+CAMDEN,camden,camden,2,PREBLE,1
+CAMPBELL,campbell,campbell,10,MAHONING,1
+CANAL FULTON,canal-fulton,canal fulton,6,STARK,1
+CANAL WINCHESTE,canal-wincheste,canal wincheste,6,FRANKLIN,1
+CANAL WINCHESTER,canal-winchester,canal winchester,26,FRANKLIN,1
+CANALWINCHESTER,canalwinchester,canalwinchester,1,FRANKLIN,1
+CANFIELD,canfield,canfield,14,MAHONING,1
+CANTON,canton,canton,93,STARK,13
+CARDINGTON,cardington,cardington,4,MORROW,1
+CAREY,carey,carey,4,WYANDOT,1
+CARLISLE,carlisle,carlisle,3,WARREN,1
+CARROLL,carroll,carroll,5,FAIRFIELD,1
+CARROLLTON,carrollton,carrollton,3,CARROLL,1
+CASSTOWN,casstown,casstown,1,MIAMI,1
+CASTALIA,castalia,castalia,2,ERIE,1
+CEDARVILLE,cedarville,cedarville,1,GREENE,1
+CELINA,celina,celina,8,MERCER,1
+CENTERBURG,centerburg,centerburg,1,KNOX,1
+CENTERVILLE,centerville,centerville,22,MONTGOMERY,2
+CHAGRIN FALLS,chagrin-falls,chagrin falls,9,CUYAHOGA|GEAUGA,2
+CHARDON,chardon,chardon,6,GEAUGA,1
+CHAUNCEY,chauncey,chauncey,1,ATHENS,1
+CHESAPEAKE,chesapeake,chesapeake,7,LAWRENCE,1
+CHESTER TWP,chester-twp,chester township,1,GEAUGA,1
+CHESTERLAND,chesterland,chesterland,8,GEAUGA,1
+CHEVIOT,cheviot,cheviot,2,HAMILTON,1
+CHILLICOTHE,chillicothe,chillicothe,29,ROSS,1
+CIN,cin,cin,1,HAMILTON,1
+CINCINAATI,cincinaati,cincinaati,1,HAMILTON,1
+CINCINANTI,cincinanti,cincinanti,1,HAMILTON,1
+CINCINATI,cincinati,cincinati,2,HAMILTON,2
+CINCINATTI,cincinatti,cincinatti,1,HAMILTON,1
+CINCINNATI,cincinnati,cincinnati,1049,BUTLER|CLERMONT|HAMILTON|WARREN,49
+CINCINNATTI,cincinnatti,cincinnatti,1,HAMILTON,1
+CINCINNNATI,cincinnnati,cincinnnati,2,HAMILTON,2
+CINICNNATI,cinicnnati,cinicnnati,1,HAMILTON,1
+CIRCLEVILLE,circleville,circleville,12,PICKAWAY,1
+CLARKSBURG,clarksburg,clarksburg,1,ROSS,1
+CLARKSVILLE,clarksville,clarksville,2,CLINTON,1
+CLAYTON,clayton,clayton,4,MONTGOMERY,1
+CLEVELAND,cleveland,cleveland,458,CUYAHOGA,25
+CLEVELAND HEIGHTS,cleveland-heights,cleveland heights,26,CUYAHOGA,4
+CLEVELAND HTS,cleveland-hts,cleveland heights,13,CUYAHOGA,3
+CLEVELAND HTS.,cleveland-hts,cleveland heights,2,CUYAHOGA,2
+CLEVES,cleves,cleves,4,HAMILTON,1
+CLEVLAND,clevland,clevland,2,CUYAHOGA,2
+CLNCINNATI,clncinnati,clncinnati,1,HAMILTON,1
+CLYDE,clyde,clyde,6,SANDUSKY,1
+COAL GROVE,coal-grove,coal grove,1,LAWRENCE,1
+COL,col,col,1,FRANKLIN,1
+COLDWATER,coldwater,coldwater,4,MERCER,1
+COLLINS,collins,collins,1,HURON,1
+COLUBUS,colubus,colubus,1,FRANKLIN,1
+COLUMBIA STATIO,columbia-statio,columbia statio,3,LORAIN,1
+COLUMBIA STATION,columbia-station,columbia station,1,LORAIN,1
+COLUMBIANA,columbiana,columbiana,7,COLUMBIANA,1
+COLUMBUS,columbus,columbus,725,DELAWARE|FRANKLIN,33
+COLUMBUS GROVE,columbus-grove,columbus grove,3,PUTNAM,1
+COMMERCIAL POIN,commercial-poin,commercial poin,1,PICKAWAY,1
+COMMERCIAL POINT,commercial-point,commercial point,2,FRANKLIN|PICKAWAY,1
+CONCORD TWNSHP,concord-twnshp,concord township,1,LAKE,1
+CONCORD TWP,concord-twp,concord township,1,LAKE,1
+CONCORD TWSP,concord-twsp,concord township,1,LAKE,1
+CONNEAUT,conneaut,conneaut,5,ASHTABULA,2
+CONTINENTAL,continental,continental,1,PUTNAM,1
+CONVOY,convoy,convoy,1,VAN WERT,1
+COOLVILLE,coolville,coolville,1,ATHENS,1
+COPLEY,copley,copley,4,SUMMIT,1
+CORNING,corning,corning,3,PERRY,2
+CORTLAND,cortland,cortland,9,TRUMBULL,1
+COSHOCTON,coshocton,coshocton,11,COSHOCTON,1
+COUMBUS,coumbus,coumbus,1,FRANKLIN,1
+COVINGTON,covington,covington,1,MIAMI,1
+CRESTLINE,crestline,crestline,4,CRAWFORD,1
+CRESTON,creston,creston,3,WAYNE,1
+CRIDERSVILLE,cridersville,cridersville,1,AUGLAIZE,1
+CROOKSVILLE,crooksville,crooksville,4,PERRY,1
+CROWN CITY,crown-city,crown city,3,GALLIA,1
+CURTICE,curtice,curtice,1,OTTAWA,1
+CUSTAR,custar,custar,1,WOOD,1
+CUYAHOGA FALLS,cuyahoga-falls,cuyahoga falls,25,SUMMIT,2
+CUYAHOGA HEIGHTS,cuyahoga-heights,cuyahoga heights,1,CUYAHOGA,1
+DALTON,dalton,dalton,3,WAYNE,1
+DANVILLE,danville,danville,2,KNOX,1
+DAYTON,dayton,dayton,202,GREENE|MONTGOMERY,25
+DE GRAFF,de-graff,de graff,1,LOGAN,1
+DEER PARK,deer-park,deer park,1,HAMILTON,1
+DEERFIELD TWP,deerfield-twp,deerfield township,1,WARREN,1
+DEFIANCE,defiance,defiance,20,DEFIANCE,1
+DELAWARE,delaware,delaware,34,DELAWARE,1
+DELPHOS,delphos,delphos,3,ALLEN|VAN WERT,1
+DELTA,delta,delta,4,FULTON,1
+DENNISON,dennison,dennison,2,TUSCARAWAS,1
+DESHLER,deshler,deshler,1,HENRY,1
+DOLA,dola,dola,1,HARDIN,1
+DOVER,dover,dover,7,TUSCARAWAS,1
+DOYLESTOWN,doylestown,doylestown,6,WAYNE,1
+DRESDEN,dresden,dresden,2,MUSKINGUM,1
+DUBIN,dubin,dubin,1,FRANKLIN,1
+DUBLIN,dublin,dublin,57,DELAWARE|FRANKLIN|UNION,2
+DUNCAN FALLS,duncan-falls,duncan falls,3,MUSKINGUM,1
+DUPONT,dupont,dupont,1,PUTNAM,1
+E. CLEVELAND,e-cleveland,e cleveland,1,CUYAHOGA,1
+E. LIVERPOOL,e-liverpool,e liverpool,2,COLUMBIANA,1
+EAST CANTON,east-canton,east canton,3,STARK,1
+EAST CLEVELAND,east-cleveland,east cleveland,15,CUYAHOGA,2
+EAST LIVERPOOL,east-liverpool,east liverpool,8,COLUMBIANA,1
+EAST PALESTINE,east-palestine,east palestine,3,COLUMBIANA,1
+EAST SPARTA,east-sparta,east sparta,1,STARK,1
+EASTLAKE,eastlake,eastlake,8,LAKE,2
+EATON,eaton,eaton,10,PREBLE,1
+EDGERTON,edgerton,edgerton,3,WILLIAMS,1
+EDON,edon,edon,2,WILLIAMS,1
+ELMORE,elmore,elmore,2,OTTAWA,1
+ELYRIA,elyria,elyria,44,LORAIN,1
+ENGLEWOOD,englewood,englewood,11,MONTGOMERY,2
+ENON,enon,enon,2,CLARK,1
+ETNA,etna,etna,3,LICKING,2
+EUCLID,euclid,euclid,66,CUYAHOGA,5
+EVENDALE,evendale,evendale,2,HAMILTON,1
+FAIFIELD,faifield,faifield,1,BUTLER,1
+FAIRBORN,fairborn,fairborn,13,CLARK|GREENE,1
+FAIRBRON,fairbron,fairbron,1,GREENE,1
+FAIRFIELD,fairfield,fairfield,40,BUTLER|HAMILTON,2
+FAIRLAWN,fairlawn,fairlawn,9,SUMMIT,1
+FAIRPORT HARBOR,fairport-harbor,fairport harbor,2,LAKE,1
+FAIRVIEW PARK,fairview-park,fairview park,4,CUYAHOGA,1
+FAYETTE,fayette,fayette,1,FULTON,1
+FAYETTEVILLE,fayetteville,fayetteville,1,BROWN,1
+FELICITY,felicity,felicity,4,CLERMONT,1
+FINDLAY,findlay,findlay,25,HANCOCK,1
+FLEMING,fleming,fleming,1,WASHINGTON,1
+FLETCHER,fletcher,fletcher,1,MIAMI,1
+FLUSHING,flushing,flushing,1,BELMONT,1
+FOREST,forest,forest,2,HARDIN,1
+FOREST PARK,forest-park,forest park,3,HAMILTON,1
+FORT JENNINGS,fort-jennings,fort jennings,1,PUTNAM,1
+FORT LORAMIE,fort-loramie,fort loramie,1,SHELBY,1
+FORT RECOVERY,fort-recovery,fort recovery,2,MERCER,1
+FOSTORIA,fostoria,fostoria,7,HANCOCK|SENECA|WOOD,1
+FRANKFORT,frankfort,frankfort,2,ROSS,1
+FRANKLIN,franklin,franklin,6,WARREN,1
+FRANKLIN FURNACE,franklin-furnace,franklin furnace,2,SCIOTO,1
+FRAZEYSBURG,frazeysburg,frazeysburg,3,MUSKINGUM,1
+FREDERICKTOWN,fredericktown,fredericktown,5,KNOX,1
+FREEPORT,freeport,freeport,1,HARRISON,1
+FREMONT,fremont,fremont,39,SANDUSKY,1
+GAHANNA,gahanna,gahanna,30,FRANKLIN,1
+GALENA,galena,galena,6,DELAWARE,1
+GALION,galion,galion,7,CRAWFORD|MORROW,1
+GALLIPOLIS,gallipolis,gallipolis,12,GALLIA,1
+GALLOWAY,galloway,galloway,17,FRANKLIN,1
+GAMBIER,gambier,gambier,1,KNOX,1
+GARFIELD,garfield,garfield,5,CUYAHOGA,2
+GARFIELD HEIGHTS,garfield-heights,garfield heights,19,CUYAHOGA,2
+GARFIELD HTS,garfield-hts,garfield heights,13,CUYAHOGA,2
+GARFIELD HTS.,garfield-hts,garfield heights,1,CUYAHOGA,1
+GARRETSVILLE,garretsville,garretsville,1,PORTAGE,1
+GARRETTSVILLE,garrettsville,garrettsville,2,PORTAGE,1
+GATES MILLS,gates-mills,gates mills,2,CUYAHOGA,1
+GENEVA,geneva,geneva,6,ASHTABULA,1
+GENOA,genoa,genoa,4,OTTAWA,1
+GEORGETOWN,georgetown,georgetown,4,BROWN,1
+GERMANTOWN,germantown,germantown,4,MONTGOMERY,1
+GIBSONBURG,gibsonburg,gibsonburg,2,SANDUSKY,1
+GIRARD,girard,girard,4,TRUMBULL,1
+GLANDORF,glandorf,glandorf,1,PUTNAM,1
+GLENMONT,glenmont,glenmont,1,HOLMES,1
+GLOUSTER,glouster,glouster,2,ATHENS,1
+GNADENHUTTEN,gnadenhutten,gnadenhutten,3,TUSCARAWAS,1
+GOSHEN,goshen,goshen,3,CLERMONT,1
+GRAFTON,grafton,grafton,4,LORAIN,1
+GRAND RAPIDS,grand-rapids,grand rapids,1,WOOD,1
+GRANDVIEW HEIGHTS,grandview-heights,grandview heights,1,FRANKLIN,1
+GRANVILLE,granville,granville,8,LICKING,1
+GRAYSVILLE,graysville,graysville,1,MONROE,1
+GRAYTOWN,graytown,graytown,1,OTTAWA,1
+GREEN SPRINGS,green-springs,green springs,3,SANDUSKY,1
+GREEN TWNSHIP,green-twnship,green twnship,1,HAMILTON,1
+GREENFIELD,greenfield,greenfield,6,HIGHLAND,1
+GREENSPRINGS,greensprings,greensprings,1,SENECA,1
+GREENVILLE,greenville,greenville,11,DARKE,1
+GREENWICH,greenwich,greenwich,1,HURON,1
+GROVE,grove,grove,1,FRANKLIN,1
+GROVE CITY,grove-city,grove city,29,FRANKLIN,1
+GROVECITY,grovecity,grovecity,1,FRANKLIN,1
+GROVEPORT,groveport,groveport,13,FRANKLIN,1
+GROVER HILL,grover-hill,grover hill,1,PAULDING,1
+HAMDEN,hamden,hamden,2,VINTON,1
+HAMERSVILLE,hamersville,hamersville,2,BROWN,1
+HAMILITON,hamiliton,hamiliton,1,BUTLER,1
+HAMILTON,hamilton,hamilton,57,BUTLER|HAMILTON,3
+HAMLER,hamler,hamler,1,HENRY,1
+HAMMONDSVILLE,hammondsville,hammondsville,1,JEFFERSON,1
+HANGING ROCK,hanging-rock,hanging rock,1,LAWRENCE,1
+HANNIBAL,hannibal,hannibal,1,MONROE,1
+HANOVERTON,hanoverton,hanoverton,1,COLUMBIANA,1
+HARRISON,harrison,harrison,14,HAMILTON,1
+HARROD,harrod,harrod,1,ALLEN,1
+HARTVILLE,hartville,hartville,2,STARK,1
+HEATH,heath,heath,6,LICKING,1
+HEBRON,hebron,hebron,2,LICKING,1
+HICKSVILLE,hicksville,hicksville,3,DEFIANCE,1
+HIGHLAND HEIGHTS,highland-heights,highland heights,3,CUYAHOGA,1
+HIGHLAND HGHTS,highland-hghts,highland heights,1,CUYAHOGA,1
+HIGHLAND HTS,highland-hts,highland heights,2,CUYAHOGA,1
+HILLARD,hillard,hillard,1,FRANKLIN,1
+HILLIARD,hilliard,hilliard,52,FRANKLIN,1
+HILLSBORO,hillsboro,hillsboro,10,HIGHLAND,1
+HOLGATE,holgate,holgate,2,HENRY,1
+HOLLAND,holland,holland,10,LUCAS,1
+HOLMESVILLE,holmesville,holmesville,1,HOLMES,1
+HOUSTON,houston,houston,1,SHELBY,1
+HOWARD,howard,howard,1,KNOX,1
+HUBBARD,hubbard,hubbard,8,TRUMBULL,1
+HUBER HEIGHTS,huber-heights,huber heights,18,MONTGOMERY,1
+HUDSON,hudson,hudson,14,SUMMIT,1
+HUNTSBURG,huntsburg,huntsburg,1,GEAUGA,1
+HURON,huron,huron,5,ERIE,1
+INDEPENDENCE,independence,independence,5,CUYAHOGA,1
+INDIAN SPRINGS,indian-springs,indian springs,1,BUTLER,1
+IRONTON,ironton,ironton,11,LAWRENCE,1
+JACKSON,jackson,jackson,13,JACKSON,1
+JACKSON CENTER,jackson-center,jackson center,2,SHELBY,1
+JACKSONVILLE,jacksonville,jacksonville,1,ATHENS,1
+JAMESTOWN,jamestown,jamestown,3,GREENE,1
+JEFFERSON,jefferson,jefferson,7,ASHTABULA,1
+JEFFERSONVILLE,jeffersonville,jeffersonville,1,FAYETTE,1
+JENERA,jenera,jenera,1,HANCOCK,1
+JEROMESVILLE,jeromesville,jeromesville,1,ASHLAND,1
+JERUSALEM,jerusalem,jerusalem,1,MONROE,1
+JEWETT,jewett,jewett,1,HARRISON,1
+JOHNSTOWN,johnstown,johnstown,6,LICKING,1
+JUNCTION CITY,junction-city,junction city,4,PERRY,1
+KALIDA,kalida,kalida,2,PUTNAM,1
+KANSAS,kansas,kansas,1,SANDUSKY,1
+KELLEYS ISLAND,kelleys-island,kelleys island,1,ERIE,1
+KENT,kent,kent,15,PORTAGE,2
+KENTON,kenton,kenton,11,HARDIN,1
+KETTERING,kettering,kettering,28,MONTGOMERY,6
+KINGS MILLS,kings-mills,kings mills,5,WARREN,1
+KINGSVILLE,kingsville,kingsville,2,ASHTABULA,1
+KINSMAN,kinsman,kinsman,2,TRUMBULL,1
+KIRKERSVILLE,kirkersville,kirkersville,1,LICKING,1
+KIRTLAND,kirtland,kirtland,4,LAKE,1
+LAGRANGE,lagrange,lagrange,4,LORAIN,1
+LAKE MILTON,lake-milton,lake milton,1,MAHONING,1
+LAKESIDE MARBLEHEAD,lakeside-marblehead,lakeside marblehead,1,OTTAWA,1
+LAKEVILLE,lakeville,lakeville,1,HOLMES,1
+LAKEWOOD,lakewood,lakewood,28,CUYAHOGA,1
+LANCASTER,lancaster,lancaster,36,FAIRFIELD,1
+LARUE,larue,larue,1,MARION,1
+LATHAM,latham,latham,2,PIKE,1
+LAURELVILLE,laurelville,laurelville,1,HOCKING,1
+LEAVITTSBURG,leavittsburg,leavittsburg,2,TRUMBULL,1
+LEBANON,lebanon,lebanon,13,WARREN,1
+LEESBURG,leesburg,leesburg,2,HIGHLAND,1
+LEETONIA,leetonia,leetonia,6,COLUMBIANA,1
+LEIPSIC,leipsic,leipsic,3,PUTNAM,1
+LEWIS CENTER,lewis-center,lewis center,27,DELAWARE,1
+LEWISBURG,lewisburg,lewisburg,3,PREBLE,1
+LEWISBURG OH,lewisburg-oh,lewisburg oh,1,PREBLE,1
+LEWISTOWN,lewistown,lewistown,2,LOGAN,1
+LEXINGTON,lexington,lexington,4,RICHLAND,1
+LIBERTY CENTER,liberty-center,liberty center,2,HENRY,1
+LIBERTY TOWNSHIP,liberty-township,liberty township,7,BUTLER,2
+LIBERTY TOWNSHP,liberty-townshp,liberty townshp,2,BUTLER,1
+LIBERTY TWNSP.,liberty-twnsp,liberty twnsp,1,BUTLER,1
+LIBERTY TWP,liberty-twp,liberty township,8,BUTLER|TRUMBULL,3
+LIMA,lima,lima,56,ALLEN,5
+LISBON,lisbon,lisbon,6,COLUMBIANA,1
+LITHOPOLIS,lithopolis,lithopolis,2,FAIRFIELD,1
+LITTLE HOCKING,little-hocking,little hocking,1,WASHINGTON,1
+LOCKBOURNE,lockbourne,lockbourne,1,FRANKLIN,1
+LODI,lodi,lodi,2,MEDINA,1
+LOGAN,logan,logan,17,HOCKING,1
+LONDON,london,london,13,MADISON,2
+LORAIN,lorain,lorain,77,LORAIN,3
+LORE CITY,lore-city,lore city,1,GUERNSEY,1
+LOUDONVILLE,loudonville,loudonville,5,ASHLAND,1
+LOUISVILLE,louisville,louisville,10,STARK,2
+LOVELAND,loveland,loveland,18,CLERMONT|HAMILTON|WARREN,1
+LOWELL,lowell,lowell,1,WASHINGTON,1
+LUCAS,lucas,lucas,2,RICHLAND,1
+LUCASVILLE,lucasville,lucasville,5,SCIOTO,1
+LYNCHBURG,lynchburg,lynchburg,1,HIGHLAND,1
+LYNDHURST,lyndhurst,lyndhurst,9,CUYAHOGA,2
+MACEDONIA,macedonia,macedonia,9,SUMMIT,1
+MADEIRA,madeira,madeira,3,HAMILTON,1
+MADISON,madison,madison,7,LAKE,1
+MAGNOLIA,magnolia,magnolia,3,TUSCARAWAS,1
+MAINEVILLE,maineville,maineville,10,WARREN,1
+MALTA,malta,malta,2,MORGAN,1
+MALVERN,malvern,malvern,3,CARROLL,1
+MANCHESTER,manchester,manchester,5,ADAMS,1
+MANSFIED,mansfied,mansfied,1,RICHLAND,1
+MANSFIELD,mansfield,mansfield,46,RICHLAND,6
+MANTUA,mantua,mantua,2,PORTAGE,1
+MAPLE,maple,maple,2,CUYAHOGA,1
+MAPLE  HEIGHT,maple-height,maple height,1,CUYAHOGA,1
+MAPLE HEIGHTS,maple-heights,maple heights,38,CUYAHOGA,2
+MAPLE HTS,maple-hts,maple heights,10,CUYAHOGA,1
+MAPLE HTS.,maple-hts,maple heights,2,CUYAHOGA,1
+MAPLEHEIGHTS,mapleheights,mapleheights,1,CUYAHOGA,1
+MARENGO,marengo,marengo,4,MORROW,1
+MARIA STEIN,maria-stein,maria stein,3,MERCER,1
+MARIETTA,marietta,marietta,18,WASHINGTON,1
+MARION,marion,marion,39,MARION,1
+MARTIN,martin,martin,1,OTTAWA,1
+MARTINS,martins,martins,1,BELMONT,1
+MARTINS FERRY,martins-ferry,martins ferry,3,BELMONT,1
+MARTINSVILLE,martinsville,martinsville,2,CLINTON,1
+MARYSVILLE,marysville,marysville,14,UNION,1
+MASON,mason,mason,33,WARREN,1
+MASSILION,massilion,massilion,1,STARK,1
+MASSILLON,massillon,massillon,38,STARK,2
+MAUMEE,maumee,maumee,16,LUCAS,1
+MAYFIELD,mayfield,mayfield,1,CUYAHOGA,1
+MAYFIELD HEIGHTS,mayfield-heights,mayfield heights,1,CUYAHOGA,1
+MAYFIELD HTS,mayfield-hts,mayfield heights,3,CUYAHOGA,1
+MAYFIELD HTS.,mayfield-hts,mayfield heights,1,CUYAHOGA,1
+MAYFIELD VILLAGE,mayfield-village,mayfield village,3,CUYAHOGA,1
+MC ARTHUR,mc-arthur,mc arthur,5,VINTON,1
+MC COMB,mc-comb,mc comb,1,HANCOCK,1
+MC CONNELSVILLE,mc-connelsville,mc connelsville,1,MORGAN,1
+MC DERMOTT,mc-dermott,mc dermott,2,SCIOTO,1
+MC DONALD,mc-donald,mc donald,1,TRUMBULL,1
+MCARTHUR,mcarthur,mcarthur,2,VINTON,1
+MCCOMB,mccomb,mccomb,1,HANCOCK,1
+MCCONNELSVILLE,mcconnelsville,mcconnelsville,1,MORGAN,1
+MCDERMOTT,mcdermott,mcdermott,1,SCIOTO,1
+MCDONALD,mcdonald,mcdonald,2,TRUMBULL,1
+MCGUFFEY,mcguffey,mcguffey,2,HARDIN,1
+MECHANICSBURG,mechanicsburg,mechanicsburg,3,CHAMPAIGN,1
+MEDINA,medina,medina,29,MEDINA,1
+MEDWAY,medway,medway,2,CLARK,1
+MELROSE,melrose,melrose,1,PAULDING,1
+MENTOR,mentor,mentor,26,LAKE,1
+MESOPOTAMIA,mesopotamia,mesopotamia,1,TRUMBULL,1
+METAMORA,metamora,metamora,1,FULTON,1
+MIAMISBURG,miamisburg,miamisburg,17,MONTGOMERY,1
+MIDDLEBURG HEIGHTS,middleburg-heights,middleburg heights,1,CUYAHOGA,1
+MIDDLEBURG HTS,middleburg-hts,middleburg heights,3,CUYAHOGA,1
+MIDDLEFIELD,middlefield,middlefield,3,GEAUGA,1
+MIDDLEPORT,middleport,middleport,4,MEIGS,1
+MIDDLETOWN,middletown,middletown,23,BUTLER|WARREN,3
+MILAN,milan,milan,5,ERIE,1
+MILFORD,milford,milford,21,CLERMONT,1
+MILFORD CENTER,milford-center,milford center,3,UNION,1
+MILLBURY,millbury,millbury,3,WOOD,1
+MILLER CITY,miller-city,miller city,2,PUTNAM,1
+MILLERSBURG,millersburg,millersburg,7,HOLMES,1
+MILLERSPORT,millersport,millersport,2,FAIRFIELD,1
+MINERAL RIDGE,mineral-ridge,mineral ridge,5,MAHONING|TRUMBULL,1
+MINERVA,minerva,minerva,3,STARK,1
+MINFORD,minford,minford,4,SCIOTO,1
+MINGO JUNCTION,mingo-junction,mingo junction,3,JEFFERSON,1
+MINSTER,minster,minster,3,AUGLAIZE,1
+MOGADORE,mogadore,mogadore,5,PORTAGE|SUMMIT,1
+MONCLOVA,monclova,monclova,4,LUCAS,1
+MONROE,monroe,monroe,7,BUTLER,1
+MONROEVILLE,monroeville,monroeville,2,HURON,1
+MONTGOMERY,montgomery,montgomery,1,HAMILTON,1
+MONTPELIER,montpelier,montpelier,5,WILLIAMS,1
+MORAINE,moraine,moraine,4,MONTGOMERY,2
+MORRAL,morral,morral,3,MARION,1
+MORROW,morrow,morrow,2,WARREN,1
+MOUNT GILEAD,mount-gilead,mount gilead,6,MORROW,1
+MOUNT ORAB,mount-orab,mount orab,1,BROWN,1
+MOUNT STERLING,mount-sterling,mount sterling,1,MADISON,1
+MOUNT VERNON,mount-vernon,mount vernon,14,KNOX,1
+MOUNT VICTORY,mount-victory,mount victory,1,HARDIN,1
+MT BLANCHARD,mt-blanchard,mount blanchard,2,HANCOCK,1
+MT ORAB,mt-orab,mount orab,3,BROWN,1
+MT STERLING,mt-sterling,mount sterling,1,MADISON,1
+MT VERNON,mt-vernon,mount vernon,2,KNOX,1
+MT. GILEAD,mt-gilead,mount gilead,1,MORROW,1
+MT. HEALTHY,mt-healthy,mount healthy,1,HAMILTON,1
+MT. VERNON,mt-vernon,mount vernon,1,KNOX,1
+MUNROE FALLS,munroe-falls,munroe falls,2,SUMMIT,1
+N. RIDGEVILLE,n-ridgeville,n ridgeville,2,LORAIN,1
+NAPOLEON,napoleon,napoleon,11,HENRY,1
+NASHPORT,nashport,nashport,3,MUSKINGUM,1
+NAVARRE,navarre,navarre,4,STARK,1
+NEGLEY,negley,negley,1,COLUMBIANA,1
+NELSONVILLE,nelsonville,nelsonville,7,ATHENS,1
+NEW ALBANY,new-albany,new albany,18,FRANKLIN|LICKING,1
+NEW BOSTON,new-boston,new boston,5,SCIOTO,1
+NEW BREMEN,new-bremen,new bremen,3,AUGLAIZE,1
+NEW CARLISLE,new-carlisle,new carlisle,2,CLARK|MIAMI,1
+NEW CONCORD,new-concord,new concord,2,MUSKINGUM,1
+NEW FRANKLIN,new-franklin,new franklin,2,SUMMIT,2
+NEW KNOXVILLE,new-knoxville,new knoxville,2,SHELBY,1
+NEW LEBANON,new-lebanon,new lebanon,1,MONTGOMERY,1
+NEW LEXINGTON,new-lexington,new lexington,5,PERRY,1
+NEW LONDON,new-london,new london,3,HURON,1
+NEW MADISON,new-madison,new madison,1,DARKE,1
+NEW MATAMORAS,new-matamoras,new matamoras,1,WASHINGTON,1
+NEW MIDDELTOWN,new-middeltown,new middeltown,1,MAHONING,1
+NEW MIDDLETOWN,new-middletown,new middletown,1,MAHONING,1
+NEW PARIS,new-paris,new paris,2,PREBLE,1
+NEW PHILADELPHI,new-philadelphi,new philadelphi,3,TUSCARAWAS,1
+NEW PHILADELPHIA,new-philadelphia,new philadelphia,12,TUSCARAWAS,1
+NEW PHILADLEPHIA,new-philadlephia,new philadlephia,1,TUSCARAWAS,1
+NEW RICHMOND,new-richmond,new richmond,3,CLERMONT,1
+NEW RIEGEL,new-riegel,new riegel,1,SENECA,1
+NEW SPRINGFIELD,new-springfield,new springfield,1,MAHONING,1
+NEW VIENNA,new-vienna,new vienna,1,CLINTON,1
+NEW WASHINGTON,new-washington,new washington,1,CRAWFORD,1
+NEW WATERFORD,new-waterford,new waterford,1,COLUMBIANA,1
+NEWARK,newark,newark,56,LICKING,2
+NEWBURY,newbury,newbury,2,GEAUGA,1
+NEWCOMERSTOWN,newcomerstown,newcomerstown,4,TUSCARAWAS,1
+NEWPORT,newport,newport,1,WASHINGTON,1
+NEWTON FALLS,newton-falls,newton falls,4,TRUMBULL,1
+NEWTOWN,newtown,newtown,1,HAMILTON,1
+NILES,niles,niles,9,TRUMBULL,1
+NORTH BALTIMORE,north-baltimore,north baltimore,2,WOOD,1
+NORTH BEND,north-bend,north bend,1,HAMILTON,1
+NORTH CANTON,north-canton,north canton,23,STARK|SUMMIT,3
+NORTH COLLEGE HILL,north-college-hill,north college hill,1,HAMILTON,1
+NORTH JACKSON,north-jackson,north jackson,2,MAHONING,1
+NORTH KINGSVILLE,north-kingsville,north kingsville,1,ASHTABULA,1
+NORTH LEWISBURG,north-lewisburg,north lewisburg,3,CHAMPAIGN,1
+NORTH OLMSTED,north-olmsted,north olmsted,16,CUYAHOGA,1
+NORTH RANDALL,north-randall,north randall,4,CUYAHOGA,1
+NORTH RIDGEVILL,north-ridgevill,north ridgevill,1,LORAIN,1
+NORTH RIDGEVILLE,north-ridgeville,north ridgeville,11,LORAIN,1
+NORTH ROYALTON,north-royalton,north royalton,11,CUYAHOGA,1
+NORTHBEND,northbend,northbend,1,HAMILTON,1
+NORTHFIELD,northfield,northfield,7,SUMMIT,1
+NORTHFIELD CENT,northfield-cent,northfield cent,1,SUMMIT,1
+NORTHWOOD,northwood,northwood,3,WOOD,1
+NORTON,norton,norton,5,SUMMIT,1
+NORWALK,norwalk,norwalk,12,HURON,1
+NORWICH,norwich,norwich,1,MUSKINGUM,1
+NORWOOD,norwood,norwood,13,HAMILTON,1
+NOVELTY,novelty,novelty,3,GEAUGA,1
+OAK HARBOR,oak-harbor,oak harbor,3,OTTAWA,1
+OAK HILL,oak-hill,oak hill,4,JACKSON,1
+OAKWOOD,oakwood,oakwood,2,CUYAHOGA|PAULDING,2
+OAKWOOD VILLAGE,oakwood-village,oakwood village,2,CUYAHOGA,1
+OBERLIN,oberlin,oberlin,8,LORAIN,1
+OBETZ,obetz,obetz,1,FRANKLIN,1
+OLMSTED,olmsted,olmsted,1,CUYAHOGA,1
+OLMSTED FALLS,olmsted-falls,olmsted falls,4,CUYAHOGA,1
+ONTARIO,ontario,ontario,5,RICHLAND,1
+ORANGE,orange,orange,1,CUYAHOGA,1
+ORANGE VILLAGE,orange-village,orange village,1,CUYAHOGA,1
+OREGON,oregon,oregon,10,LUCAS,1
+ORRVILLE,orrville,orrville,12,WAYNE,1
+ORWELL,orwell,orwell,5,ASHTABULA,1
+OSTRANDER,ostrander,ostrander,2,DELAWARE,1
+OTTAWA,ottawa,ottawa,5,PUTNAM,1
+OTTOVILLE,ottoville,ottoville,1,PUTNAM,1
+OTWAY,otway,otway,1,SCIOTO,1
+OWENSVILLE,owensville,owensville,4,CLERMONT,1
+OXFORD,oxford,oxford,8,BUTLER,1
+PAINESVILLE,painesville,painesville,16,LAKE,2
+PAINESVILLIE,painesvillie,painesvillie,1,LAKE,1
+PANDORA,pandora,pandora,1,PUTNAM,1
+PARMA,parma,parma,31,CUYAHOGA,3
+PARMA HEIGHTS,parma-heights,parma heights,6,CUYAHOGA,2
+PARMA HTS,parma-hts,parma heights,4,CUYAHOGA,1
+PATASKALA,pataskala,pataskala,17,LICKING,1
+PATASKTALA,patasktala,patasktala,1,LICKING,1
+PATRIOT,patriot,patriot,2,GALLIA,1
+PAULDING,paulding,paulding,3,PAULDING,1
+PAYNE,payne,payne,2,PAULDING,1
+PEDRO,pedro,pedro,1,LAWRENCE,1
+PEEBLES,peebles,peebles,3,ADAMS,1
+PEMBERVILLE,pemberville,pemberville,4,WOOD,1
+PENINSULA,peninsula,peninsula,2,SUMMIT,1
+PEPPER PIKE,pepper-pike,pepper pike,5,CUYAHOGA,1
+PERRY,perry,perry,3,LAKE,1
+PERRYSBURG,perrysburg,perrysburg,19,WOOD,1
+PETTISVILLE,pettisville,pettisville,1,FULTON,1
+PHILO,philo,philo,1,MUSKINGUM,1
+PICKERINGTON,pickerington,pickerington,39,FAIRFIELD|FRANKLIN,1
+PIERPONT,pierpont,pierpont,1,ASHTABULA,1
+PIKETON,piketon,piketon,3,PIKE,1
+PIONEER,pioneer,pioneer,1,WILLIAMS,1
+PIQUA,piqua,piqua,11,MIAMI,1
+PLAIN CITY,plain-city,plain city,8,MADISON|UNION,1
+PLEASANT HILL,pleasant-hill,pleasant hill,1,MIAMI,1
+PLEASANTVILLE,pleasantville,pleasantville,2,FAIRFIELD,1
+PLYMOUTH,plymouth,plymouth,2,HURON|RICHLAND,1
+POLAND,poland,poland,5,MAHONING,1
+POMEROY,pomeroy,pomeroy,2,MEIGS,1
+PORT CLINTON,port-clinton,port clinton,6,OTTAWA,1
+PORTMSOUTH,portmsouth,portmsouth,1,SCIOTO,1
+PORTSMOUTH,portsmouth,portsmouth,14,SCIOTO,1
+POWELL,powell,powell,38,DELAWARE|FRANKLIN,2
+POWHATAN POINT,powhatan-point,powhatan point,1,BELMONT,1
+PROCTORVILLE,proctorville,proctorville,4,LAWRENCE,1
+PROSPECT,prospect,prospect,1,MARION,1
+RACINE,racine,racine,3,MEIGS,1
+RAVENNA,ravenna,ravenna,17,PORTAGE,1
+RAWSON,rawson,rawson,2,HANCOCK,1
+READING,reading,reading,2,HAMILTON,1
+REEDSVILLE,reedsville,reedsville,4,MEIGS,1
+REYNOLDBURG,reynoldburg,reynoldburg,2,FRANKLIN,1
+REYNOLDSBURG,reynoldsburg,reynoldsburg,44,FAIRFIELD|FRANKLIN|LICKING,2
+REYONOLDSBURG,reyonoldsburg,reyonoldsburg,1,FRANKLIN,1
+RICHFIELD,richfield,richfield,6,SUMMIT,1
+RICHMOND HEIGHTS,richmond-heights,richmond heights,8,CUYAHOGA,1
+RICHMOND HTS,richmond-hts,richmond heights,3,CUYAHOGA,1
+RICHMOND HTS.,richmond-hts,richmond heights,1,CUYAHOGA,1
+RICHWOOD,richwood,richwood,2,UNION,1
+RIO GRANDE,rio-grande,rio grande,4,GALLIA,1
+RIPLEY,ripley,ripley,2,BROWN,1
+RITTMAN,rittman,rittman,5,WAYNE,1
+RIVERSIDE,riverside,riverside,8,MONTGOMERY,2
+ROCK CREEK,rock-creek,rock creek,3,ASHTABULA,1
+ROCKFORD,rockford,rockford,3,MERCER,1
+ROCKY RIVER,rocky-river,rocky river,12,CUYAHOGA,1
+ROOTSTOWN,rootstown,rootstown,4,PORTAGE,1
+ROSEVILLE,roseville,roseville,3,MUSKINGUM|PERRY,1
+ROSS,ross,ross,1,BUTLER,1
+ROSSFORD,rossford,rossford,5,WOOD,3
+RUSHVILLE,rushville,rushville,1,FAIRFIELD,1
+RUSSELLVILLE,russellville,russellville,1,BROWN,1
+RUSSIA,russia,russia,2,SHELBY,1
+S. CHARLESTON,s-charleston,s charleston,1,CLARK,1
+SABINA,sabina,sabina,1,CLINTON,1
+SAGAMORE HILLS,sagamore-hills,sagamore hills,1,SUMMIT,1
+SAINT,saint,saint,1,BELMONT,1
+SAINT BERNARD,saint-bernard,saint bernard,1,HAMILTON,1
+SAINT CLAIRSVIL,saint-clairsvil,saint clairsvil,1,BELMONT,1
+SAINT CLAIRSVILLE,saint-clairsville,saint clairsville,8,BELMONT,1
+SAINT HENRY,saint-henry,saint henry,2,MERCER,1
+SAINT MARYS,saint-marys,saint marys,5,AUGLAIZE,1
+SAINT PARIS,saint-paris,saint paris,1,CHAMPAIGN,1
+SALEM,salem,salem,12,COLUMBIANA|MAHONING,1
+SALINEVILLE,salineville,salineville,2,COLUMBIANA,1
+SANDUSKY,sandusky,sandusky,22,ERIE,1
+SARAHSVILLE,sarahsville,sarahsville,2,NOBLE,1
+SARDINIA,sardinia,sardinia,1,BROWN,1
+SARDIS,sardis,sardis,1,MONROE,1
+SCIOTOVILLE,sciotoville,sciotoville,2,SCIOTO,1
+SCOTT,scott,scott,1,PAULDING,1
+SCOTTOWN,scottown,scottown,2,LAWRENCE,1
+SEAMAN,seaman,seaman,1,ADAMS,1
+SEBRING,sebring,sebring,3,MAHONING,1
+SEVEN MILE,seven-mile,seven mile,2,BUTLER,1
+SEVILLE,seville,seville,5,MEDINA,1
+SHADYSIDE,shadyside,shadyside,5,BELMONT,1
+SHAKER HEIGHTS,shaker-heights,shaker heights,23,CUYAHOGA,3
+SHAKER HTS,shaker-hts,shaker heights,2,CUYAHOGA,2
+SHARONVILLE,sharonville,sharonville,2,HAMILTON,1
+SHEFFIELD LAKE,sheffield-lake,sheffield lake,5,LORAIN,1
+SHEFFIELD TWNSH,sheffield-twnsh,sheffield twnsh,1,LORAIN,1
+SHELBY,shelby,shelby,9,RICHLAND,1
+SHERWOOD,sherwood,sherwood,1,DEFIANCE,1
+SHILOH,shiloh,shiloh,1,RICHLAND,1
+SIDNEY,sidney,sidney,18,SHELBY,1
+SILVER LAKE,silver-lake,silver lake,2,SUMMIT,2
+SMITHVILLE,smithville,smithville,4,WAYNE,1
+SOLON,solon,solon,11,CUYAHOGA,1
+SOMERSET,somerset,somerset,3,PERRY,1
+SOUTH BLOOMFIELD,south-bloomfield,south bloomfield,2,PICKAWAY,1
+SOUTH CHARLESTON,south-charleston,south charleston,1,CLARK,1
+SOUTH EUCLID,south-euclid,south euclid,23,CUYAHOGA,2
+SOUTH LEBANON,south-lebanon,south lebanon,3,WARREN,1
+SOUTH POINT,south-point,south point,14,LAWRENCE,1
+SOUTH RUSSELL,south-russell,south russell,1,GEAUGA,1
+SOUTH VIENNA,south-vienna,south vienna,1,CLARK,1
+SOUTH WEBSTER,south-webster,south webster,3,SCIOTO,1
+SOUTHINGTON,southington,southington,1,TRUMBULL,1
+SPENCERVILLE,spencerville,spencerville,3,ALLEN,1
+SPRINGBORO,springboro,springboro,13,WARREN,1
+SPRINGDALE,springdale,springdale,3,HAMILTON,1
+SPRINGFIELD,springfield,springfield,39,CLARK,5
+ST HENRY,st-henry,saint henry,1,MERCER,1
+ST LOUISVILLE,st-louisville,saint louisville,1,LICKING,1
+ST MARYS,st-marys,saint marys,1,AUGLAIZE,1
+ST. CLAIRSVILLE,st-clairsville,saint clairsville,2,BELMONT,1
+ST. PARIS,st-paris,saint paris,1,CHAMPAIGN,1
+STERLING,sterling,sterling,1,WAYNE,1
+STEUBENVILLE,steubenville,steubenville,16,JEFFERSON,2
+STEWART,stewart,stewart,2,ATHENS,1
+STOCKPORT,stockport,stockport,2,MORGAN,1
+STONE CREEK,stone-creek,stone creek,1,TUSCARAWAS,1
+STONGSVILLE,stongsville,stongsville,1,CUYAHOGA,1
+STONY RIDGE,stony-ridge,stony ridge,1,WOOD,1
+STOW,stow,stow,16,SUMMIT,2
+STRASBURG,strasburg,strasburg,2,TUSCARAWAS,1
+STREETSBORO,streetsboro,streetsboro,7,PORTAGE,1
+STRONGSVILLE,strongsville,strongsville,20,CUYAHOGA,2
+STRONGVILLE,strongville,strongville,3,CUYAHOGA,1
+STRUTHERS,struthers,struthers,6,MAHONING,1
+STRYKER,stryker,stryker,1,WILLIAMS,1
+SUGAR GROVE,sugar-grove,sugar grove,1,FAIRFIELD,1
+SULLIVAN,sullivan,sullivan,2,ASHLAND,1
+SUNBURY,sunbury,sunbury,10,DELAWARE,2
+SWANTON,swanton,swanton,4,FULTON,1
+SYCAMORE,sycamore,sycamore,1,WYANDOT,1
+SYLVANIA,sylvania,sylvania,29,LUCAS,1
+SYMMES TOWNSHIP,symmes-township,symmes township,1,HAMILTON,1
+SYRACUSE,syracuse,syracuse,1,MEIGS,1
+TALLMADGE,tallmadge,tallmadge,7,SUMMIT,1
+TERRACE PARK,terrace-park,terrace park,1,HAMILTON,1
+THE PLAINS,the-plains,the plains,2,ATHENS,1
+THOMPSON,thompson,thompson,1,GEAUGA,1
+THORNVILLE,thornville,thornville,4,LICKING|PERRY,1
+THURMAN,thurman,thurman,1,GALLIA,1
+TIFFIN,tiffin,tiffin,12,SENECA,1
+TILTONSVILLE,tiltonsville,tiltonsville,2,JEFFERSON,1
+TIPP CITY,tipp-city,tipp city,9,MIAMI|MONTGOMERY,1
+TOELDO,toeldo,toeldo,1,LUCAS,1
+TOLEDO,toledo,toledo,320,LUCAS,15
+TONTOGANY,tontogany,tontogany,1,WOOD,1
+TORONTO,toronto,toronto,4,JEFFERSON,1
+TRENTON,trenton,trenton,4,BUTLER,1
+TROTWOOD,trotwood,trotwood,14,MONTGOMERY,2
+TROY,troy,troy,19,MIAMI,1
+TWINSBURG,twinsburg,twinsburg,10,SUMMIT,1
+UHRICHSVILLE,uhrichsville,uhrichsville,4,TUSCARAWAS,1
+UNION,union,union,2,MONTGOMERY,1
+UNION CITY,union-city,union city,1,DARKE,1
+UNION FURNACE,union-furnace,union furnace,2,HOCKING,1
+UNIONTOWN,uniontown,uniontown,11,STARK|SUMMIT,1
+UNIVERSITY,university,university,1,CUYAHOGA,1
+UNIVERSITY HEIGHTS,university-heights,university heights,2,CUYAHOGA,1
+UNIVERSITY HTS,university-hts,university heights,1,CUYAHOGA,1
+UPPER,upper,upper,2,FRANKLIN|WYANDOT,2
+UPPER ARLINGTON,upper-arlington,upper arlington,3,FRANKLIN,2
+UPPER SANDUSKY,upper-sandusky,upper sandusky,5,WYANDOT,1
+URBAN CREST,urban-crest,urban crest,1,FRANKLIN,1
+URBANA,urbana,urbana,9,CHAMPAIGN,1
+UTICA,utica,utica,4,LICKING,1
+VALLEY CITY,valley-city,valley city,1,MEDINA,1
+VAN BUREN,van-buren,van buren,1,HANCOCK,1
+VAN WERT,van-wert,van wert,7,VAN WERT,1
+VANDALIA,vandalia,vandalia,6,MONTGOMERY,1
+VANLUE,vanlue,vanlue,1,HANCOCK,1
+VERMILION,vermilion,vermilion,5,ERIE|LORAIN,1
+VERSAILLES,versailles,versailles,3,DARKE,1
+VINCENT,vincent,vincent,2,WASHINGTON,1
+VINTON,vinton,vinton,2,GALLIA,1
+W WORTHINGTON,w-worthington,w worthington,1,FRANKLIN,1
+W. CARROLLTON,w-carrollton,w carrollton,1,MONTGOMERY,1
+WADSWORTH,wadsworth,wadsworth,14,MEDINA,1
+WAKEMAN,wakeman,wakeman,1,HURON,1
+WALNUT CREEK,walnut-creek,walnut creek,1,HOLMES,1
+WAPAKONETA,wapakoneta,wapakoneta,7,AUGLAIZE,1
+WARREN,warren,warren,51,TRUMBULL,4
+WARRENSVILLE,warrensville,warrensville,2,CUYAHOGA,1
+WARRENSVILLE HEIGHTS,warrensville-heights,warrensville heights,8,CUYAHOGA,1
+WARRENSVILLE HTS,warrensville-hts,warrensville heights,7,CUYAHOGA,2
+WARRENSVILLE HTS.,warrensville-hts,warrensville heights,1,CUYAHOGA,1
+WARSAW,warsaw,warsaw,2,COSHOCTON,1
+WASH C.H.,wash-c-h,wash ch,1,FAYETTE,1
+WASH. C.H.,wash-c-h,wash ch,1,FAYETTE,1
+WASHINGTON,washington,washington,1,FAYETTE,1
+WASHINGTON C H,washington-c-h,washington c h,2,FAYETTE,1
+WASHINGTON C.H.,washington-c-h,washington ch,1,FAYETTE,1
+WASHINGTON CH,washington-ch,washington ch,2,FAYETTE,1
+WASHINGTON COURT HOU,washington-court-hou,washington court hou,1,FAYETTE,1
+WASHINGTON COURT HOUSE,washington-court-house,washington court house,2,FAYETTE,1
+WASHINGTON COURTHOUSE,washington-courthouse,washington courthouse,1,FAYETTE,1
+WASHINGTON TOWNSHIP,washington-township,washington township,6,MONTGOMERY,3
+WATERFORD,waterford,waterford,1,WASHINGTON,1
+WATERVILLE,waterville,waterville,3,LUCAS,1
+WAUSEON,wauseon,wauseon,8,FULTON,1
+WAVERLY,waverly,waverly,9,PIKE,1
+WAYNE,wayne,wayne,1,WARREN,1
+WAYNESBURG,waynesburg,waynesburg,1,STARK,1
+WAYNESFIELD,waynesfield,waynesfield,4,AUGLAIZE,1
+WAYNESVILLE,waynesville,waynesville,1,WARREN,1
+WAYNEVILLE,wayneville,wayneville,1,WARREN,1
+WELLINGTON,wellington,wellington,2,LORAIN,1
+WELLSTON,wellston,wellston,5,JACKSON,1
+WELLSVILLE,wellsville,wellsville,8,COLUMBIANA,1
+WEST,west,west,1,COSHOCTON,1
+WEST ALEXANDRIA,west-alexandria,west alexandria,3,PREBLE,1
+WEST CARROLLTON,west-carrollton,west carrollton,7,MONTGOMERY,1
+WEST CHESTER,west-chester,west chester,24,BUTLER,2
+WEST CHESTER TOWNSHIP,west-chester-township,west chester township,2,BUTLER,2
+WEST JEFFERSON,west-jefferson,west jefferson,4,MADISON,1
+WEST LAFAYETTE,west-lafayette,west lafayette,4,COSHOCTON,1
+WEST LIBERTY,west-liberty,west liberty,3,CHAMPAIGN|LOGAN,2
+WEST MILTON,west-milton,west milton,5,MIAMI,2
+WEST PORTSMOUTH,west-portsmouth,west portsmouth,3,SCIOTO,1
+WEST SALEM,west-salem,west salem,3,WAYNE,1
+WEST UNION,west-union,west union,4,ADAMS,1
+WEST UNITY,west-unity,west unity,1,WILLIAMS,1
+WESTERVILLE,westerville,westerville,59,DELAWARE|FRANKLIN,2
+WESTERVILLE RD,westerville-rd,westerville rd,1,FRANKLIN,1
+WESTFIELD CNTR,westfield-cntr,westfield cntr,1,MEDINA,1
+WESTLAKE,westlake,westlake,18,CUYAHOGA,1
+WESTVILLE,westville,westville,1,CHAMPAIGN,1
+WHEELERSBURG,wheelersburg,wheelersburg,7,SCIOTO,1
+WHIPPLE,whipple,whipple,1,WASHINGTON,1
+WHITEHALL,whitehall,whitehall,8,FRANKLIN,1
+WHITEHOUSE,whitehouse,whitehouse,4,LUCAS,1
+WICKLIFFE,wickliffe,wickliffe,10,LAKE,1
+WILLARD,willard,willard,8,HURON,1
+WILLIAMSBURG,williamsburg,williamsburg,2,CLERMONT,1
+WILLIAMSFIELD,williamsfield,williamsfield,1,ASHTABULA,1
+WILLIAMSPORT,williamsport,williamsport,2,PICKAWAY,1
+WILLOUGBY HILLS,willougby-hills,willougby hills,1,LAKE,1
+WILLOUGHBY,willoughby,willoughby,9,LAKE,2
+WILLOUGHBY HILL,willoughby-hill,willoughby hill,1,LAKE,1
+WILLOUGHBY HILLS,willoughby-hills,willoughby hills,1,LAKE,1
+WILLOUGHBYHILLS,willoughbyhills,willoughbyhills,1,LAKE,1
+WILLOW WOOD,willow-wood,willow wood,1,LAWRENCE,1
+WILLOWICK,willowick,willowick,10,LAKE,1
+WILMINGTON,wilmington,wilmington,10,CLINTON,1
+WINDHAM,windham,windham,2,PORTAGE,1
+WINONA,winona,winona,1,COLUMBIANA,1
+WINTERSVILLE,wintersville,wintersville,6,JEFFERSON,2
+WOODSFIELD,woodsfield,woodsfield,5,MONROE,1
+WOODVILLE,woodville,woodville,2,SANDUSKY,1
+WOOSTER,wooster,wooster,21,WAYNE,1
+WORTHINGTON,worthington,worthington,23,FRANKLIN,2
+WYOMING,wyoming,wyoming,4,HAMILTON,1
+XENIA,xenia,xenia,18,GREENE,1
+YELLOW SPRINGS,yellow-springs,yellow springs,5,CLARK|GREENE,1
+YOUNGSTOWN,youngstown,youngstown,117,MAHONING|TRUMBULL,13
+ZANESVILLE,zanesville,zanesville,55,MUSKINGUM,1
+ZOARVILLE,zoarville,zoarville,2,TUSCARAWAS,1

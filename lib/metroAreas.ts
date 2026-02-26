@@ -1,4 +1,5 @@
 import { slugify, toTitleCaseIfAllCaps } from "@/lib/utils";
+import approvedCityAliases from "@/data/city-aliases.approved.json";
 
 type DaycareRow = Record<string, string>;
 
@@ -109,6 +110,66 @@ const METRO_AREAS: MetroArea[] = [
 
 const METRO_AREA_BY_SLUG = new Map(METRO_AREAS.map((metro) => [metro.slug, metro]));
 
+const cityAliasEntries = Object.entries(approvedCityAliases.aliases || {});
+
+const DIRECTION_EXPANSIONS: Record<string, string> = {
+  N: "NORTH",
+  S: "SOUTH",
+  E: "EAST",
+  W: "WEST",
+};
+
+function normalizeCityAliasKey(city: string) {
+  let normalized = String(city || "")
+    .trim()
+    .replace(/\s+/g, " ")
+    .toUpperCase();
+
+  normalized = normalized
+    .replace(/^(N|S|E|W)\.\s+/g, (_, direction: string) => `${DIRECTION_EXPANSIONS[direction]} `)
+    .replace(/^(N|S|E|W)\s+/g, (_, direction: string) => `${DIRECTION_EXPANSIONS[direction]} `)
+    .replace(/^NORTTH\b/g, "NORTH")
+    .replace(/^SOUTTH\b/g, "SOUTH")
+    .replace(/^EASTT\b/g, "EAST")
+    .replace(/^WESTT\b/g, "WEST")
+    .replace(/\b(TWNSP|TWP|TOWNSHP)\b/g, "TOWNSHIP")
+    .replace(/^MC\s+([A-Z])/g, "MC$1")
+    .replace(/\s+OH\b$/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  return normalized;
+}
+
+function normalizeCitySlug(citySlug: string) {
+  let normalized = slugify(citySlug || "");
+  if (!normalized) return "";
+
+  normalized = normalized
+    .replace(/^(n|s|e|w)-/g, (_, direction: string) => `${DIRECTION_EXPANSIONS[direction.toUpperCase()].toLowerCase()}-`)
+    .replace(/^mc-/g, "mc")
+    .replace(/-(twnsp|twp|townshp)$/g, "-township")
+    .replace(/-oh$/g, "");
+
+  return normalized;
+}
+
+const CITY_ALIAS_BY_NAME = new Map(
+  cityAliasEntries.map(([rawCity, canonicalCity]) => [normalizeCityAliasKey(rawCity), normalizeCityAliasKey(String(canonicalCity || ""))])
+);
+
+const CITY_ALIAS_SLUG_MAP = new Map<string, string>();
+for (const [rawCity, canonicalCity] of cityAliasEntries) {
+  const rawSlug = normalizeCitySlug(rawCity);
+  const canonicalSlug = normalizeCitySlug(canonicalCity);
+  if (!rawSlug || !canonicalSlug || rawSlug === canonicalSlug) continue;
+
+  const existingCanonical = CITY_ALIAS_SLUG_MAP.get(rawSlug);
+  if (!existingCanonical || existingCanonical === canonicalSlug) {
+    CITY_ALIAS_SLUG_MAP.set(rawSlug, canonicalSlug);
+  }
+}
+
 const METRO_CITY_ALIASES: Record<string, string[]> = {
   "columbus-metro": ["columbus"],
   "cleveland-metro": ["cleveland"],
@@ -119,6 +180,22 @@ const METRO_CITY_ALIASES: Record<string, string[]> = {
 };
 
 export const COLUMBUS_METRO_SLUG = "columbus-metro";
+
+export function resolveCanonicalCityName(city: string) {
+  const normalizedCity = normalizeCityAliasKey(city);
+  if (!normalizedCity) return "";
+  return CITY_ALIAS_BY_NAME.get(normalizedCity) || normalizedCity;
+}
+
+export function resolveCanonicalCitySlugFromName(city: string) {
+  return normalizeCitySlug(resolveCanonicalCityName(city));
+}
+
+export function resolveCanonicalCitySlugFromSlug(citySlug: string) {
+  const normalizedSlug = normalizeCitySlug(citySlug);
+  if (!normalizedSlug) return "";
+  return CITY_ALIAS_SLUG_MAP.get(normalizedSlug) || normalizedSlug;
+}
 
 function pointInPolygon(lat: number, lng: number, polygon: Array<[number, number]>) {
   let isInside = false;
@@ -203,7 +280,7 @@ export function getMetroForDaycare(daycare: DaycareRow) {
   const metroByCoordinates = coords ? getMetroByCoordinates(coords.lat, coords.lng) : null;
   if (metroByCoordinates) return metroByCoordinates;
 
-  const citySlug = slugify(daycare["CITY"] || "");
+  const citySlug = resolveCanonicalCitySlugFromName(daycare["CITY"] || "");
   return getMetroByCitySlug(citySlug);
 }
 
@@ -214,18 +291,20 @@ export function getDaycaresForMetroSlug(daycares: DaycareRow[], metroSlug: strin
 }
 
 export function getDaycaresForCitySlug(daycares: DaycareRow[], citySlug: string) {
-  if (isMetroCitySlug(citySlug)) {
-    return getDaycaresForMetroSlug(daycares, citySlug);
+  const canonicalRequestedSlug = resolveCanonicalCitySlugFromSlug(citySlug);
+
+  if (isMetroCitySlug(canonicalRequestedSlug)) {
+    return getDaycaresForMetroSlug(daycares, canonicalRequestedSlug);
   }
 
-  return daycares.filter((daycare) => slugify(daycare["CITY"] || "") === citySlug);
+  return daycares.filter((daycare) => resolveCanonicalCitySlugFromName(daycare["CITY"] || "") === canonicalRequestedSlug);
 }
 
 export function getCitiesWithMetroEntry(daycares: DaycareRow[]) {
   const cityMap = new Map<string, number>();
 
   daycares.forEach((daycare) => {
-    const city = daycare["CITY"];
+    const city = resolveCanonicalCityName(daycare["CITY"] || "");
     if (city) {
       cityMap.set(city, (cityMap.get(city) || 0) + 1);
     }
@@ -233,7 +312,7 @@ export function getCitiesWithMetroEntry(daycares: DaycareRow[]) {
 
   const allCities = Array.from(cityMap.entries()).map(([name, count]) => ({
     name: toTitleCaseIfAllCaps(name),
-    slug: slugify(name),
+    slug: resolveCanonicalCitySlugFromName(name),
     count,
   }));
 

@@ -39,8 +39,9 @@ import {
   PopoverTrigger as ComboTrigger,
 } from "@/components/ui/popover";
 import { Filter, Map as MapIcon, Info, Check, ChevronsUpDown } from "lucide-react";
-import { cn, toTitleCaseIfAllCaps } from "@/lib/utils";
+import { cn, slugify, toTitleCaseIfAllCaps } from "@/lib/utils";
 import { FILTER_DEFINITIONS } from "@/data/filterDefinitions";
+import { resolveCanonicalCityName, resolveCanonicalCitySlugFromName } from "@/lib/metroAreas";
 
 type Daycare = Record<string, string>;
 
@@ -60,20 +61,11 @@ function prettyCity(city: string) {
     .replace(/(?:^|\s)\S/g, (a) => a.toUpperCase());
 }
 
-function slugify(s: string) {
-  return (s || "")
-    .toLowerCase()
-    .trim()
-    .replace(/&/g, "and")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)+/g, "");
-}
-
 function canonicalDaycarePath(daycare: Daycare, basePath: string) {
   const programNumber = daycare["PROGRAM NUMBER"] || "";
   const name = daycare["PROGRAM NAME"] || "";
-  const city = daycare["CITY"] || "";
-  return `${basePath}/daycare/${programNumber}-${slugify(name)}-${slugify(city)}`;
+  const citySlug = resolveCanonicalCitySlugFromName(daycare["CITY"] || "");
+  return `${basePath}/daycare/${programNumber}-${slugify(name)}-${citySlug}`;
 }
 
 function withListingContext(daycarePath: string, context: "state" | "city" | "county", returnTo: string) {
@@ -545,7 +537,7 @@ export default function GlobalDashboard({
       const ratingRaw = d["SUTQ RATING"] || "0";
       return {
         name: (d["PROGRAM NAME"] || "").toLowerCase(),
-        city: (d.CITY || "").trim(),
+        city: resolveCanonicalCityName(d.CITY || ""),
         county: (d.COUNTY || "").trim(),
         pfcc: d["PFCC"] === "Y" || d["PFCC AGREEMENT"] === "Y",
         rating: !ratingRaw || ratingRaw === "" ? "0" : ratingRaw,
@@ -638,7 +630,7 @@ export default function GlobalDashboard({
     const c = new Set<string>();
     const co = new Set<string>();
     daycares.forEach(d => {
-      if (d.CITY) c.add(d.CITY.trim());
+      if (d.CITY) c.add(resolveCanonicalCityName(d.CITY));
       if (d.COUNTY) co.add(d.COUNTY.trim());
     });
     return {
@@ -658,7 +650,7 @@ export default function GlobalDashboard({
       .filter((d) => d.LAT && d.LNG)
       .map((d) => {
         const name = d["PROGRAM NAME"] || "";
-        const city = d["CITY"] || "";
+        const city = resolveCanonicalCityName(d["CITY"] || "");
 
         return {
           lat: typeof d.LAT === 'string' ? parseFloat(d.LAT) : d.LAT,

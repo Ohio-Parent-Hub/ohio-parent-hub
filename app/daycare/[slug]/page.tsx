@@ -1,6 +1,6 @@
 import DaycareDetailPageShell from "@/components/DaycareDetailPageShell";
 import { slugify, toTitleCaseIfAllCaps } from "@/lib/utils";
-import { getMetroForDaycare } from "@/lib/metroAreas";
+import { getMetroForDaycare, resolveCanonicalCityName, resolveCanonicalCitySlugFromName } from "@/lib/metroAreas";
 import type { Metadata } from "next";
 import fs from "node:fs";
 import path from "node:path";
@@ -43,8 +43,8 @@ function findDaycareBySlug(slug: string): DaycareRow | null {
 function canonicalDaycareSlug(daycare: DaycareRow) {
   const programNumber = daycare["PROGRAM NUMBER"] || "";
   const name = daycare["PROGRAM NAME"] || "";
-  const city = daycare["CITY"] || "";
-  return `${programNumber}-${slugify(name)}-${slugify(city)}`;
+  const citySlug = resolveCanonicalCitySlugFromName(daycare["CITY"] || "");
+  return `${programNumber}-${slugify(name)}-${citySlug}`;
 }
 
 function normalizeProgramType(programType: string) {
@@ -154,7 +154,7 @@ export async function generateStaticParams() {
 
   return all
     .filter((daycare) => {
-      const citySlug = slugify(daycare["CITY"] || "");
+      const citySlug = resolveCanonicalCitySlugFromName(daycare["CITY"] || "");
       return Boolean(daycare["PROGRAM NUMBER"]) && PRIORITY_CITY_SLUGS.has(citySlug);
     })
     .map((daycare) => ({ slug: canonicalDaycareSlug(daycare) }));
@@ -176,7 +176,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   const name = toTitleCaseIfAllCaps(daycare["PROGRAM NAME"] || "") || "Daycare";
-  const city = toTitleCaseIfAllCaps(daycare["CITY"] || "");
+  const city = toTitleCaseIfAllCaps(resolveCanonicalCityName(daycare["CITY"] || ""));
   const sutq = daycare["SUTQ RATING"] || "Not Rated";
   const programType = daycare["PROGRAM TYPE"] || "";
   const canonicalSlug = canonicalDaycareSlug(daycare);
@@ -250,8 +250,8 @@ export default async function DaycarePage({ params, searchParams }: Props) {
   const sutq = daycare["SUTQ RATING"] || "Not Rated";
   
   const street = toTitleCaseIfAllCaps(daycare["STREET ADDRESS"] || "");
-  const city = toTitleCaseIfAllCaps(daycare["CITY"] || "");
-  const citySlug = slugify(city);
+  const city = toTitleCaseIfAllCaps(resolveCanonicalCityName(daycare["CITY"] || ""));
+  const citySlug = resolveCanonicalCitySlugFromName(daycare["CITY"] || city);
   const zip = daycare["ZIP CODE"] || "";
   const county = toTitleCaseIfAllCaps(daycare["COUNTY"] || "");
   const countySlug = slugify(county);
@@ -313,7 +313,7 @@ export default async function DaycarePage({ params, searchParams }: Props) {
   const nearbyDaycares: RelatedDaycareCard[] = nearbyCandidates.slice(0, 5).map(({ daycare: candidate, miles }) => ({
     href: `/daycare/${canonicalDaycareSlug(candidate)}`,
     name: toTitleCaseIfAllCaps(candidate["PROGRAM NAME"] || "Licensed Daycare"),
-    city: toTitleCaseIfAllCaps(candidate["CITY"] || "Ohio"),
+    city: toTitleCaseIfAllCaps(resolveCanonicalCityName(candidate["CITY"] || "Ohio")),
     street: toTitleCaseIfAllCaps(candidate["STREET ADDRESS"] || ""),
     programType: toTitleCaseIfAllCaps(candidate["PROGRAM TYPE"] || "Not Specified"),
     sutq: candidate["SUTQ RATING"] || "0",
@@ -336,7 +336,7 @@ export default async function DaycarePage({ params, searchParams }: Props) {
     .map(({ daycare: candidate, miles }) => ({
       href: `/daycare/${canonicalDaycareSlug(candidate)}`,
       name: toTitleCaseIfAllCaps(candidate["PROGRAM NAME"] || "Licensed Daycare"),
-      city: toTitleCaseIfAllCaps(candidate["CITY"] || "Ohio"),
+      city: toTitleCaseIfAllCaps(resolveCanonicalCityName(candidate["CITY"] || "Ohio")),
       street: toTitleCaseIfAllCaps(candidate["STREET ADDRESS"] || ""),
       programType: toTitleCaseIfAllCaps(candidate["PROGRAM TYPE"] || "Not Specified"),
       sutq: candidate["SUTQ RATING"] || "0",

@@ -1,16 +1,8 @@
 import { NextResponse } from 'next/server';
 import path from 'path';
 import fs from 'fs';
-import { getDaycaresForCitySlug } from '@/lib/metroAreas';
-
-function slugify(s: string) {
-  return (s || '')
-    .toLowerCase()
-    .trim()
-    .replace(/&/g, 'and')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/(^-|-$)+/g, '');
-}
+import { slugify } from '@/lib/utils';
+import { getDaycaresForCitySlug, resolveCanonicalCitySlugFromSlug } from '@/lib/metroAreas';
 
 export async function GET(request: Request) {
   const filePath = path.join(process.cwd(), 'data', 'daycares.json');
@@ -18,7 +10,7 @@ export async function GET(request: Request) {
   const data = JSON.parse(fileContents);
 
   const { searchParams } = new URL(request.url);
-  const citySlug = slugify(searchParams.get('city') || '');
+  const citySlug = resolveCanonicalCitySlugFromSlug(slugify(searchParams.get('city') || ''));
   const countySlug = slugify(searchParams.get('county') || '');
 
   if (citySlug) {
