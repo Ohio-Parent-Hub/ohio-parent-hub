@@ -1,5 +1,9 @@
 # County Hub Plan (MVP-First)
 
+> Canonical execution tracking now lives in [MASTER_ROADMAP.md](MASTER_ROADMAP.md).
+>
+> This document remains the county architecture/spec reference.
+
 _Last updated: 2026-02-25_
 
 ## Objective

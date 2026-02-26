@@ -1,5 +1,9 @@
 # Ohio Parent Hub - Development Checklist
 
+> Canonical task tracking now lives in [MASTER_ROADMAP.md](MASTER_ROADMAP.md).
+>
+> This file is retained for historical context and legacy notes.
+
 **Last Updated:** February 18, 2026
 
 ---

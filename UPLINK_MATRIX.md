@@ -1,5 +1,9 @@
 # Uplink Matrix & County Hub Notes
 
+> Canonical execution tracking now lives in [MASTER_ROADMAP.md](MASTER_ROADMAP.md).
+>
+> This document remains the uplink behavior/spec reference.
+
 _Last updated: 2026-02-25_
 
 ## Purpose
