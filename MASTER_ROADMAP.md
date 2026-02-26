@@ -97,7 +97,7 @@ ID format legend: use `phase.item` references (example: `0.1`, `2.4`, `4.7`) for
 		- Contact page has working contact method (email or form)
 		- Methodology clearly explains data source/update process
 
-- [ ] **0.6 Detail page static generation strategy decision** (full set vs targeted ISR)
+- [x] **0.6 Detail page static generation strategy decision** (full set vs targeted ISR)
 	- **Why:** current detail `generateStaticParams` is limited to priority-city subset
 	- **Depends on:** build-time/perf constraints
 	- **Affects:** crawl efficiency, TTFB, build duration, infrastructure cost
