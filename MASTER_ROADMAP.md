@@ -79,7 +79,7 @@ ID format legend: use `phase.item` references (example: `0.1`, `2.4`, `4.7`) for
 		- Sitemap/internal links emit canonical city slugs only
 		- Before/after report recorded (city count delta, affected URLs, collision checks)
 
-- [ ] **0.4 City page editorial depth v1** (intro + “What is SUTQ?” + “How to choose daycare”)
+- [x] **0.4 City page editorial depth v1** (intro + “What is SUTQ?” + “How to choose daycare”)
 	- **Why:** highest remaining “thin directory” risk reducer
 	- **Depends on:** city templates and data summaries
 	- **Affects:** `/daycares/[city]` quality, indexation, CTR, rankings
@@ -180,6 +180,7 @@ ID format legend: use `phase.item` references (example: `0.1`, `2.4`, `4.7`) for
 		- Content template finalized
 		- First 3–5 guide pages published
 		- Internal links added from relevant city/county hubs
+		- FAQ + editorial depth cross-linking plan added for global, city, county, and daycare pages
 - [ ] **3.4 Email capture + retention placeholder plan** (owned audience before full blog/shop scale)
 - [ ] **3.5 Thin-city redirect pilot design** (county redirect cohort, KPIs, rollback rules)
 	- **Definition of done:**

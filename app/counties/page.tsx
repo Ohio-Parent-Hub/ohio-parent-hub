@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import type { CSSProperties } from "react";
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import CountyBrowseClient from "@/components/CountyBrowseClient";
 import { slugify, toTitleCaseIfAllCaps } from "@/lib/utils";
@@ -26,7 +27,7 @@ const lightGold = "#F5E9BE";
 
 export const metadata: Metadata = {
   title: "Best Daycares by Ohio County",
-  description: "Browse licensed daycares and early childhood programs by county across Ohio to find child care near you.",
+  description: "Browse all licensed daycares by county across Ohio and open local listings with SUTQ and program details.",
   keywords: [
     "best daycares by county ohio",
     "ohio daycare counties",
@@ -90,6 +91,7 @@ export default function CountiesPage() {
       count,
     }))
     .sort((a, b) => a.name.localeCompare(b.name));
+  const countyBrowseIntro = `Use this page to browse all ${allCounties.length.toLocaleString()} Ohio county pages and quickly compare licensed daycare options by region.`;
 
   return (
     <div className="min-h-screen" style={{ background: cream, color: dark }}>
@@ -137,6 +139,23 @@ export default function CountiesPage() {
               ))}
             </div>
           </div>
+        </div>
+      </section>
+
+      <section className="px-6 pt-6 pb-2">
+        <div className="mx-auto max-w-7xl rounded-2xl border p-4 shadow-sm" style={{ background: "#fff", borderColor: `${sage}55` }}>
+          <h2 className="font-serif text-lg font-semibold" style={{ color: dark }}>
+            How to use the county index
+          </h2>
+          <p className="mt-2 text-sm leading-relaxed" style={{ color: `${dark}cc` }}>
+            {countyBrowseIntro}
+          </p>
+          <p className="mt-2 text-sm leading-relaxed" style={{ color: `${dark}cc` }}>
+            Choose county browsing when you want wider local coverage across multiple cities. For a tighter, neighborhood-level list, <Link href="/cities" className="underline hover:no-underline">browse by city</Link>.
+          </p>
+          <p className="mt-2 text-xs leading-relaxed" style={{ color: `${dark}99` }}>
+            Ohio Parent Hub currently focuses on licensing details, SUTQ status, and program information. Parent reviews are not included at this time.
+          </p>
         </div>
       </section>
 

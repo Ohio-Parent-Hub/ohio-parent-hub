@@ -4,6 +4,7 @@ import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import CityBrowseClient from "@/components/CityBrowseClient";
 import { getCitiesWithMetroEntry } from "@/lib/metroAreas";
 import type { Metadata } from "next";
+import Link from "next/link";
 import type { CSSProperties } from "react";
 
 function SparkleDecor({ className, style }: { className?: string; style?: CSSProperties }) {
@@ -26,7 +27,7 @@ const lightGold = "#F5E9BE";
 
 export const metadata: Metadata = {
   title: "Best Daycares by Ohio City",
-  description: "Browse licensed daycares and early childhood programs by city across Ohio to find child care near you.",
+  description: "Browse all licensed daycares by city across Ohio and open local listings with SUTQ and program details.",
   keywords: [
     "best daycares by city ohio",
     "ohio daycare cities",
@@ -62,6 +63,7 @@ interface CityData {
 export default function CitiesPage() {
   const daycares = loadDaycares();
   const allCities: CityData[] = getCitiesWithMetroEntry(daycares);
+  const cityBrowseIntro = `Use this page to browse all ${allCities.length.toLocaleString()} Ohio city pages and quickly jump into local daycare listings.`;
 
   return (
     <div className="min-h-screen" style={{ background: cream, color: dark }}>
@@ -105,6 +107,23 @@ export default function CitiesPage() {
               ))}
             </div>
           </div>
+        </div>
+      </section>
+
+      <section className="px-6 pt-6 pb-2">
+        <div className="mx-auto max-w-7xl rounded-2xl border p-4 shadow-sm" style={{ background: "#fff", borderColor: `${sage}55` }}>
+          <h2 className="font-serif text-lg font-semibold" style={{ color: dark }}>
+            How to use the city index
+          </h2>
+          <p className="mt-2 text-sm leading-relaxed" style={{ color: `${dark}cc` }}>
+            {cityBrowseIntro}
+          </p>
+          <p className="mt-2 text-sm leading-relaxed" style={{ color: `${dark}cc` }}>
+            Choose city browsing when you want neighborhood-level options. If you need broader coverage, <Link href="/counties" className="underline hover:no-underline">browse by county</Link> to compare programs across nearby cities.
+          </p>
+          <p className="mt-2 text-xs leading-relaxed" style={{ color: `${dark}99` }}>
+            Ohio Parent Hub currently focuses on licensing details, SUTQ status, and program information. Parent reviews are not included at this time.
+          </p>
         </div>
       </section>
 

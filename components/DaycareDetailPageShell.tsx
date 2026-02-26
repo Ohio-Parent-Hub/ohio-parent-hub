@@ -1,3 +1,5 @@
+"use client";
+
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { SutqBadge } from "@/components/SutqBadge";
 import StaticMap from "@/components/StaticMap";
@@ -6,7 +8,8 @@ import { Button } from "@/components/ui/button";
 import BackToResultsButton from "@/components/BackToResultsButton";
 import Link from "next/link";
 import TrackedUplinkLink from "@/components/TrackedUplinkLink";
-import { ExternalLink } from "lucide-react";
+import { ChevronDown, ExternalLink, Star } from "lucide-react";
+import { useState } from "react";
 
 type RelatedDaycareCard = {
   href: string;
@@ -27,7 +30,6 @@ type DaycareDetailPageShellProps = {
   browseLinks?: Array<{ label: string; href: string; isActive?: boolean }>;
   nearbyDaycares?: RelatedDaycareCard[];
   similarDaycares?: RelatedDaycareCard[];
-  profileBadgeLabel: string;
   name: string;
   city: string;
   sutq: string;
@@ -57,6 +59,67 @@ const cream = "#F5EDE4";
 const dark = "#4A6B67";
 const lightTeal = "#D5E5E3";
 
+type SutqDetails = {
+  label: string;
+  badgeClassName: string;
+  starClassName: string;
+  points: string[];
+};
+
+function getSutqDetails(rating: string): SutqDetails {
+  const value = String(rating || "").trim().toLowerCase();
+
+  if (value === "3" || value.includes("gold")) {
+    return {
+      label: "Gold Rated",
+      badgeClassName: "bg-yellow-100 text-yellow-800 border-yellow-200 hover:bg-yellow-200",
+      starClassName: "fill-yellow-600 text-yellow-600",
+      points: [
+        "Meets Gold and Silver requirements.",
+        "Includes stronger quality expectations across curriculum, assessment, and improvement planning.",
+        "For center-based programs, Gold includes added ratio and group-size requirements.",
+      ],
+    };
+  }
+
+  if (value === "2" || value.includes("silver")) {
+    return {
+      label: "Silver Rated",
+      badgeClassName: "bg-slate-100 text-slate-700 border-slate-300 hover:bg-slate-200",
+      starClassName: "fill-slate-400 text-slate-400",
+      points: [
+        "Meets Silver requirements and core Bronze requirements.",
+        "Includes stronger documentation and family follow-through expectations.",
+        "Requires ongoing annual quality-improvement planning.",
+      ],
+    };
+  }
+
+  if (value === "1" || value.includes("bronze")) {
+    return {
+      label: "Bronze Rated",
+      badgeClassName: "bg-orange-50 text-orange-800 border-orange-200 hover:bg-orange-100",
+      starClassName: "fill-orange-600 text-orange-600",
+      points: [
+        "Meets Bronze SUTQ requirements.",
+        "Uses aligned curriculum and child-screening processes with required documentation.",
+        "Requires annual self-assessment and continuous improvement planning.",
+      ],
+    };
+  }
+
+  return {
+    label: "Not Rated",
+    badgeClassName: "bg-white text-muted-foreground border-border hover:bg-muted/30",
+    starClassName: "fill-transparent text-muted-foreground",
+    points: [
+      "No active SUTQ rating is shown for this listing.",
+      "The program may still be state licensed even when SUTQ is not displayed.",
+      "Ask whether they are currently participating in SUTQ and where they are in the process.",
+    ],
+  };
+}
+
 export default function DaycareDetailPageShell({
   breadcrumbs,
   backHref,
@@ -65,7 +128,6 @@ export default function DaycareDetailPageShell({
   browseLinks = [],
   nearbyDaycares = [],
   similarDaycares = [],
-  profileBadgeLabel,
   name,
   city,
   sutq,
@@ -86,6 +148,12 @@ export default function DaycareDetailPageShell({
   lng,
   schema,
 }: DaycareDetailPageShellProps) {
+  const [isSutqDetailsOpen, setIsSutqDetailsOpen] = useState(false);
+  const [isAboutOpenMobile, setIsAboutOpenMobile] = useState(false);
+  const [isQuestionsOpenMobile, setIsQuestionsOpenMobile] = useState(false);
+  const [isCompareOpenMobile, setIsCompareOpenMobile] = useState(false);
+  const sutqDetails = getSutqDetails(sutq);
+
   const renderDaycareCards = (items: RelatedDaycareCard[], keyPrefix: string) => (
     <div className="space-y-3">
       {items.map((item) => (
@@ -171,7 +239,7 @@ export default function DaycareDetailPageShell({
 
           <header className="rounded-2xl border p-6 sm:p-8" style={{ background: "#fff", borderColor: `${sage}55` }}>
             <Badge variant="outline" className="mb-4" style={{ borderColor: `${teal}55`, color: dark }}>
-              {profileBadgeLabel}
+              {programType}
             </Badge>
             <h1 className="font-serif text-3xl font-bold tracking-tight sm:text-4xl" style={{ color: dark }}>
               {name}
@@ -179,12 +247,151 @@ export default function DaycareDetailPageShell({
             <p className="mt-2 text-muted-foreground">{city}, Ohio</p>
 
             <div className="mt-4 flex flex-wrap gap-2">
-              <SutqBadge rating={sutq} />
-              <Badge variant="secondary" className="bg-secondary/20 text-secondary-foreground">
-                {programType}
-              </Badge>
+              <button
+                type="button"
+                className={`inline-flex items-center gap-1 rounded-md border px-2.5 py-1 text-xs font-medium transition-colors ${sutqDetails.badgeClassName}`}
+                aria-expanded={isSutqDetailsOpen}
+                aria-controls="sutq-rating-details"
+                aria-label="Toggle SUTQ rating details"
+                onClick={() => setIsSutqDetailsOpen((current) => !current)}
+              >
+                <Star className={`h-3.5 w-3.5 ${sutqDetails.starClassName}`} aria-hidden="true" />
+                <span>{sutqDetails.label}</span>
+                <ChevronDown
+                  className={`h-3.5 w-3.5 transition-transform ${isSutqDetailsOpen ? "rotate-180" : "rotate-0"}`}
+                  aria-hidden="true"
+                />
+              </button>
+            </div>
+
+            <div id="sutq-rating-details" className={`mt-3 ${isSutqDetailsOpen ? "block" : "hidden"}`}>
+              <ul className="space-y-1 text-xs leading-relaxed text-muted-foreground">
+                {sutqDetails.points.map((point) => (
+                  <li key={point}>• {point}</li>
+                ))}
+              </ul>
             </div>
           </header>
+        </div>
+      </section>
+
+      <section className="px-6 pt-6 pb-2">
+        <div className="mx-auto max-w-7xl md:hidden">
+          <div className="rounded-2xl border p-4 shadow-sm" style={{ background: "#fff", borderColor: `${sage}55` }}>
+            <h2 className="font-serif text-base font-semibold" style={{ color: dark }}>
+              Parent guidance for this listing
+            </h2>
+
+            <div className="mt-2 border-t" style={{ borderColor: `${sage}55` }}>
+              <button
+                type="button"
+                className="flex w-full items-center justify-between py-2.5 text-left"
+                aria-expanded={isAboutOpenMobile}
+                aria-controls="daycare-editorial-about-mobile"
+                aria-label="Toggle how to read this listing"
+                onClick={() => setIsAboutOpenMobile((current) => !current)}
+              >
+                <span className="text-sm font-semibold" style={{ color: dark }}>How to read this listing</span>
+                <span className={`text-base leading-none transition-transform ${isAboutOpenMobile ? "rotate-180" : "rotate-0"}`} style={{ color: teal }} aria-hidden="true">▾</span>
+              </button>
+              <p
+                id="daycare-editorial-about-mobile"
+                className={`pb-3 text-sm leading-relaxed ${isAboutOpenMobile ? "block" : "hidden"}`}
+                style={{ color: `${dark}cc` }}
+              >
+                Start with SUTQ status and program type, then check license dates and contact details before deciding who to call first.
+              </p>
+            </div>
+
+            <div className="border-t" style={{ borderColor: `${sage}55` }}>
+              <button
+                type="button"
+                className="flex w-full items-center justify-between py-2.5 text-left"
+                aria-expanded={isQuestionsOpenMobile}
+                aria-controls="daycare-editorial-questions-mobile"
+                aria-label="Toggle what to ask first"
+                onClick={() => setIsQuestionsOpenMobile((current) => !current)}
+              >
+                <span className="text-sm font-semibold" style={{ color: dark }}>What to ask first</span>
+                <span className={`text-base leading-none transition-transform ${isQuestionsOpenMobile ? "rotate-180" : "rotate-0"}`} style={{ color: teal }} aria-hidden="true">▾</span>
+              </button>
+              <p
+                id="daycare-editorial-questions-mobile"
+                className={`text-sm leading-relaxed ${isQuestionsOpenMobile ? "block" : "hidden"}`}
+                style={{ color: `${dark}cc` }}
+              >
+                Ask about current openings for your child’s age, daily schedule fit, and how families receive updates.
+              </p>
+              <p
+                className={`pb-3 pt-2 text-xs leading-relaxed ${isQuestionsOpenMobile ? "block" : "hidden"}`}
+                style={{ color: `${dark}99` }}
+              >
+                If this listing looks promising, call now and verify current availability.
+              </p>
+            </div>
+
+            <div className="border-t" style={{ borderColor: `${sage}55` }}>
+              <button
+                type="button"
+                className="flex w-full items-center justify-between py-2.5 text-left"
+                aria-expanded={isCompareOpenMobile}
+                aria-controls="daycare-editorial-compare-mobile"
+                aria-label="Toggle how to compare options"
+                onClick={() => setIsCompareOpenMobile((current) => !current)}
+              >
+                <span className="text-sm font-semibold" style={{ color: dark }}>How to compare options</span>
+                <span className={`text-base leading-none transition-transform ${isCompareOpenMobile ? "rotate-180" : "rotate-0"}`} style={{ color: teal }} aria-hidden="true">▾</span>
+              </button>
+              <p
+                id="daycare-editorial-compare-mobile"
+                className={`text-sm leading-relaxed ${isCompareOpenMobile ? "block" : "hidden"}`}
+                style={{ color: `${dark}cc` }}
+              >
+                Compare this listing with nearby and similar programs before final decisions.
+              </p>
+              <p
+                className={`pb-3 pt-2 text-xs leading-relaxed ${isCompareOpenMobile ? "block" : "hidden"}`}
+                style={{ color: `${dark}99` }}
+              >
+                A quick 2–3 program comparison usually makes the best fit clearer.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="mx-auto hidden max-w-7xl gap-4 md:grid md:grid-cols-3">
+          <article className="rounded-2xl border p-5 shadow-sm" style={{ background: "#fff", borderColor: `${sage}55` }}>
+            <h2 className="font-serif text-lg font-semibold" style={{ color: dark }}>
+              How to read this listing
+            </h2>
+            <p className="mt-2 text-sm leading-relaxed" style={{ color: `${dark}cc` }}>
+              Start with SUTQ status and program type, then check license dates and contact details before deciding who to call first.
+            </p>
+          </article>
+
+          <article className="rounded-2xl border p-5 shadow-sm" style={{ background: "#fff", borderColor: `${sage}55` }}>
+            <h2 className="font-serif text-lg font-semibold" style={{ color: dark }}>
+              What to ask first
+            </h2>
+            <p className="mt-2 text-sm leading-relaxed" style={{ color: `${dark}cc` }}>
+              Ask about current openings for your child’s age, daily schedule fit, and how families receive updates.
+            </p>
+            <p className="mt-3 text-xs leading-relaxed" style={{ color: `${dark}99` }}>
+              If this listing looks promising, call now and verify current availability.
+            </p>
+          </article>
+
+          <article className="rounded-2xl border p-5 shadow-sm" style={{ background: "#fff", borderColor: `${sage}55` }}>
+            <h2 className="font-serif text-lg font-semibold" style={{ color: dark }}>
+              How to compare options
+            </h2>
+            <p className="mt-2 text-sm leading-relaxed" style={{ color: `${dark}cc` }}>
+              Compare this listing with nearby and similar programs before final decisions.
+            </p>
+            <p className="mt-3 text-xs leading-relaxed" style={{ color: `${dark}99` }}>
+              A quick 2–3 program comparison usually makes the best fit clearer.
+            </p>
+          </article>
         </div>
       </section>
 

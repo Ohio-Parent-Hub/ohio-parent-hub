@@ -25,7 +25,25 @@ function loadDaycares(): DaycareRow[] {
 }
 
 function buildCountySnippetCopy(countyDisplay: string, count: number) {
-  return `Compare ${count} licensed daycare programs in ${countyDisplay} County, OH. Review SUTQ ratings, locations, and contact details.`;
+  return `Browse all ${count.toLocaleString()} licensed daycares in ${countyDisplay} County, Ohio. Compare program type, SUTQ status, and key details to find childcare that fits your family.`;
+}
+
+function buildCountyEditorialCopy(countyDisplay: string, count: number) {
+  return {
+    intro:
+      `Choosing childcare in ${countyDisplay} County can feel overwhelming, especially when every family's needs are different. ` +
+      `This page includes all ${count.toLocaleString()} licensed daycares in ${countyDisplay} County, Ohio, so you can compare program type, SUTQ status, and core listing details in one place.`,
+    sutq:
+      "Step Up To Quality (SUTQ) is Ohio's quality rating system for licensed early care and education programs. " +
+      "Ratings shown are Gold, Silver, Bronze, or Not Rated. In general, higher tiers indicate programs meeting additional quality standards beyond baseline licensing.",
+    choosingCare:
+      `Use SUTQ as a starting filter, then confirm day-to-day fit directly with each program in ${countyDisplay} County. ` +
+      "Compare program type, call to confirm openings and waitlist timing, ask about teacher consistency and daily communication, and schedule a tour before deciding.",
+    transparency:
+      "Ohio Parent Hub does not currently include parent reviews. We focus on licensing details, SUTQ status, program type, and core program information to support your research.",
+    notRated:
+      "Not Rated does not automatically mean low quality—it means no SUTQ tier is currently shown. Use tours, licensing details, and direct questions to evaluate fit.",
+  };
 }
 
 export async function generateStaticParams() {
@@ -120,6 +138,7 @@ export default async function CountyDaycaresPage({ params }: Props) {
   }
 
   const countySnippetCopy = buildCountySnippetCopy(countyDisplay, matches.length);
+  const countyEditorialCopy = buildCountyEditorialCopy(countyDisplay, matches.length);
 
   return (
     <CountyDaycaresPageClient
@@ -127,6 +146,11 @@ export default async function CountyDaycaresPage({ params }: Props) {
       countySlug={countySlug}
       countyCount={matches.length}
       countySnippetCopy={countySnippetCopy}
+      countyIntroCopy={countyEditorialCopy.intro}
+      countySutqCopy={countyEditorialCopy.sutq}
+      countyChoosingCareCopy={countyEditorialCopy.choosingCare}
+      countyTransparencyCopy={countyEditorialCopy.transparency}
+      countyNotRatedCopy={countyEditorialCopy.notRated}
       initialDaycares={matches.slice(0, 15)}
       basePath=""
       homeHref="/"

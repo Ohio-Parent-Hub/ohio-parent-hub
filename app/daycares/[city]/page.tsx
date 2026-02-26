@@ -44,7 +44,25 @@ function daycareDisplayName(daycare: DaycareRow) {
 }
 
 function buildCitySnippetCopy(cityDisplay: string, count: number) {
-  return `Compare ${count} licensed daycare programs in ${cityDisplay}, OH. Review SUTQ ratings, locations, and contact details.`;
+  return `Browse all ${count.toLocaleString()} licensed daycares in ${cityDisplay}, Ohio. Compare program type, SUTQ status, and key details to find childcare that fits your family.`;
+}
+
+function buildCityEditorialCopy(cityDisplay: string, count: number) {
+  return {
+    intro:
+      `Choosing childcare in ${cityDisplay} can feel overwhelming, especially when every family's needs are different. ` +
+      `This page includes all ${count.toLocaleString()} licensed daycares in ${cityDisplay}, Ohio, so you can compare program type, SUTQ status, and core listing details in one place.`,
+    sutq:
+      "Step Up To Quality (SUTQ) is Ohio's quality rating system for licensed early care and education programs. " +
+      "Ratings shown are Gold, Silver, Bronze, or Not Rated. In general, higher tiers indicate programs meeting additional quality standards beyond baseline licensing.",
+    choosingCare:
+      `Use SUTQ as a starting filter, then confirm day-to-day fit directly with each program in ${cityDisplay}. ` +
+      "Compare program type, call to confirm openings and waitlist timing, ask about teacher consistency and daily communication, and schedule a tour before deciding.",
+    transparency:
+      "Ohio Parent Hub does not currently include parent reviews. We focus on licensing details, SUTQ status, program type, and core program information to support your research.",
+    notRated:
+      "Not Rated does not automatically mean low quality—it means no SUTQ tier is currently shown. Use tours, licensing details, and direct questions to evaluate fit.",
+  };
 }
 
 export async function generateStaticParams() {
@@ -147,6 +165,7 @@ export default async function CityDaycaresPage({ params }: Props) {
   }
 
   const citySnippetCopy = buildCitySnippetCopy(cityDisplay, matches.length);
+  const cityEditorialCopy = buildCityEditorialCopy(cityDisplay, matches.length);
   const countyLinks = Array.from(
     new Map(
       matches
@@ -191,6 +210,11 @@ export default async function CityDaycaresPage({ params }: Props) {
         citySlug={citySlug}
         cityCount={matches.length}
         citySnippetCopy={citySnippetCopy}
+        cityIntroCopy={cityEditorialCopy.intro}
+        citySutqCopy={cityEditorialCopy.sutq}
+        cityChoosingCareCopy={cityEditorialCopy.choosingCare}
+        cityTransparencyCopy={cityEditorialCopy.transparency}
+        cityNotRatedCopy={cityEditorialCopy.notRated}
         countyLinks={countyLinks}
         initialDaycares={matches.slice(0, 15)}
         basePath=""

@@ -404,7 +404,6 @@ export default async function DaycarePage({ params, searchParams }: Props) {
       browseLinks={browseLinks}
       nearbyDaycares={nearbyDaycares}
       similarDaycares={similarDaycares}
-      profileBadgeLabel="Licensed Program Profile"
       name={name}
       city={city}
       sutq={sutq}

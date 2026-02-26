@@ -27,6 +27,12 @@ const lightGold = "#F5E9BE";
 interface DraftDaycaresPageClientProps {
   daycareCount: number;
   cityCount: number;
+  statewideSnippetCopy: string;
+  statewideIntroCopy: string;
+  statewideSutqCopy: string;
+  statewideChoosingCareCopy: string;
+  statewideTransparencyCopy: string;
+  statewideNotRatedCopy: string;
   initialDaycares?: Record<string, string>[];
   basePath?: string;
   homeHref?: string;
@@ -36,6 +42,12 @@ interface DraftDaycaresPageClientProps {
 export default function DraftDaycaresPageClient({
   daycareCount,
   cityCount,
+  statewideSnippetCopy,
+  statewideIntroCopy,
+  statewideSutqCopy,
+  statewideChoosingCareCopy,
+  statewideTransparencyCopy,
+  statewideNotRatedCopy,
   initialDaycares = [],
   basePath = "/draft",
   homeHref = "/draft",
@@ -45,6 +57,9 @@ export default function DraftDaycaresPageClient({
   const [mapZoom, setMapZoom] = useState<number | null>(null);
   const [locationQuery, setLocationQuery] = useState("");
   const [heroSearchClearSignal, setHeroSearchClearSignal] = useState(0);
+  const [isAboutOpenMobile, setIsAboutOpenMobile] = useState(false);
+  const [isSutqOpenMobile, setIsSutqOpenMobile] = useState(false);
+  const [isChooseOpenMobile, setIsChooseOpenMobile] = useState(false);
 
   return (
     <main className="min-h-screen" style={{ background: cream, color: dark }}>
@@ -71,7 +86,7 @@ export default function DraftDaycaresPageClient({
                 Find the Best Daycares in Ohio
               </h1>
               <p className="mt-4 max-w-2xl text-base leading-relaxed" style={{ color: `${dark}bb` }}>
-                Search licensed childcare providers across Ohio and compare program details, quality ratings, and location options to find care near you.
+                {statewideSnippetCopy}
               </p>
               <div className="mt-6 max-w-xl">
                 <LocationSearch
@@ -99,6 +114,126 @@ export default function DraftDaycaresPageClient({
               ))}
             </div>
           </div>
+        </div>
+      </section>
+
+      <section className="px-6 pt-6 pb-2">
+        <div className="mx-auto max-w-7xl md:hidden">
+          <div className="rounded-2xl border p-4 shadow-sm" style={{ background: "#fff", borderColor: `${sage}55` }}>
+            <h2 className="font-serif text-base font-semibold" style={{ color: dark }}>
+              Parent guidance for Ohio
+            </h2>
+
+            <div className="mt-2 border-t" style={{ borderColor: `${sage}55` }}>
+              <button
+                type="button"
+                className="flex w-full items-center justify-between py-2.5 text-left"
+                aria-expanded={isAboutOpenMobile}
+                aria-controls="state-editorial-about-mobile"
+                aria-label="Toggle About childcare in Ohio"
+                onClick={() => setIsAboutOpenMobile((current) => !current)}
+              >
+                <span className="text-sm font-semibold" style={{ color: dark }}>About childcare in Ohio</span>
+                <span className={`text-base leading-none transition-transform ${isAboutOpenMobile ? "rotate-180" : "rotate-0"}`} style={{ color: teal }} aria-hidden="true">▾</span>
+              </button>
+              <p
+                id="state-editorial-about-mobile"
+                className={`pb-3 text-sm leading-relaxed ${isAboutOpenMobile ? "block" : "hidden"}`}
+                style={{ color: `${dark}cc` }}
+              >
+                {statewideIntroCopy}
+              </p>
+            </div>
+
+            <div className="border-t" style={{ borderColor: `${sage}55` }}>
+              <button
+                type="button"
+                className="flex w-full items-center justify-between py-2.5 text-left"
+                aria-expanded={isSutqOpenMobile}
+                aria-controls="state-editorial-sutq-mobile"
+                aria-label="Toggle Understanding SUTQ in Ohio"
+                onClick={() => setIsSutqOpenMobile((current) => !current)}
+              >
+                <span className="text-sm font-semibold" style={{ color: dark }}>Understanding SUTQ in Ohio</span>
+                <span className={`text-base leading-none transition-transform ${isSutqOpenMobile ? "rotate-180" : "rotate-0"}`} style={{ color: teal }} aria-hidden="true">▾</span>
+              </button>
+              <p
+                id="state-editorial-sutq-mobile"
+                className={`text-sm leading-relaxed ${isSutqOpenMobile ? "block" : "hidden"}`}
+                style={{ color: `${dark}cc` }}
+              >
+                {statewideSutqCopy}
+              </p>
+              <p
+                className={`pb-3 pt-2 text-xs leading-relaxed ${isSutqOpenMobile ? "block" : "hidden"}`}
+                style={{ color: `${dark}99` }}
+              >
+                {statewideNotRatedCopy}
+              </p>
+            </div>
+
+            <div className="border-t" style={{ borderColor: `${sage}55` }}>
+              <button
+                type="button"
+                className="flex w-full items-center justify-between py-2.5 text-left"
+                aria-expanded={isChooseOpenMobile}
+                aria-controls="state-editorial-choose-mobile"
+                aria-label="Toggle How to choose care in Ohio"
+                onClick={() => setIsChooseOpenMobile((current) => !current)}
+              >
+                <span className="text-sm font-semibold" style={{ color: dark }}>How to choose care in Ohio</span>
+                <span className={`text-base leading-none transition-transform ${isChooseOpenMobile ? "rotate-180" : "rotate-0"}`} style={{ color: teal }} aria-hidden="true">▾</span>
+              </button>
+              <p
+                id="state-editorial-choose-mobile"
+                className={`text-sm leading-relaxed ${isChooseOpenMobile ? "block" : "hidden"}`}
+                style={{ color: `${dark}cc` }}
+              >
+                {statewideChoosingCareCopy}
+              </p>
+              <p
+                className={`pb-3 pt-2 text-xs leading-relaxed ${isChooseOpenMobile ? "block" : "hidden"}`}
+                style={{ color: `${dark}99` }}
+              >
+                {statewideTransparencyCopy}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="mx-auto hidden max-w-7xl gap-4 md:grid md:grid-cols-3">
+          <article className="rounded-2xl border p-5 shadow-sm" style={{ background: "#fff", borderColor: `${sage}55` }}>
+            <h2 className="font-serif text-lg font-semibold" style={{ color: dark }}>
+              About childcare in Ohio
+            </h2>
+            <p className="mt-2 text-sm leading-relaxed" style={{ color: `${dark}cc` }}>
+              {statewideIntroCopy}
+            </p>
+          </article>
+
+          <article className="rounded-2xl border p-5 shadow-sm" style={{ background: "#fff", borderColor: `${sage}55` }}>
+            <h2 className="font-serif text-lg font-semibold" style={{ color: dark }}>
+              Understanding SUTQ in Ohio
+            </h2>
+            <p className="mt-2 text-sm leading-relaxed" style={{ color: `${dark}cc` }}>
+              {statewideSutqCopy}
+            </p>
+            <p className="mt-3 text-xs leading-relaxed" style={{ color: `${dark}99` }}>
+              {statewideNotRatedCopy}
+            </p>
+          </article>
+
+          <article className="rounded-2xl border p-5 shadow-sm" style={{ background: "#fff", borderColor: `${sage}55` }}>
+            <h2 className="font-serif text-lg font-semibold" style={{ color: dark }}>
+              How to choose care in Ohio
+            </h2>
+            <p className="mt-2 text-sm leading-relaxed" style={{ color: `${dark}cc` }}>
+              {statewideChoosingCareCopy}
+            </p>
+            <p className="mt-3 text-xs leading-relaxed" style={{ color: `${dark}99` }}>
+              {statewideTransparencyCopy}
+            </p>
+          </article>
         </div>
       </section>
 

@@ -81,7 +81,6 @@ export default async function DraftDaycarePage({ params }: Props) {
         { label: "Ohio", href: "/draft/daycares" },
         { label: city, href: `/draft/daycares/${slugify(city)}`, isActive: true },
       ]}
-      profileBadgeLabel="Licensed Program Profile"
       name={name}
       city={city}
       sutq={sutq}
