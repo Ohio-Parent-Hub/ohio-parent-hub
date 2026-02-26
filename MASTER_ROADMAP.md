@@ -88,7 +88,7 @@ ID format legend: use `phase.item` references (example: `0.1`, `2.4`, `4.7`) for
 		- Content is specific to city context (not generic boilerplate)
 		- Metadata/H1/opening copy remain semantically aligned
 
-- [ ] **0.5 Trust pages + trust-linked footer** (`/about`, `/contact`, `/privacy`, `/methodology`)
+- [x] **0.5 Trust pages + trust-linked footer** (`/about`, `/contact`, `/privacy`, `/methodology`)
 	- **Why:** reduces spam/low-trust perception for directory model
 	- **Depends on:** content copy + header/footer integration
 	- **Affects:** sitewide trust signals + quality evaluation

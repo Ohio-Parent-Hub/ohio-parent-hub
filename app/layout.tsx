@@ -4,6 +4,7 @@ import Script from "next/script";
 import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import SiteHeader from "@/components/SiteHeader";
+import SiteFooter from "@/components/SiteFooter";
 
 const dmSerif = DM_Serif_Display({
   weight: ["400"],
@@ -116,6 +117,7 @@ export default function RootLayout({
         <TooltipProvider>
           <SiteHeader />
           {children}
+          <SiteFooter />
         </TooltipProvider>
       </body>
     </html>

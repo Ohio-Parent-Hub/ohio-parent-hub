@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 import fs from "node:fs";
 import path from "node:path";
 import type { CSSProperties } from "react";
@@ -8,7 +7,7 @@ import type { Metadata } from "next";
 import { Button } from "@/components/ui/button";
 import { toTitleCaseIfAllCaps } from "@/lib/utils";
 import { getCitiesWithMetroEntry, resolveCanonicalCityName } from "@/lib/metroAreas";
-import { MapPin, Search, ShieldCheck, Baby, ArrowRight, Heart, Sparkles } from "lucide-react";
+import { MapPin, Search, ShieldCheck, Baby, ArrowRight, Sparkles } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Best Daycares in Ohio | Licensed Child Care Search",
@@ -254,21 +253,9 @@ export default function HomePage() {
         </div>
       </section>
 
-      <WaveDivider fill={cream} />
-
-      <footer className="px-6 pb-12 pt-4" style={{ background: cream }}>
-        <div className="mx-auto flex max-w-6xl flex-col items-center gap-5 text-center">
-          <Image src="/icon.png" alt="Ohio Parent Hub" width={48} height={48} className="rounded-xl shadow-sm" />
-          <p className="font-serif text-lg font-bold" style={{ color: teal }}>Ohio Parent Hub</p>
-          <div className="flex flex-wrap justify-center gap-6 text-sm font-medium" style={{ color: `${dark}88` }}>
-            <Link href="/daycares">Find Daycares</Link>
-            <Link href="/cities">Cities</Link>
-          </div>
-          <div className="flex items-center gap-1 text-sm" style={{ color: `${dark}50` }}>
-            Made with <Heart className="mx-1 h-3.5 w-3.5" style={{ color: pink }} /> for Ohio families
-          </div>
-        </div>
-      </footer>
+      <div style={{ background: teal }}>
+        <WaveDivider fill={cream} />
+      </div>
     </div>
   );
 }
