@@ -24,20 +24,101 @@ type RelatedDaycareCard = {
 };
 
 export const revalidate = 86400;
+export const dynamicParams = false;
 
-const PRIORITY_CITY_SLUGS = new Set(["columbus", "cleveland", "cincinnati"]);
+const NEARBY_BUCKET_DEGREES = 0.2;
+const NEARBY_BUCKET_RADIUS = 1;
+
+type SpatialPoint = {
+  index: number;
+  lat: number;
+  lng: number;
+  programNumber: string;
+};
+
+type DaycareDataset = {
+  rows: DaycareRow[];
+  byProgramNumber: Map<string, DaycareRow>;
+  spatialBuckets: Map<string, SpatialPoint[]>;
+};
+
+let daycareDatasetCache: DaycareDataset | null = null;
+
+function getBucketKey(lat: number, lng: number) {
+  const latBucket = Math.floor(lat / NEARBY_BUCKET_DEGREES);
+  const lngBucket = Math.floor(lng / NEARBY_BUCKET_DEGREES);
+  return `${latBucket}:${lngBucket}`;
+}
+
+function buildDaycareDataset(rows: DaycareRow[]): DaycareDataset {
+  const byProgramNumber = new Map<string, DaycareRow>();
+  const spatialBuckets = new Map<string, SpatialPoint[]>();
+
+  rows.forEach((row, index) => {
+    const programNumber = row["PROGRAM NUMBER"] || "";
+    if (programNumber) {
+      byProgramNumber.set(programNumber, row);
+    }
+
+    const lat = Number.parseFloat(String(row["LAT"] ?? ""));
+    const lng = Number.parseFloat(String(row["LNG"] ?? ""));
+    if (!Number.isFinite(lat) || !Number.isFinite(lng) || !programNumber) return;
+
+    const key = getBucketKey(lat, lng);
+    const points = spatialBuckets.get(key) || [];
+    points.push({ index, lat, lng, programNumber });
+    spatialBuckets.set(key, points);
+  });
+
+  return {
+    rows,
+    byProgramNumber,
+    spatialBuckets,
+  };
+}
+
+function getDaycareDataset(): DaycareDataset {
+  if (daycareDatasetCache) return daycareDatasetCache;
+
+  const datasetPath = path.join(process.cwd(), "data", "daycares.json");
+  if (!fs.existsSync(datasetPath)) {
+    daycareDatasetCache = buildDaycareDataset([]);
+    return daycareDatasetCache;
+  }
+
+  const raw = fs.readFileSync(datasetPath, "utf8");
+  const parsed = JSON.parse(raw) as DaycareRow[];
+  daycareDatasetCache = buildDaycareDataset(parsed);
+  return daycareDatasetCache;
+}
 
 function loadDaycares(): DaycareRow[] {
-  const p = path.join(process.cwd(), "data", "daycares.json");
-  if (!fs.existsSync(p)) return [];
-  const raw = fs.readFileSync(p, "utf8");
-  return JSON.parse(raw);
+  return getDaycareDataset().rows;
 }
 
 function findDaycareBySlug(slug: string): DaycareRow | null {
   const programNumber = slug.split("-")[0];
-  const all = loadDaycares();
-  return all.find((d) => d["PROGRAM NUMBER"] === programNumber) || null;
+  if (!programNumber) return null;
+  return getDaycareDataset().byProgramNumber.get(programNumber) || null;
+}
+
+function getNearbySpatialPoints(lat: number, lng: number) {
+  const { spatialBuckets } = getDaycareDataset();
+  const latBucket = Math.floor(lat / NEARBY_BUCKET_DEGREES);
+  const lngBucket = Math.floor(lng / NEARBY_BUCKET_DEGREES);
+  const nearby: SpatialPoint[] = [];
+
+  for (let latOffset = -NEARBY_BUCKET_RADIUS; latOffset <= NEARBY_BUCKET_RADIUS; latOffset += 1) {
+    for (let lngOffset = -NEARBY_BUCKET_RADIUS; lngOffset <= NEARBY_BUCKET_RADIUS; lngOffset += 1) {
+      const bucketKey = `${latBucket + latOffset}:${lngBucket + lngOffset}`;
+      const bucketPoints = spatialBuckets.get(bucketKey);
+      if (bucketPoints?.length) {
+        nearby.push(...bucketPoints);
+      }
+    }
+  }
+
+  return nearby;
 }
 
 function canonicalDaycareSlug(daycare: DaycareRow) {
@@ -153,10 +234,7 @@ export async function generateStaticParams() {
   const all = loadDaycares();
 
   return all
-    .filter((daycare) => {
-      const citySlug = resolveCanonicalCitySlugFromName(daycare["CITY"] || "");
-      return Boolean(daycare["PROGRAM NUMBER"]) && PRIORITY_CITY_SLUGS.has(citySlug);
-    })
+    .filter((daycare) => Boolean(daycare["PROGRAM NUMBER"]))
     .map((daycare) => ({ slug: canonicalDaycareSlug(daycare) }));
 }
 
@@ -291,18 +369,17 @@ export default async function DaycarePage({ params, searchParams }: Props) {
   const currentSutq = (daycare["SUTQ RATING"] || "").trim().toLowerCase();
   const currentPfcc = isPfccEnabled(daycare);
   const nearbyCandidates = hasCoordinates
-    ? allDaycares
-        .filter((candidate) => candidate["PROGRAM NUMBER"] !== programNumber)
+    ? getNearbySpatialPoints(lat, lng)
+        .filter((candidate) => candidate.programNumber !== programNumber)
         .map((candidate) => {
-          const candidateLat = Number.parseFloat(String(candidate["LAT"] ?? ""));
-          const candidateLng = Number.parseFloat(String(candidate["LNG"] ?? ""));
-          if (!Number.isFinite(candidateLat) || !Number.isFinite(candidateLng)) return null;
+          const daycareRow = allDaycares[candidate.index];
+          if (!daycareRow) return null;
 
-          const miles = distanceMiles(lat, lng, candidateLat, candidateLng);
+          const miles = distanceMiles(lat, lng, candidate.lat, candidate.lng);
           if (miles > 10) return null;
 
           return {
-            daycare: candidate,
+            daycare: daycareRow,
             miles,
           };
         })
