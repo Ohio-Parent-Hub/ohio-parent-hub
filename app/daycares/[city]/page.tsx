@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { notFound, permanentRedirect } from "next/navigation";
 import DraftCityDaycaresPageClient from "@/components/DraftCityDaycaresPageClient";
 import { slugify, toTitleCaseIfAllCaps } from "@/lib/utils";
+import { projectDaycareListRows } from "@/lib/daycareProjection";
 import {
   getDaycaresForCitySlug,
   getMetroCitySlugs,
@@ -216,7 +217,7 @@ export default async function CityDaycaresPage({ params }: Props) {
         cityTransparencyCopy={cityEditorialCopy.transparency}
         cityNotRatedCopy={cityEditorialCopy.notRated}
         countyLinks={countyLinks}
-        initialDaycares={matches.slice(0, 15)}
+        initialDaycares={projectDaycareListRows(matches.slice(0, 15))}
         basePath=""
         homeHref="/"
         citiesHref="/cities"

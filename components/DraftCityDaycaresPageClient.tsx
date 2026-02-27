@@ -287,6 +287,7 @@ export default function DraftCityDaycaresPageClient({
             daycares={initialDaycares}
             citySlug={citySlug}
             cityDisplay={cityDisplay}
+            initialTotalCount={cityCount}
             basePath={basePath}
             externalMapCenter={mapCenter}
             onExternalMapCenterChange={setMapCenter}

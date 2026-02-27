@@ -50,6 +50,7 @@ interface CityDashboardProps {
   citySlug?: string;
   countySlug?: string;
   cityDisplay: string;
+  initialTotalCount?: number;
   basePath?: string;
   externalMapCenter?: [number, number] | null;
   onExternalMapCenterChange?: (coords: [number, number] | null) => void;
@@ -338,6 +339,7 @@ export default function CityDashboard({
   citySlug,
   countySlug,
   cityDisplay,
+  initialTotalCount,
   basePath = "",
   externalMapCenter,
   onExternalMapCenterChange,
@@ -363,20 +365,28 @@ export default function CityDashboard({
   const [selectedProgramTypes, setSelectedProgramTypes] = useState<string[]>([]);
   const [selectedCity, setSelectedCity] = useState("");
   const [hydratedDaycares, setHydratedDaycares] = useState<Daycare[]>(daycares);
+  const [isHydratingDaycares, setIsHydratingDaycares] = useState(Boolean(citySlug || countySlug));
   const [restoredStateReady, setRestoredStateReady] = useState(false);
 
   useEffect(() => {
     setHydratedDaycares(daycares);
+    if (daycares.length > 0) {
+      setIsHydratingDaycares(false);
+    }
   }, [daycares]);
 
   useEffect(() => {
-    if (!citySlug && !countySlug) return;
+    if (!citySlug && !countySlug) {
+      setIsHydratingDaycares(false);
+      return;
+    }
     const citySlugValue = citySlug;
     const countySlugValue = countySlug;
 
     let isCancelled = false;
 
     async function hydrateCityDaycares() {
+      setIsHydratingDaycares(true);
       try {
         const queryString = citySlugValue
           ? `city=${encodeURIComponent(citySlugValue)}`
@@ -388,6 +398,10 @@ export default function CityDashboard({
           setHydratedDaycares(data);
         }
       } catch {
+      } finally {
+        if (!isCancelled) {
+          setIsHydratingDaycares(false);
+        }
       }
     }
 
@@ -556,7 +570,17 @@ export default function CityDashboard({
 
     return result;
   }, [hydratedDaycares, searchQuery, selectedCity, pfccEnabled, selectedRatings, selectedProgramTypes]);
-
+  const hasActiveFilters =
+    Boolean(searchQuery) ||
+    Boolean(selectedCity) ||
+    pfccEnabled ||
+    selectedRatings.length > 0 ||
+    selectedProgramTypes.length > 0 ||
+    Boolean(mapCenter);
+  const displayResultsCount =
+    isHydratingDaycares && !hasActiveFilters && typeof initialTotalCount === "number"
+      ? initialTotalCount
+      : filteredDaycares.length;
   // Limit rendered list for performance (pagination can come later)
   const displayList = filteredDaycares.slice(0, 50);
 
@@ -692,7 +716,7 @@ export default function CityDashboard({
             <div className="flex items-baseline justify-between">
               <div>
                 <h2 className="text-xl font-bold">
-                  {filteredDaycares.length} Results
+                  {displayResultsCount} Results
                 </h2>
                 {locationQuery && (
                   <p className="mt-1 text-sm text-neutral-500">

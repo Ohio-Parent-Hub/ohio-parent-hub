@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import CountyDaycaresPageClient from "@/components/CountyDaycaresPageClient";
 import { slugify } from "@/lib/utils";
+import { projectDaycareListRows } from "@/lib/daycareProjection";
 
 type Props = { params: Promise<{ county?: string }> };
 
@@ -151,7 +152,7 @@ export default async function CountyDaycaresPage({ params }: Props) {
       countyChoosingCareCopy={countyEditorialCopy.choosingCare}
       countyTransparencyCopy={countyEditorialCopy.transparency}
       countyNotRatedCopy={countyEditorialCopy.notRated}
-      initialDaycares={matches.slice(0, 15)}
+      initialDaycares={projectDaycareListRows(matches.slice(0, 15))}
       basePath=""
       homeHref="/"
       countiesHref="/counties"

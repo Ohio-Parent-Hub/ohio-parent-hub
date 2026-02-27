@@ -273,6 +273,7 @@ export default function CountyDaycaresPageClient({
             daycares={initialDaycares}
             countySlug={countySlug}
             cityDisplay={`${countyDisplay} County`}
+            initialTotalCount={countyCount}
             basePath={basePath}
             externalMapCenter={mapCenter}
             onExternalMapCenterChange={setMapCenter}

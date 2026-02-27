@@ -3,6 +3,7 @@ import path from 'path';
 import fs from 'fs';
 import { slugify } from '@/lib/utils';
 import { getDaycaresForCitySlug, resolveCanonicalCitySlugFromSlug } from '@/lib/metroAreas';
+import { projectDaycareListRows } from '@/lib/daycareProjection';
 
 export async function GET(request: Request) {
   const filePath = path.join(process.cwd(), 'data', 'daycares.json');
@@ -15,13 +16,13 @@ export async function GET(request: Request) {
 
   if (citySlug) {
     const filtered = getDaycaresForCitySlug(data, citySlug);
-    return NextResponse.json(filtered);
+    return NextResponse.json(projectDaycareListRows(filtered));
   }
 
   if (countySlug) {
     const filtered = data.filter((d: Record<string, string>) => slugify(d['COUNTY'] || '') === countySlug);
-    return NextResponse.json(filtered);
+    return NextResponse.json(projectDaycareListRows(filtered));
   }
   
-  return NextResponse.json(data);
+  return NextResponse.json(projectDaycareListRows(data));
 }
