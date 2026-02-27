@@ -938,20 +938,26 @@ export default function GlobalDashboard({
         </div>
 
         {/* Map */}
-        <div className="rounded-xl border bg-neutral-50 shadow-sm relative z-0">
-          <InteractiveMap 
-            center={center}
-            zoom={mapZoom ?? (mapCenter ? 12 : 7)}
-            onZoomChange={(zoomLevel) => setMapZoom(zoomLevel)}
-            onViewportChange={(viewport) => {
-              setMapBounds(viewport.bounds);
-              setMapViewCenter([viewport.center.lat, viewport.center.lng]);
-            }}
-            markers={mapMarkers}
-            userLocation={mapCenter}
-            height="500px" // Taller map for global view
-            className="rounded-xl"
-          />
+        <div className="rounded-xl border bg-neutral-50 shadow-sm relative z-0" style={{ height: "500px" }}>
+          {restoredStateReady ? (
+            <InteractiveMap 
+              center={center}
+              zoom={mapZoom ?? (mapCenter ? 12 : 7)}
+              onZoomChange={(zoomLevel) => setMapZoom(zoomLevel)}
+              onViewportChange={(viewport) => {
+                setMapBounds(viewport.bounds);
+                setMapViewCenter([viewport.center.lat, viewport.center.lng]);
+              }}
+              markers={mapMarkers}
+              userLocation={mapCenter}
+              height="500px"
+              className="rounded-xl"
+            />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center rounded-xl bg-neutral-100 text-sm text-neutral-400">
+              Loading map…
+            </div>
+          )}
         </div>
 
         {/* List */}
