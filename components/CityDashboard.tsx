@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { SutqBadge } from "@/components/SutqBadge";
@@ -44,6 +44,29 @@ import { cn, slugify, toTitleCaseIfAllCaps } from "@/lib/utils";
 import { isMetroCitySlug, resolveCanonicalCityName, resolveCanonicalCitySlugFromName } from "@/lib/metroAreas";
 
 type Daycare = Record<string, string>;
+
+function isFiniteCoordinate(value: number) {
+  return Number.isFinite(value);
+}
+
+function toRadians(value: number) {
+  return (value * Math.PI) / 180;
+}
+
+function distanceMiles(from: [number, number], to: [number, number]) {
+  const earthRadiusMiles = 3958.8;
+  const dLat = toRadians(to[0] - from[0]);
+  const dLng = toRadians(to[1] - from[1]);
+  const lat1 = toRadians(from[0]);
+  const lat2 = toRadians(to[0]);
+
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng / 2) ** 2;
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+  return earthRadiusMiles * c;
+}
 
 interface CityDashboardProps {
   daycares: Daycare[];
@@ -356,7 +379,9 @@ export default function CityDashboard({
   const returnTo = pathname;
 
   const [searchQuery, setSearchQuery] = useState("");
+  const [mapBounds, setMapBounds] = useState<{ north: number; south: number; east: number; west: number } | null>(null);
   const [internalMapCenter, setInternalMapCenter] = useState<[number, number] | null>(null);
+  const [internalMapViewCenter, setInternalMapViewCenter] = useState<[number, number] | null>(null);
   const [internalMapZoom, setInternalMapZoom] = useState<number | null>(null);
   const [internalLocationQuery, setInternalLocationQuery] = useState("");
   const [locationSearchClearSignal, setLocationSearchClearSignal] = useState(0);
@@ -414,7 +439,27 @@ export default function CityDashboard({
 
   const mapCenter = externalMapCenter !== undefined ? externalMapCenter : internalMapCenter;
   const setMapCenter = onExternalMapCenterChange ?? setInternalMapCenter;
+  const mapViewCenter = internalMapViewCenter;
+  const setMapViewCenter = setInternalMapViewCenter;
   const mapZoom = externalMapZoom !== undefined ? externalMapZoom : internalMapZoom;
+
+  // When the external map center changes from outside (e.g. hero LocationSearch),
+  // sync it into the internal view center so the map zooms to the correct location.
+  // skipNextExternalCenterSyncRef is set to true before sessionStorage restores mapCenter
+  // so that the round-trip through the parent does NOT overwrite the restored mapViewCenter.
+  const prevExternalMapCenterRef = useRef(externalMapCenter);
+  const skipNextExternalCenterSyncRef = useRef(false);
+  useEffect(() => {
+    if (externalMapCenter === prevExternalMapCenterRef.current) return;
+    prevExternalMapCenterRef.current = externalMapCenter;
+    if (skipNextExternalCenterSyncRef.current) {
+      skipNextExternalCenterSyncRef.current = false;
+      return;
+    }
+    if (externalMapCenter !== undefined) {
+      setInternalMapViewCenter(externalMapCenter ?? null);
+    }
+  }, [externalMapCenter]);
   const setMapZoom = onExternalMapZoomChange ?? setInternalMapZoom;
   const locationQuery = externalLocationQuery !== undefined ? externalLocationQuery : internalLocationQuery;
   const setLocationQuery = onExternalLocationQueryChange ?? setInternalLocationQuery;
@@ -435,6 +480,7 @@ export default function CityDashboard({
         selectedProgramTypes?: string[];
         selectedCity?: string;
         mapCenter?: [number, number] | null;
+        mapViewCenter?: [number, number] | null;
         mapZoom?: number | null;
         locationQuery?: string;
       };
@@ -445,7 +491,11 @@ export default function CityDashboard({
       if (Array.isArray(parsed.selectedProgramTypes)) setSelectedProgramTypes(parsed.selectedProgramTypes);
       if (typeof parsed.selectedCity === "string") setSelectedCity(parsed.selectedCity);
       if (parsed.mapCenter === null || (Array.isArray(parsed.mapCenter) && parsed.mapCenter.length === 2)) {
+        skipNextExternalCenterSyncRef.current = true;
         setMapCenter(parsed.mapCenter as [number, number] | null);
+      }
+      if (parsed.mapViewCenter === null || (Array.isArray(parsed.mapViewCenter) && parsed.mapViewCenter.length === 2)) {
+        setMapViewCenter(parsed.mapViewCenter as [number, number] | null);
       }
       if (typeof parsed.mapZoom === "number") setMapZoom(parsed.mapZoom);
       if (parsed.mapZoom === null) setMapZoom(null);
@@ -454,7 +504,7 @@ export default function CityDashboard({
     } finally {
       setRestoredStateReady(true);
     }
-  }, [setLocationQuery, setMapCenter, setMapZoom, storageKey]);
+  }, [setLocationQuery, setMapCenter, setMapViewCenter, setMapZoom, storageKey]);
 
   useEffect(() => {
     if (!restoredStateReady) return;
@@ -479,6 +529,7 @@ export default function CityDashboard({
     selectedProgramTypes,
     selectedCity,
     mapCenter,
+    mapViewCenter,
     mapZoom,
     locationQuery,
     storageKey,
@@ -509,6 +560,7 @@ export default function CityDashboard({
     setSelectedCity("");
     setSearchQuery("");
     setMapCenter(null);
+    setMapViewCenter(null);
     setMapZoom(null);
     setLocationQuery("");
     setLocationSearchClearSignal((value) => value + 1);
@@ -517,6 +569,7 @@ export default function CityDashboard({
 
   const clearLocationOnly = () => {
     setMapCenter(null);
+    setMapViewCenter(null);
     setMapZoom(null);
     setLocationQuery("");
     setLocationSearchClearSignal((value) => value + 1);
@@ -581,8 +634,40 @@ export default function CityDashboard({
     isHydratingDaycares && !hasActiveFilters && typeof initialTotalCount === "number"
       ? initialTotalCount
       : filteredDaycares.length;
+  const mapVisibleDaycares = useMemo(() => {
+    const withCoordinates = filteredDaycares.filter((daycare) => {
+      if (!daycare["LAT"] || !daycare["LNG"]) return false;
+      const lat = Number(daycare["LAT"]);
+      const lng = Number(daycare["LNG"]);
+      return isFiniteCoordinate(lat) && isFiniteCoordinate(lng);
+    });
+
+    if (!mapBounds) return withCoordinates;
+
+    return withCoordinates.filter((daycare) => {
+      const lat = Number(daycare["LAT"]);
+      const lng = Number(daycare["LNG"]);
+      return (
+        lat <= mapBounds.north &&
+        lat >= mapBounds.south &&
+        lng <= mapBounds.east &&
+        lng >= mapBounds.west
+      );
+    });
+  }, [filteredDaycares, mapBounds]);
+  const mapViewSortedDaycares = useMemo(() => {
+    if (!mapCenter) return mapVisibleDaycares;
+
+    return [...mapVisibleDaycares].sort((daycareA, daycareB) => {
+      const distanceA = distanceMiles(mapCenter, [Number(daycareA["LAT"]), Number(daycareA["LNG"])]);
+      const distanceB = distanceMiles(mapCenter, [Number(daycareB["LAT"]), Number(daycareB["LNG"])]);
+      return distanceA - distanceB;
+    });
+  }, [mapVisibleDaycares, mapCenter]);
+  const isResultsCountPending = !mapBounds || isHydratingDaycares;
+  const displayMapViewCount = isResultsCountPending ? displayResultsCount : mapVisibleDaycares.length;
   // Limit rendered list for performance (pagination can come later)
-  const displayList = filteredDaycares.slice(0, 50);
+  const displayList = mapViewSortedDaycares.slice(0, 50);
 
   // Map markers based on FILTERED results
   const markers = useMemo(() => {
@@ -622,7 +707,7 @@ export default function CityDashboard({
 
   // Fallback if no markers
   const defaultCenter: [number, number] = [39.9612, -82.9988]; 
-  const center = mapCenter || markerCenter || defaultCenter;
+  const center = mapViewCenter || mapCenter || markerCenter || defaultCenter;
 
   return (
     <div>
@@ -705,6 +790,7 @@ export default function CityDashboard({
                 <LocationSearch
                   onLocationFound={(lat, lng) => {
                     setMapCenter([lat, lng]);
+                    setMapViewCenter([lat, lng]);
                     setMapZoom(12);
                   }}
                   onSearchSuccess={(query) => setLocationQuery(query)}
@@ -716,8 +802,9 @@ export default function CityDashboard({
             <div className="flex items-baseline justify-between">
               <div>
                 <h2 className="text-xl font-bold">
-                  {displayResultsCount} Results
+                  {isResultsCountPending ? "Updating results..." : `${displayMapViewCount} Results in Map View`}
                 </h2>
+                <p className="text-xs text-neutral-400 mt-0.5">Only locations with address coordinates appear on the map.</p>
                 {locationQuery && (
                   <p className="mt-1 text-sm text-neutral-500">
                     Showing results near <span className="font-medium text-neutral-700">{locationQuery}</span>.
@@ -740,6 +827,10 @@ export default function CityDashboard({
               center={center}
               zoom={mapZoom ?? (mapCenter ? 12 : 7)}
               onZoomChange={(zoomLevel) => setMapZoom(zoomLevel)}
+              onViewportChange={(viewport) => {
+                setMapBounds(viewport.bounds);
+                setMapViewCenter([viewport.center.lat, viewport.center.lng]);
+              }}
               markers={markers}
               userLocation={mapCenter}
               height="500px"
@@ -749,6 +840,11 @@ export default function CityDashboard({
 
           {/* Results List */}
           <div className="space-y-4">
+            {mapViewSortedDaycares.length > displayList.length && (
+              <p className="text-sm text-neutral-500">
+                Showing 50 of {mapViewSortedDaycares.length} results. Use filters to narrow your search.
+              </p>
+            )}
             {displayList.map((d) => {
               const id = d["PROGRAM NUMBER"] || "";
               const name = d["PROGRAM NAME"] || "";
@@ -763,6 +859,10 @@ export default function CityDashboard({
               const pfcc = d["PFCC AGREEMENT"] === "Y";
                 const slug = `${id}-${slugify(name)}-${resolveCanonicalCitySlugFromName(city)}`;
               const detailHref = withListingContext(`${basePath}/daycare/${slug}`, linkContext, returnTo);
+              const hasPinnedLocation = Boolean(mapCenter);
+              const distanceFromPinned = hasPinnedLocation
+                ? distanceMiles(mapCenter as [number, number], [Number(d["LAT"]), Number(d["LNG"])])
+                : null;
 
               return (
                 <div
@@ -784,6 +884,11 @@ export default function CityDashboard({
                       {displayStreet}
                     </p>
                     <div className="flex items-center gap-2 text-xs text-neutral-400">
+                      {distanceFromPinned !== null && (
+                        <span className="bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded font-medium">
+                          {distanceFromPinned.toFixed(1)} mi
+                        </span>
+                      )}
                       <span className="bg-neutral-100 px-2 py-0.5 rounded text-neutral-600">{displayProgramType}</span>
                       {pfcc && (
                         <span className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded font-medium">
@@ -813,16 +918,12 @@ export default function CityDashboard({
               );
             })}
 
-            {filteredDaycares.length > displayList.length && (
-              <div className="text-center py-8 text-neutral-500 border-t border-dashed">
-                Showing top 50 results. Use filters to narrow down your search.
-              </div>
-            )}
 
-            {filteredDaycares.length === 0 && (
+
+            {displayList.length === 0 && (
               <div className="text-center py-12 text-neutral-500 bg-neutral-50 rounded-xl border border-dashed">
-                <p className="font-medium">No daycares found</p>
-                <p className="text-sm mt-1">Try adjusting your search or filters.</p>
+                <p className="font-medium">No daycares in current map view</p>
+                <p className="text-sm mt-1">Try zooming out or adjusting your search or filters.</p>
                 <Button variant="link" onClick={clearAllFilters} className="mt-2">
                   Clear all filters
                 </Button>

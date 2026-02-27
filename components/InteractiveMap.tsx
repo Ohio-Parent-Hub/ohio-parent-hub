@@ -15,6 +15,10 @@ interface InteractiveMapProps {
   center: [number, number];
   zoom?: number;
   onZoomChange?: (zoom: number) => void;
+  onViewportChange?: (viewport: {
+    bounds: { north: number; south: number; east: number; west: number };
+    center: { lat: number; lng: number };
+  }) => void;
   markers?: Array<{
     lat: number;
     lng: number;

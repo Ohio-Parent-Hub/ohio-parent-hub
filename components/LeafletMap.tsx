@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import L from "leaflet";
 import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents } from "react-leaflet";
 import "leaflet.markercluster";
@@ -24,6 +24,10 @@ export interface MapProps {
   center: [number, number]; // [lat, lng]
   zoom?: number;
   onZoomChange?: (zoom: number) => void;
+  onViewportChange?: (viewport: {
+    bounds: { north: number; south: number; east: number; west: number };
+    center: { lat: number; lng: number };
+  }) => void;
   markers?: Array<{
     lat: number;
     lng: number;
@@ -47,9 +51,25 @@ function MapUpdater({ center, zoom }: { center: [number, number], zoom: number }
   const map = useMap();
   const centerLat = center[0];
   const centerLng = center[1];
+  const previousCenterRef = useRef<[number, number]>([centerLat, centerLng]);
+  const previousZoomRef = useRef<number>(zoom);
 
   useEffect(() => {
-    map.setView([centerLat, centerLng], zoom);
+    const previousCenter = previousCenterRef.current;
+    const centerChanged = previousCenter[0] !== centerLat || previousCenter[1] !== centerLng;
+    const zoomChanged = previousZoomRef.current !== zoom;
+
+    if (centerChanged) {
+      map.setView([centerLat, centerLng], zoom);
+      previousCenterRef.current = [centerLat, centerLng];
+      previousZoomRef.current = zoom;
+      return;
+    }
+
+    if (zoomChanged && map.getZoom() !== zoom) {
+      map.setZoom(zoom);
+      previousZoomRef.current = zoom;
+    }
   }, [centerLat, centerLng, zoom, map]);
 
   return null;
@@ -65,6 +85,54 @@ function MapZoomListener({ onZoomChange }: { onZoomChange: (zoom: number) => voi
   useEffect(() => {
     onZoomChange(map.getZoom());
   }, [map, onZoomChange]);
+
+  return null;
+}
+
+function MapViewportListener({
+  onViewportChange,
+}: {
+  onViewportChange: (viewport: {
+    bounds: { north: number; south: number; east: number; west: number };
+    center: { lat: number; lng: number };
+  }) => void;
+}) {
+  const map = useMap();
+  const onViewportChangeRef = useRef(onViewportChange);
+
+  useEffect(() => {
+    onViewportChangeRef.current = onViewportChange;
+  }, [onViewportChange]);
+
+  const emitViewport = useCallback(() => {
+    const bounds = map.getBounds();
+    const currentCenter = map.getCenter();
+    onViewportChangeRef.current({
+      bounds: {
+        north: bounds.getNorth(),
+        south: bounds.getSouth(),
+        east: bounds.getEast(),
+        west: bounds.getWest(),
+      },
+      center: {
+        lat: currentCenter.lat,
+        lng: currentCenter.lng,
+      },
+    });
+  }, [map]);
+
+  useMapEvents({
+    moveend: () => {
+      emitViewport();
+    },
+    zoomend: () => {
+      emitViewport();
+    },
+  });
+
+  useEffect(() => {
+    emitViewport();
+  }, [emitViewport]);
 
   return null;
 }
@@ -222,6 +290,7 @@ export default function LeafletMap({
   center,
   zoom = 13,
   onZoomChange,
+  onViewportChange,
   markers = [],
   userLocation,
   interactive = true,
@@ -287,6 +356,7 @@ export default function LeafletMap({
       >
         <MapUpdater center={center} zoom={zoom} />
         {interactive && onZoomChange && <MapZoomListener onZoomChange={onZoomChange} />}
+        {interactive && onViewportChange && <MapViewportListener onViewportChange={onViewportChange} />}
 
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'

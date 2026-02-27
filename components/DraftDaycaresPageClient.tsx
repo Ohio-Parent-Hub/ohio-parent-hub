@@ -241,6 +241,7 @@ export default function DraftDaycaresPageClient({
         <div className="mx-auto max-w-7xl rounded-3xl border p-4 sm:p-6 shadow-sm" style={{ background: "#fff", borderColor: `${sage}55` }}>
           <GlobalDashboard
             initialDaycares={initialDaycares}
+            initialTotalCount={daycareCount}
             basePath={basePath}
             externalMapCenter={mapCenter}
             onExternalMapCenterChange={setMapCenter}
