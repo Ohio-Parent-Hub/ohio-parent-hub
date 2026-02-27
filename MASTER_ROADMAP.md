@@ -112,17 +112,62 @@ ID format legend: use `phase.item` references (example: `0.1`, `2.4`, `4.7`) for
 - [x] **1.2 Global links canonicalized to city-suffixed detail URLs**
 - [x] **1.3 Slug mismatch/404 city issue fixed via shared normalization**
 - [x] **1.4 ItemList schema on city pages**
-- [ ] **1.5 Reduce city HTML payload** (SSR valuable block, progressively enhance heavy listing/map)
+- [x] **1.5 Reduce city HTML payload** (SSR valuable block, progressively enhance heavy listing/map)
 	- **Depends on:** city template/content architecture
 	- **Affects:** Core Web Vitals + crawl efficiency
+	- **Implementation note:** This serves as the reference implementation pattern for 1.5b.
+	- **UI guardrail:** No new visible sections/components; optimize existing rendering and data flow only.
 	- **Definition of done:**
 		- City page initial HTML size reduced with before/after numbers
 		- Core content remains server-rendered and crawlable
 		- UX behavior/functionality remains equivalent after hydration
 
-- [ ] **1.6 `/daycares` first-render crawlability audit** (ensure crawlable links + high-value content in initial HTML)
+- [x] **1.5b Reduce county HTML payload** (SSR valuable block, progressively enhance heavy listing/map)
+	- **Depends on:** county template/content architecture
+	- **Affects:** Core Web Vitals + crawl efficiency
+	- **Implementation note:** Reuse the same SSR-first + progressive enhancement pattern selected for 1.5 to avoid duplicate architecture decisions.
+	- **UI guardrail:** No new visible sections/components; optimize existing rendering and data flow only.
+	- **Definition of done:**
+		- County page initial HTML size reduced with before/after numbers
+		- Core content remains server-rendered and crawlable
+		- UX behavior/functionality remains equivalent after hydration
+
+- [ ] **1.5c SEO safety contract for 1.5/1.5b** (required pre-launch gate)
+	- **Purpose:** prevent accidental SEO regressions while reducing payload
+	- **Scope guardrail:** preserve existing page UX; do not introduce new visible SEO-only blocks.
+	- **Progress status:**
+		- [x] Local first-render HTML checks completed for representative city + county URLs
+		- [x] Local source checks confirm title/meta/canonical/H1/editorial content in server HTML
+		- [x] Local source checks confirm crawlable daycare detail links in first-render HTML
+		- [x] Local build + lint checks pass after 1.5/1.5b implementation
+		- [ ] Rich Results/schema validation run captured for representative URLs (external tool)
+		- [ ] GSC URL Inspection and post-release trend checks completed (external tool)
+	- **Non-negotiable first-render (SSR) requirements:**
+		- Canonical URL, title, meta description, robots directives, and H1 remain in initial HTML
+		- City/county editorial intro + key explanatory copy remain in initial HTML
+		- Existing daycare detail links remain crawlable in initial HTML where currently represented (not JS-only)
+		- Structured data required for template (for example `ItemList` where used) remains in initial HTML
+	- **Allowed to defer (client enhancement):**
+		- Interactive map behavior, advanced filter state logic, larger data hydration, non-critical UI polish
+	- **Verification gates before release:**
+		- Before/after HTML snapshots for representative city + county pages reviewed and archived
+		- No-JS/manual source check confirms required links/content exist in server HTML
+		- Rich Results/schema validation passes for representative URLs
+		- Lighthouse/PageSpeed comparison recorded (mobile + desktop) with no severe SEO-category regression
+	- **Post-release guardrails (7–14 day check):**
+		- GSC URL Inspection confirms rendered/crawled page contains required content
+		- Coverage/Crawl Stats for city/county templates show no negative trend requiring rollback
+		- If regressions appear, rollback to previous template behavior and open follow-up fix item before re-release
+
+- [x] **1.6 `/daycares` first-render crawlability audit** (ensure crawlable links + high-value content in initial HTML)
 	- **Depends on:** dashboard rendering pattern
 	- **Affects:** long-tail discovery and orphan reduction
+	- **Progress:** local first-render audit completed on built route output (`.next/server/app/daycares.html`)
+	- **Status checklist:**
+		- [x] First-render HTML includes crawlable daycare detail anchor links (SSR)
+		- [x] First-render HTML includes H1 + editorial guidance content (SSR)
+		- [x] First-render HTML includes canonical + meta description
+		- [ ] Re-crawl/coverage evidence captured to confirm orphan-risk improvement (external)
 	- **Definition of done:**
 		- HTML snapshot review confirms crawlable listing links in first render
 		- Any JS-only dependency gaps are documented and fixed
