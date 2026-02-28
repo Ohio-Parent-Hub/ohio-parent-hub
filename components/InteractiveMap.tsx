@@ -14,6 +14,7 @@ const LeafletMap = dynamic(() => import("./LeafletMap"), {
 interface InteractiveMapProps {
   center: [number, number];
   zoom?: number;
+  resetSignal?: number;
   onZoomChange?: (zoom: number) => void;
   onViewportChange?: (viewport: {
     bounds: { north: number; south: number; east: number; west: number };
@@ -37,5 +38,5 @@ interface InteractiveMapProps {
 }
 
 export default function InteractiveMap(props: InteractiveMapProps) {
-  return <LeafletMap {...props} interactive={true} />;
+  return <LeafletMap {...props} interactive={true} scrollWheelZoom={false} />;
 }

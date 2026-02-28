@@ -23,6 +23,7 @@ if (typeof window !== "undefined") {
 export interface MapProps {
   center: [number, number]; // [lat, lng]
   zoom?: number;
+  resetSignal?: number; // Increment to force map back to center+zoom immediately
   onZoomChange?: (zoom: number) => void;
   onViewportChange?: (viewport: {
     bounds: { north: number; south: number; east: number; west: number };
@@ -71,6 +72,19 @@ function MapUpdater({ center, zoom }: { center: [number, number], zoom: number }
       previousZoomRef.current = zoom;
     }
   }, [centerLat, centerLng, zoom, map]);
+
+  return null;
+}
+
+function MapResetHandler({ resetSignal, center, zoom }: { resetSignal: number; center: [number, number]; zoom: number }) {
+  const map = useMap();
+  const prevSignalRef = useRef(resetSignal);
+
+  useEffect(() => {
+    if (resetSignal === prevSignalRef.current) return;
+    prevSignalRef.current = resetSignal;
+    map.setView(center, zoom, { animate: false });
+  }, [resetSignal, center, zoom, map]);
 
   return null;
 }
@@ -289,6 +303,7 @@ function ClusteredMarkersLayer({ markers }: { markers: NonNullable<MapProps["mar
 export default function LeafletMap({
   center,
   zoom = 13,
+  resetSignal = 0,
   onZoomChange,
   onViewportChange,
   markers = [],
@@ -355,6 +370,7 @@ export default function LeafletMap({
         {...mapOptions}
       >
         <MapUpdater center={center} zoom={zoom} />
+        {interactive && <MapResetHandler resetSignal={resetSignal} center={center} zoom={zoom} />}
         {interactive && onZoomChange && <MapZoomListener onZoomChange={onZoomChange} />}
         {interactive && onViewportChange && <MapViewportListener onViewportChange={onViewportChange} />}
 

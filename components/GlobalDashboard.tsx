@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect, useRef, useCallback } from "react";
+import { useState, useMemo, useEffect, useLayoutEffect, useRef, useCallback } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { SutqBadge } from "@/components/SutqBadge";
@@ -44,6 +44,9 @@ import { FILTER_DEFINITIONS } from "@/data/filterDefinitions";
 import { resolveCanonicalCityName, resolveCanonicalCitySlugFromName } from "@/lib/metroAreas";
 
 type Daycare = Record<string, string>;
+
+// Ohio full-state bounding box — used to reset mapBounds when clearing all filters
+const OHIO_DEFAULT_BOUNDS = { north: 42.0, south: 38.3, east: -80.0, west: -85.0 };
 
 type FilterWorkerRow = {
   name: string;
@@ -477,6 +480,7 @@ export default function GlobalDashboard({
   const [internalMapCenter, setInternalMapCenter] = useState<[number, number] | null>(null);
   const [internalMapViewCenter, setInternalMapViewCenter] = useState<[number, number] | null>(null);
   const [internalMapZoom, setInternalMapZoom] = useState<number | null>(null);
+  const [mapResetSignal, setMapResetSignal] = useState(0);
   const [mapBounds, setMapBounds] = useState<{ north: number; south: number; east: number; west: number } | null>(null);
   const [internalLocationQuery, setInternalLocationQuery] = useState("");
   const [locationSearchClearSignal, setLocationSearchClearSignal] = useState(0);
@@ -493,7 +497,7 @@ export default function GlobalDashboard({
   // so that the round-trip through the parent does NOT overwrite the restored mapViewCenter.
   const prevExternalMapCenterRef = useRef(externalMapCenter);
   const skipNextExternalCenterSyncRef = useRef(false);
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (externalMapCenter === prevExternalMapCenterRef.current) return;
     prevExternalMapCenterRef.current = externalMapCenter;
     if (skipNextExternalCenterSyncRef.current) {
@@ -542,9 +546,11 @@ export default function GlobalDashboard({
       if (Array.isArray(parsed.selectedProgramTypes)) setSelectedProgramTypes(parsed.selectedProgramTypes);
       if (typeof parsed.selectedCity === "string") setSelectedCity(parsed.selectedCity);
       if (typeof parsed.selectedCounty === "string") setSelectedCounty(parsed.selectedCounty);
-      if (parsed.mapCenter === null || (Array.isArray(parsed.mapCenter) && parsed.mapCenter.length === 2)) {
+      if (Array.isArray(parsed.mapCenter) && parsed.mapCenter.length === 2) {
         skipNextExternalCenterSyncRef.current = true;
-        setMapCenter(parsed.mapCenter as [number, number] | null);
+        setMapCenter(parsed.mapCenter as [number, number]);
+      } else if (parsed.mapCenter === null) {
+        setMapCenter(null);
       }
       if (parsed.mapViewCenter === null || (Array.isArray(parsed.mapViewCenter) && parsed.mapViewCenter.length === 2)) {
         setMapViewCenter(parsed.mapViewCenter as [number, number] | null);
@@ -717,14 +723,14 @@ export default function GlobalDashboard({
       ? initialTotalCount
       : filteredDaycares.length;
   const mapVisibleDaycares = useMemo(() => {
+    if (!mapBounds) return [];
+
     const withCoordinates = filteredDaycares.filter((daycare) => {
       if (!daycare["LAT"] || !daycare["LNG"]) return false;
       const lat = Number(daycare["LAT"]);
       const lng = Number(daycare["LNG"]);
       return isFiniteCoordinate(lat) && isFiniteCoordinate(lng);
     });
-
-    if (!mapBounds) return withCoordinates;
 
     return withCoordinates.filter((daycare) => {
       const lat = Number(daycare["LAT"]);
@@ -774,7 +780,14 @@ export default function GlobalDashboard({
 
   // Ohio Center
   const defaultCenterCoords: [number, number] = [40.4173, -82.9071];
-  const center = mapViewCenter || mapCenter || defaultCenterCoords;
+  // If externalMapCenter changed in this render (detected by reading the ref before the
+  // useLayoutEffect updates it), use it directly — bypasses the stale mapViewCenter so
+  // MapUpdater calls setView(correct, zoom) in a single render instead of two.
+  const externalCenterChangedNow =
+    externalMapCenter !== undefined &&
+    externalMapCenter !== prevExternalMapCenterRef.current &&
+    !skipNextExternalCenterSyncRef.current;
+  const center = (externalCenterChangedNow ? externalMapCenter : mapViewCenter) || mapCenter || defaultCenterCoords;
 
   const clearAll = useCallback(() => {
     setPfccEnabled(false);
@@ -786,8 +799,10 @@ export default function GlobalDashboard({
     setMapCenter(null);
     setMapViewCenter(null);
     setMapZoom(null);
+    setMapBounds(OHIO_DEFAULT_BOUNDS); // immediately restore full-state bounds so count resets
     setLocationQuery("");
     setLocationSearchClearSignal((value) => value + 1);
+    setMapResetSignal((prev) => prev + 1); // force Leaflet map view back to Ohio center
     onClearAllFilters?.();
   }, [onClearAllFilters, setLocationQuery, setMapCenter, setMapViewCenter, setMapZoom]);
 
@@ -943,6 +958,7 @@ export default function GlobalDashboard({
             <InteractiveMap 
               center={center}
               zoom={mapZoom ?? (mapCenter ? 12 : 7)}
+              resetSignal={mapResetSignal}
               onZoomChange={(zoomLevel) => setMapZoom(zoomLevel)}
               onViewportChange={(viewport) => {
                 setMapBounds(viewport.bounds);
@@ -962,7 +978,7 @@ export default function GlobalDashboard({
 
         {/* List */}
         <div className="space-y-4">
-          {mapViewSortedDaycares.length > displayList.length && (
+          {!isResultsCountPending && mapViewSortedDaycares.length > displayList.length && (
             <p className="text-sm text-neutral-500">
               Showing 50 of {mapViewSortedDaycares.length} results. Use filters to narrow your search.
             </p>
