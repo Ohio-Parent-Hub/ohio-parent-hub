@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect, useRef } from "react";
+import { useState, useMemo, useEffect, useLayoutEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { SutqBadge } from "@/components/SutqBadge";
@@ -380,6 +380,7 @@ export default function CityDashboard({
 
   const [searchQuery, setSearchQuery] = useState("");
   const [mapBounds, setMapBounds] = useState<{ north: number; south: number; east: number; west: number } | null>(null);
+  const [mapResetSignal, setMapResetSignal] = useState(0);
   const [internalMapCenter, setInternalMapCenter] = useState<[number, number] | null>(null);
   const [internalMapViewCenter, setInternalMapViewCenter] = useState<[number, number] | null>(null);
   const [internalMapZoom, setInternalMapZoom] = useState<number | null>(null);
@@ -449,7 +450,7 @@ export default function CityDashboard({
   // so that the round-trip through the parent does NOT overwrite the restored mapViewCenter.
   const prevExternalMapCenterRef = useRef(externalMapCenter);
   const skipNextExternalCenterSyncRef = useRef(false);
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (externalMapCenter === prevExternalMapCenterRef.current) return;
     prevExternalMapCenterRef.current = externalMapCenter;
     if (skipNextExternalCenterSyncRef.current) {
@@ -490,9 +491,11 @@ export default function CityDashboard({
       if (Array.isArray(parsed.selectedRatings)) setSelectedRatings(parsed.selectedRatings);
       if (Array.isArray(parsed.selectedProgramTypes)) setSelectedProgramTypes(parsed.selectedProgramTypes);
       if (typeof parsed.selectedCity === "string") setSelectedCity(parsed.selectedCity);
-      if (parsed.mapCenter === null || (Array.isArray(parsed.mapCenter) && parsed.mapCenter.length === 2)) {
+      if (Array.isArray(parsed.mapCenter) && parsed.mapCenter.length === 2) {
         skipNextExternalCenterSyncRef.current = true;
-        setMapCenter(parsed.mapCenter as [number, number] | null);
+        setMapCenter(parsed.mapCenter as [number, number]);
+      } else if (parsed.mapCenter === null) {
+        setMapCenter(null);
       }
       if (parsed.mapViewCenter === null || (Array.isArray(parsed.mapViewCenter) && parsed.mapViewCenter.length === 2)) {
         setMapViewCenter(parsed.mapViewCenter as [number, number] | null);
@@ -562,8 +565,10 @@ export default function CityDashboard({
     setMapCenter(null);
     setMapViewCenter(null);
     setMapZoom(null);
+    setMapBounds(null); // let Leaflet re-report bounds after map snaps back
     setLocationQuery("");
     setLocationSearchClearSignal((value) => value + 1);
+    setMapResetSignal((prev) => prev + 1); // force map view back to city center
     onClearAllFilters?.();
   };
 
@@ -635,14 +640,14 @@ export default function CityDashboard({
       ? initialTotalCount
       : filteredDaycares.length;
   const mapVisibleDaycares = useMemo(() => {
+    if (!mapBounds) return [];
+
     const withCoordinates = filteredDaycares.filter((daycare) => {
       if (!daycare["LAT"] || !daycare["LNG"]) return false;
       const lat = Number(daycare["LAT"]);
       const lng = Number(daycare["LNG"]);
       return isFiniteCoordinate(lat) && isFiniteCoordinate(lng);
     });
-
-    if (!mapBounds) return withCoordinates;
 
     return withCoordinates.filter((daycare) => {
       const lat = Number(daycare["LAT"]);
@@ -707,7 +712,14 @@ export default function CityDashboard({
 
   // Fallback if no markers
   const defaultCenter: [number, number] = [39.9612, -82.9988]; 
-  const center = mapViewCenter || mapCenter || markerCenter || defaultCenter;
+  // If externalMapCenter changed in this render (detected by reading the ref before the
+  // useLayoutEffect updates it), use it directly — bypasses the stale mapViewCenter so
+  // MapUpdater calls setView(correct, zoom) in a single render instead of two.
+  const externalCenterChangedNow =
+    externalMapCenter !== undefined &&
+    externalMapCenter !== prevExternalMapCenterRef.current &&
+    !skipNextExternalCenterSyncRef.current;
+  const center = (externalCenterChangedNow ? externalMapCenter : mapViewCenter) || mapCenter || markerCenter || defaultCenter;
 
   return (
     <div>
@@ -827,6 +839,7 @@ export default function CityDashboard({
               <InteractiveMap
                 center={center}
                 zoom={mapZoom ?? (mapCenter ? 12 : 7)}
+                resetSignal={mapResetSignal}
                 onZoomChange={(zoomLevel) => setMapZoom(zoomLevel)}
                 onViewportChange={(viewport) => {
                   setMapBounds(viewport.bounds);
@@ -846,7 +859,7 @@ export default function CityDashboard({
 
           {/* Results List */}
           <div className="space-y-4">
-            {mapViewSortedDaycares.length > displayList.length && (
+            {!isResultsCountPending && mapViewSortedDaycares.length > displayList.length && (
               <p className="text-sm text-neutral-500">
                 Showing 50 of {mapViewSortedDaycares.length} results. Use filters to narrow your search.
               </p>
