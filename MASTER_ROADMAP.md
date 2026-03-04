@@ -1,6 +1,6 @@
 # Ohio Parent Hub — Master Roadmap
 
-_Last updated: 2026-02-25_
+_Last updated: 2026-03-04_
 
 This is the canonical roadmap for all site work.
 Prioritization is indexing-first (where needed), but includes full product/UX/ops enhancements.
@@ -221,6 +221,16 @@ ID format legend: use `phase.item` references (example: `0.1`, `2.4`, `4.7`) for
 		- Reusable posting template created
 		- First 4 weeks of light posting prompts drafted
 - [ ] **3.3 Editorial expansion** (city guides, FAQ content, childcare explainers)
+	- **Progress status:**
+		- [x] `/faq` page live — 10 Q&As with real source links, collapsible accordions, FAQPage JSON-LD, stat cards in hero
+		- [x] FAQ link in global nav (desktop + mobile) and footer
+		- [x] FAQ section added to homepage with FAQPage schema (SSR)
+		- [x] FAQ section added to `/daycares` page with FAQPage schema (SSR)
+		- [x] City-specific FAQ section on all city pages (dynamic provider name in Q&A) with FAQPage schema (SSR)
+		- [x] County-specific FAQ section on all county pages with FAQPage schema (SSR)
+		- [x] Provider-specific FAQ section on all detail pages (SUTQ, license, PFCC, etc.) with FAQPage schema (SSR)
+		- [ ] City/county guide pages (childcare explainers, how-to content)
+		- [ ] First 3–5 long-form guide pages published
 	- **Definition of done:**
 		- Content template finalized
 		- First 3–5 guide pages published
@@ -274,10 +284,13 @@ ID format legend: use `phase.item` references (example: `0.1`, `2.4`, `4.7`) for
 - [x] Daycare `aggregateRating` where valid
 - [x] City `ItemList` schema
 - [x] County hub architecture + major link pathways
+- [x] `/faq` page with 10 Q&As, real source links, FAQPage JSON-LD, live stat cards
+- [x] FAQ sections (SSR + FAQPage schema) on homepage, `/daycares`, city, county, and detail pages
+- [x] FAQ nav link in global header (desktop + mobile) and footer
 
 ### Still highest-risk gaps
 - [ ] City normalization/alias governance to prevent duplicate city variants
-- [ ] City editorial differentiation depth
+- [ ] City editorial differentiation depth (guide pages, explainers — FAQ cross-linking done)
 - [ ] Trust/legal pages and explicit quality signals
 - [ ] Full crawl/index validation loop post-fix
 - [ ] Detail route static/ISR strategy at full scale
