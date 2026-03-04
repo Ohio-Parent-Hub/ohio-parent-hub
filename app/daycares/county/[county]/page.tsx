@@ -29,6 +29,29 @@ function buildCountySnippetCopy(countyDisplay: string, count: number) {
   return `Browse all ${count.toLocaleString()} licensed daycares in ${countyDisplay} County, Ohio. Compare program type, SUTQ status, and key details to find childcare that fits your family.`;
 }
 
+type CountySutqStats = {
+  gold: number;
+  silver: number;
+  bronze: number;
+  notRated: number;
+  total: number;
+};
+
+function buildCountySutqStats(daycares: DaycareRow[]): CountySutqStats {
+  let gold = 0;
+  let silver = 0;
+  let bronze = 0;
+  let notRated = 0;
+  for (const d of daycares) {
+    const r = (d["SUTQ RATING"] || "").trim();
+    if (r === "3") gold++;
+    else if (r === "2") silver++;
+    else if (r === "1") bronze++;
+    else notRated++;
+  }
+  return { gold, silver, bronze, notRated, total: daycares.length };
+}
+
 function buildCountyEditorialCopy(countyDisplay: string, count: number) {
   return {
     intro:
@@ -140,6 +163,7 @@ export default async function CountyDaycaresPage({ params }: Props) {
 
   const countySnippetCopy = buildCountySnippetCopy(countyDisplay, matches.length);
   const countyEditorialCopy = buildCountyEditorialCopy(countyDisplay, matches.length);
+  const sutqStats = buildCountySutqStats(matches);
 
   return (
     <CountyDaycaresPageClient
@@ -152,6 +176,7 @@ export default async function CountyDaycaresPage({ params }: Props) {
       countyChoosingCareCopy={countyEditorialCopy.choosingCare}
       countyTransparencyCopy={countyEditorialCopy.transparency}
       countyNotRatedCopy={countyEditorialCopy.notRated}
+      sutqStats={sutqStats}
       initialDaycares={projectDaycareListRows(matches.slice(0, 15))}
       basePath=""
       homeHref="/"

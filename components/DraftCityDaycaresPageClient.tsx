@@ -9,6 +9,14 @@ import type { CSSProperties } from "react";
 
 type DaycareRow = Record<string, string>;
 
+type CitySutqStats = {
+  gold: number;
+  silver: number;
+  bronze: number;
+  notRated: number;
+  total: number;
+};
+
 interface DraftCityDaycaresPageClientProps {
   cityDisplay: string;
   citySlug: string;
@@ -19,6 +27,7 @@ interface DraftCityDaycaresPageClientProps {
   cityChoosingCareCopy: string;
   cityTransparencyCopy: string;
   cityNotRatedCopy: string;
+  sutqStats?: CitySutqStats;
   initialDaycares: DaycareRow[];
   basePath?: string;
   homeHref?: string;
@@ -41,21 +50,7 @@ const sage = "#B8C5B2";
 const cream = "#F5EDE4";
 const dark = "#4A6B67";
 const lightTeal = "#D5E5E3";
-const lightPink = "#FADED4";
 const lightGold = "#F5E9BE";
-
-function getCityValueClass(value: string) {
-  const words = value.trim().split(/\s+/).filter(Boolean);
-  const longestWordLength = words.reduce((maxLength, word) => Math.max(maxLength, word.length), 0);
-
-  if (longestWordLength >= 11) {
-    return "text-sm sm:text-base";
-  }
-  if (longestWordLength >= 9) {
-    return "text-base sm:text-lg";
-  }
-  return "text-[clamp(0.95rem,3vw,1.5rem)]";
-}
 
 export default function DraftCityDaycaresPageClient({
   cityDisplay,
@@ -67,6 +62,7 @@ export default function DraftCityDaycaresPageClient({
   cityChoosingCareCopy,
   cityTransparencyCopy,
   cityNotRatedCopy,
+  sutqStats,
   initialDaycares,
   basePath = "/draft",
   homeHref = "/draft",
@@ -136,26 +132,35 @@ export default function DraftCityDaycaresPageClient({
               </div>
             </div>
 
-            <div className="lg:col-span-2 grid grid-cols-3 gap-3">
-              {[
-                { value: cityCount.toLocaleString(), label: "Programs", bg: "#FFFFFF", accent: teal, type: "default" },
-                { value: cityDisplay || "Ohio", label: "City", bg: lightPink, accent: pink, type: "city" },
-                { value: "100%", label: "Licensed", bg: lightGold, accent: gold, type: "default" },
-              ].map((stat) => (
-                <div key={stat.label} className="h-[96px] rounded-2xl border p-4 shadow-sm" style={{ background: stat.bg, borderColor: `${stat.accent}40` }}>
-                  <div
-                    className={
-                      stat.type === "city"
-                        ? `min-h-[2.7rem] ${getCityValueClass(String(stat.value))} font-bold font-serif leading-tight line-clamp-2 whitespace-normal break-normal text-balance`
-                        : "text-2xl font-bold font-serif line-clamp-1"
-                    }
-                    style={{ color: stat.accent }}
-                  >
-                    {stat.value}
-                  </div>
-                  <div className="text-[11px] uppercase tracking-widest mt-1" style={{ color: `${dark}88` }}>{stat.label}</div>
+            <div className="lg:col-span-2 grid grid-cols-2 gap-3">
+              {sutqStats && sutqStats.gold > 0 && (
+                <div className="rounded-2xl border p-4 shadow-sm" style={{ background: lightGold, borderColor: `${gold}40` }}>
+                  <div className="text-2xl font-bold font-serif leading-none" style={{ color: gold }}>{sutqStats.gold}</div>
+                  <div className="mt-1 text-xs font-semibold uppercase tracking-widest" style={{ color: `${dark}88` }}>Gold SUTQ</div>
+                  <div className="mt-0.5 text-xs" style={{ color: `${dark}66` }}>{Math.round((sutqStats.gold / sutqStats.total) * 100)}% of programs</div>
                 </div>
-              ))}
+              )}
+              {sutqStats && sutqStats.silver > 0 && (
+                <div className="rounded-2xl border p-4 shadow-sm" style={{ background: "#F1F5F9", borderColor: "#CBD5E194" }}>
+                  <div className="text-2xl font-bold font-serif leading-none" style={{ color: "#475569" }}>{sutqStats.silver}</div>
+                  <div className="mt-1 text-xs font-semibold uppercase tracking-widest" style={{ color: `${dark}88` }}>Silver SUTQ</div>
+                  <div className="mt-0.5 text-xs" style={{ color: `${dark}66` }}>{Math.round((sutqStats.silver / sutqStats.total) * 100)}% of programs</div>
+                </div>
+              )}
+              {sutqStats && sutqStats.bronze > 0 && (
+                <div className="rounded-2xl border p-4 shadow-sm" style={{ background: "#FFF7ED", borderColor: "#FED7AA94" }}>
+                  <div className="text-2xl font-bold font-serif leading-none" style={{ color: "#C2410C" }}>{sutqStats.bronze}</div>
+                  <div className="mt-1 text-xs font-semibold uppercase tracking-widest" style={{ color: `${dark}88` }}>Bronze SUTQ</div>
+                  <div className="mt-0.5 text-xs" style={{ color: `${dark}66` }}>{Math.round((sutqStats.bronze / sutqStats.total) * 100)}% of programs</div>
+                </div>
+              )}
+              {sutqStats && sutqStats.notRated > 0 && (
+                <div className="rounded-2xl border p-4 shadow-sm" style={{ background: "#fff", borderColor: `${sage}55` }}>
+                  <div className="text-2xl font-bold font-serif leading-none" style={{ color: `${dark}99` }}>{sutqStats.notRated}</div>
+                  <div className="mt-1 text-xs font-semibold uppercase tracking-widest" style={{ color: `${dark}88` }}>Not Rated</div>
+                  <div className="mt-0.5 text-xs" style={{ color: `${dark}66` }}>{Math.round((sutqStats.notRated / sutqStats.total) * 100)}% of programs</div>
+                </div>
+              )}
             </div>
           </div>
         </div>
