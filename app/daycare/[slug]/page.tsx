@@ -2,6 +2,7 @@ import DaycareDetailPageShell from "@/components/DaycareDetailPageShell";
 import { slugify, toTitleCaseIfAllCaps } from "@/lib/utils";
 import { getMetroForDaycare, resolveCanonicalCityName, resolveCanonicalCitySlugFromName } from "@/lib/metroAreas";
 import type { Metadata } from "next";
+import type { ReactNode } from "react";
 import fs from "node:fs";
 import path from "node:path";
 import { notFound, permanentRedirect } from "next/navigation";
@@ -22,6 +23,139 @@ type RelatedDaycareCard = {
   pfcc: boolean;
   distanceMiles: number;
 };
+
+// ─── Detail Page FAQ ──────────────────────────────────────────────────────────
+const teal = "#7EA8A4";
+const dark = "#4A6B67";
+const sage = "#B8C5B2";
+const cream = "#F5EDE4";
+const gold = "#DCB346";
+
+type DetailFaqEntry = {
+  question: string;
+  answer: ReactNode;
+  schemaAnswer: string;
+};
+
+function buildDetailFaqs(
+  name: string,
+  sutq: string,
+  city: string,
+  citySlug: string,
+  isPfcc: boolean,
+  initialLicense: string,
+  licenseExpires: string,
+): DetailFaqEntry[] {
+  const sutqNum = parseInt(sutq, 10);
+  const sutqLabel =
+    sutqNum === 3 ? "Gold" :
+    sutqNum === 2 ? "Silver" :
+    sutqNum === 1 ? "Bronze" :
+    "Not Rated";
+
+  return [
+    {
+      question: `What does ${name}'s SUTQ rating of "${sutqLabel}" mean?`,
+      answer:
+        sutqNum >= 1 && sutqNum <= 3 ? (
+          <p>
+            Ohio&apos;s <strong>Step Up to Quality (SUTQ)</strong> program rates licensed child care providers on a 1–3 star scale.{" "}
+            {name} holds a <strong>{sutqLabel}</strong> rating, meaning they meet{" "}
+            {sutqNum === 1
+              ? "foundational quality standards above the basic licensing requirements."
+              : sutqNum === 2
+                ? "enhanced quality standards including stronger staff qualifications and curriculum."
+                : "Ohio's highest quality standards — the top tier for staff credentials, curriculum, and family engagement."}{" "}
+            Ratings are verified by Ohio CCIDS.{" "}
+            <a href="https://childrenandyouth.ohio.gov/for-providers/step-up-to-quality" target="_blank" rel="noopener noreferrer" style={{ color: dark }}>Learn more about SUTQ ratings</a>.
+          </p>
+        ) : (
+          <p>
+            <strong>Not Rated</strong> does not mean low quality. Many excellent licensed providers — including newer programs
+            or those who have not yet enrolled — do not participate in SUTQ. All licensed Ohio providers must meet baseline
+            health and safety requirements regardless of rating. Verify this provider&apos;s license at{" "}
+            <a href="https://childcaresearch.ohio.gov" target="_blank" rel="noopener noreferrer" style={{ color: dark }}>childcaresearch.ohio.gov</a>.{" "}
+            <a href="/faq#sutq" style={{ color: dark }}>Learn more about SUTQ on our FAQ page</a>.
+          </p>
+        ),
+      schemaAnswer:
+        sutqNum >= 1 && sutqNum <= 3
+          ? `Ohio's SUTQ program rates providers 1–3 stars. ${name} holds a ${sutqLabel} rating, meaning they meet ${sutqNum === 1 ? "foundational quality standards above basic licensing." : sutqNum === 2 ? "enhanced quality standards including stronger staff qualifications." : "Ohio's highest quality standards — the top tier."} Ratings are verified by Ohio CCIDS.`
+          : `Not Rated does not mean low quality. Many excellent providers do not participate in SUTQ. All licensed Ohio providers must meet baseline health and safety requirements. Verify at childcaresearch.ohio.gov.`,
+    },
+    {
+      question: `Is ${name} currently licensed in Ohio?`,
+      answer: (
+        <p>
+          {name} is a licensed Ohio child care provider
+          {initialLicense !== "—" ? `, licensed since ${initialLicense}` : ""}.
+          {licenseExpires !== "—" ? ` License expiration on record: ${licenseExpires}.` : ""}{" "}
+          Ohio licensing is administered by the Ohio Department of Children and Youth. You can confirm current license
+          status and view compliance history at{" "}
+          <a href="https://childcaresearch.ohio.gov" target="_blank" rel="noopener noreferrer" style={{ color: dark }}>childcaresearch.ohio.gov</a>.
+        </p>
+      ),
+      schemaAnswer: `${name} is a licensed Ohio child care provider${initialLicense !== "—" ? `, licensed since ${initialLicense}` : ""}${licenseExpires !== "—" ? `. License expiration on record: ${licenseExpires}.` : "."} Confirm current status at childcaresearch.ohio.gov.`,
+    },
+    {
+      question: `Does ${name} accept PFCC child care assistance?`,
+      answer: isPfcc ? (
+        <p>
+          <strong>Yes</strong> — {name} is listed as accepting <strong>Publicly Funded Child Care (PFCC)</strong>,
+          Ohio&apos;s subsidy program that helps income-eligible families cover child care costs. Eligibility and co-pays
+          are based on income and family size. To apply, contact your county Job and Family Services office or visit{" "}
+          <a href="https://childrenandyouth.ohio.gov/for-families/child-care-families" target="_blank" rel="noopener noreferrer" style={{ color: dark }}>childrenandyouth.ohio.gov</a>.
+        </p>
+      ) : (
+        <p>
+          {name} is <strong>not currently listed</strong> as a PFCC provider in our data. If your family needs child care
+          assistance, you can search for PFCC-accepting providers in {city} on our{" "}
+          <a href={`/daycares/${citySlug}`} style={{ color: dark }}>{city} listings page</a>, or contact your county
+          Job and Family Services office for a current provider list.
+        </p>
+      ),
+      schemaAnswer: isPfcc
+        ? `Yes, ${name} accepts Publicly Funded Child Care (PFCC), Ohio's subsidy for income-eligible families. Apply through county Job and Family Services or childrenandyouth.ohio.gov.`
+        : `${name} is not currently listed as a PFCC provider. Search for PFCC-accepting providers in ${city} or contact county Job and Family Services.`,
+    },
+    {
+      question: `What should I ask when I call ${name}?`,
+      answer: (
+        <div>
+          <p className="mb-2">Before enrolling, cover these during your call or tour:</p>
+          <ul className="list-disc pl-5 space-y-1 text-sm">
+            <li>Do you have current openings for my child&apos;s age group?</li>
+            <li>What are your hours and which holidays are you closed?</li>
+            <li>What is the caregiver-to-child ratio for my child&apos;s age?</li>
+            <li>What experience and certifications do your caregivers hold?</li>
+            <li>How do you handle illness, medication, and emergencies?</li>
+            <li>What does a typical day look like for my child&apos;s age?</li>
+            <li>What are all fees — registration, supply, and late pickup?</li>
+            <li>Do you accept PFCC, Child Care Choice, or other subsidies?</li>
+          </ul>
+          <p className="mt-2 text-sm">
+            See the full age-specific checklist at{" "}
+            <a href="/faq" style={{ color: dark }}>our FAQ page</a>, adapted from the Child Care Aware of America Short Notice Checklist.
+          </p>
+        </div>
+      ),
+      schemaAnswer: `Ask about: current openings for your child's age, hours and holidays, caregiver-to-child ratios, staff certifications, illness and emergency procedures, daily schedule, all fees, and subsidy acceptance. See the full checklist at ohioparenthub.com/faq.`,
+    },
+    {
+      question: `How up-to-date is the information shown for ${name}?`,
+      answer: (
+        <p>
+          This profile is sourced from the Ohio CCIDS public licensing database, updated periodically by the Ohio
+          Department of Children and Youth. PFCC status, SUTQ ratings, administrator names, and contact details may
+          change between updates. Always confirm details directly with the provider and verify the current license
+          status at{" "}
+          <a href="https://childcaresearch.ohio.gov" target="_blank" rel="noopener noreferrer" style={{ color: dark }}>childcaresearch.ohio.gov</a>.
+        </p>
+      ),
+      schemaAnswer: `This profile is sourced from the Ohio CCIDS public licensing database. PFCC status, ratings, and contact info may change. Always confirm directly with the provider and verify license status at childcaresearch.ohio.gov.`,
+    },
+  ];
+}
 
 export const revalidate = 86400;
 export const dynamicParams = false;
@@ -467,6 +601,92 @@ export default async function DaycarePage({ params, searchParams }: Props) {
     ...(email && { email }),
   };
 
+  // ─── FAQ section ────────────────────────────────────────────────────────────
+  const detailFaqs = buildDetailFaqs(
+    name,
+    sutq,
+    city,
+    citySlug,
+    isPfccEnabled(daycare),
+    initialLicense,
+    licenseExpires,
+  );
+
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: detailFaqs.map((f) => ({
+      "@type": "Question",
+      name: f.question,
+      acceptedAnswer: { "@type": "Answer", text: f.schemaAnswer },
+    })),
+  };
+
+  const faqSection = (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(faqSchema).replace(/</g, "\\u003c"),
+        }}
+      />
+      <section
+        className="px-6 pb-24 pt-16"
+        style={{ background: cream }}
+        aria-label={`Frequently asked questions about ${name}`}
+      >
+        <div className="mx-auto max-w-3xl">
+          <div className="mb-10">
+            <svg viewBox="0 0 24 24" fill="currentColor" className="mb-4 h-5 w-5" style={{ color: `${gold}60` }} aria-hidden="true">
+              <path d="M12 0L13.5 9L24 12L13.5 15L12 24L10.5 15L0 12L10.5 9L12 0Z" />
+            </svg>
+            <h2 className="font-serif text-4xl font-bold" style={{ color: dark }}>
+              Common Questions About {name}
+            </h2>
+            <p className="mt-2" style={{ color: `${dark}88` }}>
+              Helpful answers for families researching this provider.
+            </p>
+          </div>
+          <div className="space-y-4">
+            {detailFaqs.map(({ question, answer }) => (
+              <details
+                key={question}
+                className="group rounded-2xl border shadow-sm"
+                style={{ background: "#fff", borderColor: `${sage}55` }}
+              >
+                <summary
+                  className="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-5 marker:hidden [&::-webkit-details-marker]:hidden"
+                  style={{ color: dark }}
+                >
+                  <h3 className="font-serif text-lg font-semibold leading-snug" style={{ color: dark }}>
+                    {question}
+                  </h3>
+                  <span
+                    className="flex-shrink-0 text-xl leading-none transition-transform duration-200 group-open:rotate-180"
+                    style={{ color: teal }}
+                    aria-hidden="true"
+                  >
+                    ▾
+                  </span>
+                </summary>
+                <div className="border-t px-6 pb-6 pt-4" style={{ borderColor: `${sage}33` }}>
+                  {answer}
+                </div>
+              </details>
+            ))}
+          </div>
+          <p className="mt-6 text-sm" style={{ color: `${dark}88` }}>
+            More questions?{" "}
+            <a href="/faq" className="underline hover:no-underline" style={{ color: teal }}>
+              Visit our full FAQ page
+            </a>
+            .
+          </p>
+        </div>
+      </section>
+    </>
+  );
+
   return (
     <DaycareDetailPageShell
       breadcrumbs={[
@@ -500,6 +720,7 @@ export default async function DaycarePage({ params, searchParams }: Props) {
       lat={lat}
       lng={lng}
       schema={schema}
+      faqSection={faqSection}
     />
   );
 }

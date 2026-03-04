@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { SutqBadge } from "@/components/SutqBadge";
 import StaticMap from "@/components/StaticMap";
@@ -49,6 +50,7 @@ type DaycareDetailPageShellProps = {
   lat: number;
   lng: number;
   schema?: Record<string, unknown>;
+  faqSection?: ReactNode;
 };
 
 const teal = "#7EA8A4";
@@ -147,6 +149,7 @@ export default function DaycareDetailPageShell({
   lat,
   lng,
   schema,
+  faqSection,
 }: DaycareDetailPageShellProps) {
   const [isSutqDetailsOpen, setIsSutqDetailsOpen] = useState(false);
   const [isAboutOpenMobile, setIsAboutOpenMobile] = useState(false);
@@ -489,9 +492,13 @@ export default function DaycareDetailPageShell({
             </section>
           </div>
         </div>
+      </section>
 
-        {nearbyDaycares.length > 0 && (
-          <div className={`mx-auto mt-6 grid max-w-7xl grid-cols-1 gap-6 ${similarDaycares.length > 0 ? "lg:grid-cols-2" : ""}`}>
+      {faqSection}
+
+      {nearbyDaycares.length > 0 && (
+        <section className="px-6 py-8">
+          <div className={`mx-auto grid max-w-7xl grid-cols-1 gap-6 ${similarDaycares.length > 0 ? "lg:grid-cols-2" : ""}`}>
             <div className="rounded-3xl border p-4 sm:p-6 shadow-sm" style={{ background: "#fff", borderColor: `${sage}55` }}>
               <section className="rounded-2xl border border-primary/20 bg-card p-6 shadow-sm">
                 <h2 className="mb-4 font-serif text-2xl font-bold text-primary">More Daycares Nearby</h2>
@@ -508,8 +515,8 @@ export default function DaycareDetailPageShell({
               </div>
             )}
           </div>
-        )}
-      </section>
+        </section>
+      )}
     </main>
   );
 }

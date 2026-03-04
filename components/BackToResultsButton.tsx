@@ -3,7 +3,6 @@
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
-import { useMemo } from "react";
 import { trackUplinkClick } from "@/lib/trackUplink";
 
 type BackToResultsButtonProps = {
@@ -19,29 +18,12 @@ export default function BackToResultsButton({
 }: BackToResultsButtonProps) {
   const router = useRouter();
 
-  const canNavigateBackInternally = useMemo(() => {
-    if (typeof window === "undefined") return false;
-    if (!document.referrer) return false;
-
-    try {
-      const referrerUrl = new URL(document.referrer);
-      return referrerUrl.origin === window.location.origin;
-    } catch {
-      return false;
-    }
-  }, []);
-
   function handleClick() {
     trackUplinkClick({
       linkType: "back_to_results",
-      target: canNavigateBackInternally ? "history" : fallbackHref,
+      target: fallbackHref,
       context: trackingContext,
     });
-
-    if (canNavigateBackInternally) {
-      router.back();
-      return;
-    }
 
     router.push(fallbackHref);
   }

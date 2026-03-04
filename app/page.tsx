@@ -1,7 +1,7 @@
 import Link from "next/link";
 import fs from "node:fs";
 import path from "node:path";
-import type { CSSProperties } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import type { Metadata } from "next";
 
 import { Button } from "@/components/ui/button";
@@ -72,6 +72,137 @@ function SparkleDecor({ className, style }: { className?: string; style?: CSSPro
     </svg>
   );
 }
+
+type HomeFaqEntry = { question: string; schemaAnswer: string; answer: ReactNode };
+
+const homeFaqs: HomeFaqEntry[] = [
+  {
+    question: "What is the average cost of daycare in Ohio?",
+    schemaAnswer:
+      "According to the Economic Policy Institute (data updated February 2025), the average annual cost of infant care in Ohio is $17,071 (approximately $1,423/month), and care for a 4-year-old averages $13,426/year. Ohio ranks as the 16th most expensive state for infant care in the U.S. Costs vary by provider type, location, and hours. Ohio's PFCC program may help eligible families offset expenses. Ohio also offers a free SUTQ Cost Estimator at sutqcalculator.childrenandyouth.ohio.gov that estimates costs by rating level and county.",
+    answer: (
+      <div className="space-y-3 text-sm leading-relaxed" style={{ color: "#4A6B67cc" }}>
+        <p>Ohio child care costs are among the highest in the nation. According to data from the Economic Policy Institute (updated February 2025):</p>
+        <ul className="list-disc list-inside space-y-1 pl-1">
+          <li><strong style={{ color: "#4A6B67" }}>Average annual cost of infant care in Ohio: $17,071</strong> — approximately $1,423/month</li>
+          <li><strong style={{ color: "#4A6B67" }}>Average annual cost for a 4-year-old: $13,426</strong> — approximately $1,119/month</li>
+          <li>Ohio ranks as the <strong style={{ color: "#4A6B67" }}>16th most expensive state</strong> for infant care in the U.S.</li>
+          <li>Infant care in Ohio costs <strong style={{ color: "#4A6B67" }}>53.7% more per year</strong> than in-state college tuition</li>
+        </ul>
+        <p>Costs vary by provider type and location. Home-based Type B providers are typically less expensive than licensed Child Care Centers. Urban areas like Columbus, Cleveland, and Cincinnati tend to run higher than rural communities.</p>
+        <p>
+          Ohio offers a free{" "}
+          <a href="https://sutqcalculator.childrenandyouth.ohio.gov/" target="_blank" rel="noopener noreferrer" className="underline hover:no-underline" style={{ color: "#7EA8A4" }}>SUTQ Cost Estimator</a>{" "}
+          that estimates child care costs by SUTQ rating level and county. If cost is a barrier, Ohio&apos;s <strong style={{ color: "#4A6B67" }}>Publicly Funded Child Care (PFCC)</strong> program may help eligible families — contact your county Department of Job and Family Services to apply.
+        </p>
+        <p className="text-xs" style={{ color: "#4A6B6766" }}>
+          Source:{" "}
+          <a href="https://www.epi.org/child-care-costs-in-the-united-states/#/OH" target="_blank" rel="noopener noreferrer" className="underline hover:no-underline">Economic Policy Institute — Child Care Costs in the United States (Ohio)</a>
+        </p>
+      </div>
+    ),
+  },
+  {
+    question: "What are the different types of child care providers in Ohio?",
+    schemaAnswer:
+      "Ohio licenses or certifies seven distinct child care provider types: Licensed Child Care Centers (non-residential facilities serving larger groups), Licensed Type A Family Child Care Homes (fully licensed home programs, up to 12 children), Licensed Type B Family Child Care Homes (registered home programs, up to 6 children), Licensed School-Age Child Care, Licensed School-Based Preschool, Certified In Home Aides (care in the child's own home), and Registered or Approved Day Camps. Ohio Parent Hub lists all seven types and allows filtering by program type.",
+    answer: (
+      <div className="space-y-3 text-sm leading-relaxed" style={{ color: "#4A6B67cc" }}>
+        <p>Ohio licenses, registers, or certifies seven distinct child care provider types:</p>
+        <div className="space-y-2">
+          <p><strong style={{ color: "#4A6B67" }}>Licensed Child Care Center</strong> — A licensed facility in a non-residential building serving larger groups across multiple age rooms. Most offer full-day, year-round programming.</p>
+          <p><strong style={{ color: "#4A6B67" }}>Licensed Type A Family Child Care Home</strong> — A fully licensed home-based program serving up to 12 children with an assistant. Similar licensing rigor to a center, but in a residential setting.</p>
+          <p><strong style={{ color: "#4A6B67" }}>Licensed Type B Family Child Care Home</strong> — A registered home program serving up to six children in the provider&apos;s own residence.</p>
+          <p><strong style={{ color: "#4A6B67" }}>Licensed School-Age Child Care</strong> — Before/after school and break-time care for children in kindergarten through age 14.</p>
+          <p><strong style={{ color: "#4A6B67" }}>Licensed School-Based Preschool</strong> — Early childhood programs operating within a school building for ages 3–5.</p>
+          <p><strong style={{ color: "#4A6B67" }}>Certified In Home Aide</strong> — Care provided in the child&apos;s own home; common for families using Ohio&apos;s PFCC subsidy program.</p>
+          <p><strong style={{ color: "#4A6B67" }}>Registered / Approved Day Camp</strong> — Structured daytime programs during summer and school breaks.</p>
+        </div>
+        <p>
+          Ohio Parent Hub lists all seven types. Use the{" "}
+          <Link href="/daycares" className="underline hover:no-underline" style={{ color: "#7EA8A4" }}>program type filter</Link>{" "}
+          to find the setting that fits your family.
+        </p>
+        <p className="text-xs" style={{ color: "#4A6B6766" }}>
+          Source:{" "}
+          <a href="https://childrenandyouth.ohio.gov/for-families/early-care-education/child-care" target="_blank" rel="noopener noreferrer" className="underline hover:no-underline">Ohio Department of Children and Youth — Child Care for Families</a>
+        </p>
+      </div>
+    ),
+  },
+  {
+    question: "Are all daycares listed on Ohio Parent Hub licensed by the state?",
+    schemaAnswer:
+      "Yes. Every provider listed on Ohio Parent Hub is sourced from Ohio's official state licensing database maintained by the Ohio Department of Children and Youth (DCY). All providers must pass initial inspections and are subject to ongoing compliance reviews. To verify current license status and inspection history, visit Ohio's Child Care Search at childcaresearch.ohio.gov.",
+    answer: (
+      <div className="space-y-3 text-sm leading-relaxed" style={{ color: "#4A6B67cc" }}>
+        <p>
+          Yes. Every provider listed on Ohio Parent Hub is sourced from Ohio&apos;s official state licensing database maintained by the <strong style={{ color: "#4A6B67" }}>Ohio Department of Children and Youth (DCY)</strong>. Operating a child care program in Ohio without a license or registration is illegal in virtually all circumstances.
+        </p>
+        <p>
+          All providers must pass initial inspections covering health and safety, staffing ratios, background checks, and physical environment — and are subject to ongoing compliance reviews to maintain their license.
+        </p>
+        <p>
+          To verify a provider&apos;s current license status and view inspection history, visit{" "}
+          <a href="https://childcaresearch.ohio.gov" target="_blank" rel="noopener noreferrer" className="underline hover:no-underline" style={{ color: "#7EA8A4" }}>Ohio&apos;s Child Care Search</a>{" "}
+          directly.
+        </p>
+        <p className="text-xs" style={{ color: "#4A6B6766" }}>
+          Source:{" "}
+          <a href="https://childcaresearch.ohio.gov" target="_blank" rel="noopener noreferrer" className="underline hover:no-underline">Ohio Department of Children and Youth — Child Care Search</a>
+        </p>
+      </div>
+    ),
+  },
+  {
+    question: "What is SUTQ and what do Gold, Silver, and Bronze ratings mean?",
+    schemaAnswer:
+      "SUTQ stands for Step Up To Quality, Ohio's voluntary tiered quality rating system administered by the Ohio Department of Children and Youth (DCY). It has three levels — Bronze (entry), Silver (intermediate), and Gold (highest) — covering curriculum, developmental screening, staff qualifications, and family partnerships. Not Rated means the provider has not enrolled in the voluntary program; it does not mean the provider is unlicensed or unsafe.",
+    answer: (
+      <div className="space-y-3 text-sm leading-relaxed" style={{ color: "#4A6B67cc" }}>
+        <p>
+          SUTQ stands for <strong style={{ color: "#4A6B67" }}>Step Up To Quality</strong>, Ohio&apos;s voluntary tiered quality rating and improvement system administered by the Ohio Department of Children and Youth. It recognizes licensed providers that go above baseline licensing requirements.
+        </p>
+        <div className="space-y-1">
+          <p><strong style={{ color: "#4A6B67" }}>🥉 Bronze</strong> — Research-based curriculum, developmental screenings, annual self-assessments, minimum staff education thresholds.</p>
+          <p><strong style={{ color: "#4A6B67" }}>🥈 Silver</strong> — Everything in Bronze, plus formal child assessments shared with families and an on-site administrator with an Associate&apos;s Degree or CPL Level 3.</p>
+          <p><strong style={{ color: "#4A6B67" }}>🥇 Gold</strong> — Everything in Silver, plus assessment-driven lesson planning, 50% of lead teachers with AA or CPL Level 3, and enhanced staff-to-child ratios.</p>
+        </div>
+        <p><strong style={{ color: "#4A6B67" }}>Not Rated</strong> means the provider hasn&apos;t enrolled in the voluntary SUTQ program — not that they&apos;re unlicensed or unsafe. Use the free{" "}
+          <a href="https://sutqcalculator.childrenandyouth.ohio.gov/" target="_blank" rel="noopener noreferrer" className="underline hover:no-underline" style={{ color: "#7EA8A4" }}>SUTQ Cost Estimator</a>{" "}
+          to compare costs by rating level in your county.
+        </p>
+        <p className="text-xs" style={{ color: "#4A6B6766" }}>
+          Source:{" "}
+          <a href="https://childrenandyouth.ohio.gov/for-providers/step-up-to-quality/step-up-to-quality" target="_blank" rel="noopener noreferrer" className="underline hover:no-underline">Ohio DCY — Step Up To Quality</a>{" "}|{" "}
+          <a href="https://codes.ohio.gov/assets/laws/administrative-code/authenticated/5101/2/17/5101$2-17-01_20240707.pdf" target="_blank" rel="noopener noreferrer" className="underline hover:no-underline">OAC 5101:2-17-01 (PDF)</a>
+        </p>
+      </div>
+    ),
+  },
+  {
+    question: "What is PFCC and how do I get help paying for child care in Ohio?",
+    schemaAnswer:
+      "PFCC stands for Publicly Funded Child Care, an Ohio program that helps eligible families afford licensed child care using federal and state funds administered by the Ohio Department of Children and Youth. A PFCC Agreement on a listing means that provider has agreed to accept PFCC reimbursements as payment. Eligibility is based on family income and work or school participation. Contact your county Department of Job and Family Services to apply.",
+    answer: (
+      <div className="space-y-3 text-sm leading-relaxed" style={{ color: "#4A6B67cc" }}>
+        <p>
+          <strong style={{ color: "#4A6B67" }}>PFCC (Publicly Funded Child Care)</strong> is an Ohio program that helps eligible families afford licensed child care using federal Child Care and Development Fund (CCDF) money combined with state funds, distributed through the Ohio Department of Children and Youth.
+        </p>
+        <p>
+          When a listing shows a <strong style={{ color: "#4A6B67" }}>PFCC Agreement</strong>, it means that provider has a signed agreement to accept PFCC reimbursements as payment. If your family qualifies for assistance, you can use that benefit at any provider holding a PFCC Agreement.
+        </p>
+        <p>
+          Eligibility is based on family income, work or school participation, and other factors. To apply, contact your county Department of Job and Family Services — each county administers the program locally.
+        </p>
+        <p className="text-xs" style={{ color: "#4A6B6766" }}>
+          Source:{" "}
+          <a href="https://childrenandyouth.ohio.gov/for-providers/resources/pfcc" target="_blank" rel="noopener noreferrer" className="underline hover:no-underline">Ohio DCY — Publicly Funded Child Care</a>
+        </p>
+      </div>
+    ),
+  },
+];
 
 export default function HomePage() {
   const daycares = loadDaycares();
@@ -256,6 +387,68 @@ export default function HomePage() {
       <div style={{ background: teal }}>
         <WaveDivider fill={cream} />
       </div>
+
+      {/* FAQ Section */}
+      <section className="px-6 pb-24 pt-16" style={{ background: cream }}>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "FAQPage",
+              mainEntity: homeFaqs.map(({ question, schemaAnswer }) => ({
+                "@type": "Question",
+                name: question,
+                acceptedAnswer: { "@type": "Answer", text: schemaAnswer },
+              })),
+            }).replace(/</g, "\\u003c"),
+          }}
+        />
+        <div className="mx-auto max-w-3xl">
+          <div className="mb-10">
+            <SparkleDecor className="mb-4 h-5 w-5" style={{ color: `${gold}60` }} />
+            <h2 className="font-serif text-4xl font-bold" style={{ color: dark }}>Common Questions</h2>
+            <p className="mt-3 text-base" style={{ color: `${dark}88` }}>
+              Everything you need to know about finding child care in Ohio.
+            </p>
+          </div>
+          <div className="space-y-4">
+            {homeFaqs.map(({ question, answer }) => (
+              <details
+                key={question}
+                className="group rounded-2xl border shadow-sm"
+                style={{ background: "#fff", borderColor: `${sage}55` }}
+              >
+                <summary
+                  className="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-5 marker:hidden [&::-webkit-details-marker]:hidden"
+                  style={{ color: dark }}
+                >
+                  <h3 className="font-serif text-lg font-semibold leading-snug" style={{ color: dark }}>
+                    {question}
+                  </h3>
+                  <span
+                    className="flex-shrink-0 text-xl leading-none transition-transform duration-200 group-open:rotate-180"
+                    style={{ color: teal }}
+                    aria-hidden="true"
+                  >
+                    ▾
+                  </span>
+                </summary>
+                <div className="border-t px-6 pb-6 pt-4" style={{ borderColor: `${sage}33` }}>
+                  {answer}
+                </div>
+              </details>
+            ))}
+          </div>
+          <p className="mt-8 text-sm" style={{ color: `${dark}88` }}>
+            More questions?{" "}
+            <Link href="/faq" className="underline hover:no-underline" style={{ color: teal }}>
+              Visit our full FAQ page
+            </Link>
+            .
+          </p>
+        </div>
+      </section>
     </div>
   );
 }
