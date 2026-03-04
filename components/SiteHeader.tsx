@@ -110,6 +110,20 @@ export default function SiteHeader() {
                         <ChevronRight className="h-4 w-4" style={{ color: `${dark}88` }} />
                       </Link>
                     </SheetClose>
+
+                    <SheetClose asChild>
+                      <Link
+                        href="/faq"
+                        className="flex h-11 w-full items-center justify-between rounded-xl border px-4 text-sm font-medium transition-colors hover:bg-primary/10"
+                        style={{ borderColor: `${teal}40`, color: dark }}
+                      >
+                        <span className="flex items-center gap-2">
+                          <ChevronRight className="h-4 w-4" style={{ color: teal }} />
+                          FAQ
+                        </span>
+                        <ChevronRight className="h-4 w-4" style={{ color: `${dark}88` }} />
+                      </Link>
+                    </SheetClose>
                   </div>
                 </div>
               </SheetContent>
@@ -119,6 +133,7 @@ export default function SiteHeader() {
           <div className="hidden items-center gap-6 md:flex">
             <Link href="/cities" className="text-sm font-medium" style={{ color: dark }}>Browse Cities</Link>
             <Link href="/counties" className="text-sm font-medium" style={{ color: dark }}>Browse Counties</Link>
+            <Link href="/faq" className="text-sm font-medium" style={{ color: dark }}>FAQ</Link>
             <Button size="sm" className="rounded-full px-5 font-bold" style={{ background: pink, color: "#fff" }} asChild>
               <Link href="/daycares"><Search className="mr-1.5 h-3.5 w-3.5" />Find a Daycare</Link>
             </Button>
