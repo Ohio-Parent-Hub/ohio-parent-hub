@@ -157,7 +157,7 @@ function buildDetailFaqs(
 }
 
 export const revalidate = 86400;
-export const dynamicParams = false;
+
 
 const NEARBY_BUCKET_DEGREES = 0.2;
 const NEARBY_BUCKET_RADIUS = 1;
@@ -345,11 +345,10 @@ function isPfccEnabled(row: DaycareRow) {
 }
 
 export async function generateStaticParams() {
-  const all = loadDaycares();
-
-  return all
-    .filter((daycare) => Boolean(daycare["PROGRAM NUMBER"]))
-    .map((daycare) => ({ slug: canonicalDaycareSlug(daycare) }));
+  // Return empty — pages render on-demand via ISR (revalidate = 86400).
+  // Each page is ~88KB HTML; pre-rendering 8000+ exceeds Vercel's 75MB limit.
+  // Bots still get fully server-rendered HTML on every request, cached 24h.
+  return [];
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
