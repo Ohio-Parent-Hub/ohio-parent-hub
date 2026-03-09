@@ -9,7 +9,6 @@ import { notFound, permanentRedirect } from "next/navigation";
 
 type Props = {
   params: Promise<{ slug: string }>;
-  searchParams: Promise<{ context?: string | string[]; returnTo?: string | string[] }>;
 };
 
 type DaycareRow = Record<string, string>;
@@ -323,25 +322,6 @@ function parseSutqRatingValue(sutq: string): 1 | 2 | 3 | null {
   return null;
 }
 
-function firstQueryValue(value: string | string[] | undefined) {
-  if (Array.isArray(value)) return value[0] || "";
-  return value || "";
-}
-
-function normalizeContext(value: string): "state" | "county" | "city" | "unknown" {
-  if (value === "state" || value === "county" || value === "city") {
-    return value;
-  }
-  return "unknown";
-}
-
-function sanitizeReturnToPath(value: string): string | null {
-  if (!value) return null;
-  if (!value.startsWith("/")) return null;
-  if (value.startsWith("//")) return null;
-  return value;
-}
-
 function toRadians(value: number) {
   return (value * Math.PI) / 180;
 }
@@ -442,9 +422,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default async function DaycarePage({ params, searchParams }: Props) {
+export default async function DaycarePage({ params }: Props) {
   const { slug } = await params;
-  const query = await searchParams;
   const daycare = findDaycareBySlug(slug);
 
   if (!daycare) {
@@ -488,15 +467,9 @@ export default async function DaycarePage({ params, searchParams }: Props) {
   const cityHref = `/daycares/${citySlug}`;
   const countyHref = countySlug ? `/daycares/county/${countySlug}` : null;
   const metroHref = metro ? `/daycares/${metro.slug}` : null;
-  const context = normalizeContext(firstQueryValue(query.context));
-  const returnTo = sanitizeReturnToPath(firstQueryValue(query.returnTo));
-  const contextFallbackHref =
-    context === "state"
-      ? stateHref
-      : context === "county"
-        ? (countyHref || cityHref)
-        : cityHref;
-  const backHref = returnTo || contextFallbackHref;
+  // Nav context (back-to-results) now comes from sessionStorage client-side (TICKET-001)
+  const context: "state" | "county" | "city" | "unknown" = "unknown";
+  const backHref = cityHref;
 
   const allDaycares = loadDaycares();
   const currentProgramType = (daycare["PROGRAM TYPE"] || "").trim().toLowerCase();

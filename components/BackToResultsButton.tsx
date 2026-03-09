@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
@@ -17,15 +18,34 @@ export default function BackToResultsButton({
   trackingContext = "unknown",
 }: BackToResultsButtonProps) {
   const router = useRouter();
+  const [resolvedHref, setResolvedHref] = useState(fallbackHref);
+  const [resolvedContext, setResolvedContext] = useState(trackingContext);
+
+  useEffect(() => {
+    try {
+      const stored = sessionStorage.getItem("ohph_nav_context");
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed.returnTo && typeof parsed.returnTo === "string" && parsed.returnTo.startsWith("/") && !parsed.returnTo.startsWith("//")) {
+          setResolvedHref(parsed.returnTo);
+        }
+        if (["state", "county", "city"].includes(parsed.context)) {
+          setResolvedContext(parsed.context);
+        }
+      }
+    } catch {
+      // sessionStorage unavailable — use fallback props
+    }
+  }, []);
 
   function handleClick() {
     trackUplinkClick({
       linkType: "back_to_results",
-      target: fallbackHref,
-      context: trackingContext,
+      target: resolvedHref,
+      context: resolvedContext,
     });
 
-    router.push(fallbackHref);
+    router.push(resolvedHref);
   }
 
   return (

@@ -85,12 +85,12 @@ interface CityDashboardProps {
   hideHeaderLocationSearch?: boolean;
 }
 
-function withListingContext(daycarePath: string, context: "city" | "county", returnTo: string) {
-  const query = new URLSearchParams({
-    context,
-    returnTo,
-  });
-  return `${daycarePath}?${query.toString()}`;
+function storeNavContext(context: string, returnTo: string) {
+  try {
+    sessionStorage.setItem("ohph_nav_context", JSON.stringify({ context, returnTo }));
+  } catch {
+    // sessionStorage unavailable — back button will use server-computed fallback
+  }
 }
 
 function prettyCity(city: string) {
@@ -685,11 +685,7 @@ export default function CityDashboard({
         const displayName = toTitleCaseIfAllCaps(name);
         const displayCity = toTitleCaseIfAllCaps(city);
         const citySlug = resolveCanonicalCitySlugFromName(city);
-        const url = withListingContext(
-          `${basePath}/daycare/${id}-${slugify(name)}-${citySlug}`,
-          linkContext,
-          returnTo,
-        );
+        const url = `${basePath}/daycare/${id}-${slugify(name)}-${citySlug}`;
         return {
           lat: Number(d["LAT"]),
           lng: Number(d["LNG"]),
@@ -877,7 +873,7 @@ export default function CityDashboard({
               const displayProgramType = toTitleCaseIfAllCaps(programType);
               const pfcc = d["PFCC AGREEMENT"] === "Y";
                 const slug = `${id}-${slugify(name)}-${resolveCanonicalCitySlugFromName(city)}`;
-              const detailHref = withListingContext(`${basePath}/daycare/${slug}`, linkContext, returnTo);
+              const detailHref = `${basePath}/daycare/${slug}`;
               const hasPinnedLocation = Boolean(mapCenter);
               const distanceFromPinned = hasPinnedLocation
                 ? distanceMiles(mapCenter as [number, number], [Number(d["LAT"]), Number(d["LNG"])])
@@ -893,7 +889,7 @@ export default function CityDashboard({
                       <SutqBadge rating={sutq} className="scale-90 origin-left" />
                     </div>
                     <h3 className="font-bold text-lg leading-tight mb-1">
-                      <Link href={detailHref} className="hover:underline">
+                      <Link href={detailHref} className="hover:underline" onClick={() => storeNavContext(linkContext, returnTo)}>
                         {displayName}
                       </Link>
                     </h3>
@@ -919,7 +915,7 @@ export default function CityDashboard({
 
                   <div className="hidden sm:flex flex-col items-end gap-3 min-w-[120px]">
                     <SutqBadge rating={sutq} />
-                    <Link href={detailHref}>
+                    <Link href={detailHref} onClick={() => storeNavContext(linkContext, returnTo)}>
                       <Button variant="outline" size="sm" className="w-full">
                         View Details
                       </Button>
@@ -927,7 +923,7 @@ export default function CityDashboard({
                   </div>
 
                   <div className="sm:hidden">
-                    <Link href={detailHref}>
+                    <Link href={detailHref} onClick={() => storeNavContext(linkContext, returnTo)}>
                       <Button variant="outline" size="sm" className="w-full">
                         View Details
                       </Button>

@@ -94,12 +94,12 @@ function canonicalDaycarePath(daycare: Daycare, basePath: string) {
   return `${basePath}/daycare/${programNumber}-${slugify(name)}-${citySlug}`;
 }
 
-function withListingContext(daycarePath: string, context: "state" | "city" | "county", returnTo: string) {
-  const query = new URLSearchParams({
-    context,
-    returnTo,
-  });
-  return `${daycarePath}?${query.toString()}`;
+function storeNavContext(context: string, returnTo: string) {
+  try {
+    sessionStorage.setItem("ohph_nav_context", JSON.stringify({ context, returnTo }));
+  } catch {
+    // sessionStorage unavailable — back button will use server-computed fallback
+  }
 }
 
 const RATINGS = ["3", "2", "1"];
@@ -767,7 +767,7 @@ export default function GlobalDashboard({
           lat: typeof d.LAT === 'string' ? parseFloat(d.LAT) : d.LAT,
           lng: typeof d.LNG === 'string' ? parseFloat(d.LNG) : d.LNG,
           title: toTitleCaseIfAllCaps(name),
-          url: withListingContext(canonicalDaycarePath(d, basePath), "state", returnTo),
+          url: canonicalDaycarePath(d, basePath),
           sutqRating: d["SUTQ RATING"] || "0",
           programType: toTitleCaseIfAllCaps(d["PROGRAM TYPE"] || ""),
           pfcc: d["PFCC"] === "Y" || d["PFCC AGREEMENT"] === "Y",
@@ -990,7 +990,7 @@ export default function GlobalDashboard({
             const displayCity = toTitleCaseIfAllCaps(city);
             const displayStreet = toTitleCaseIfAllCaps(d["STREET ADDRESS"] || "");
             const displayProgramType = toTitleCaseIfAllCaps(d["PROGRAM TYPE"] || "");
-            const detailHref = withListingContext(canonicalDaycarePath(d, basePath), "state", returnTo);
+            const detailHref = canonicalDaycarePath(d, basePath);
             const hasPinnedLocation = Boolean(mapCenter);
             const distanceFromPinned = hasPinnedLocation
               ? distanceMiles(mapCenter as [number, number], [Number(d["LAT"]), Number(d["LNG"])])
@@ -1006,7 +1006,7 @@ export default function GlobalDashboard({
                       <SutqBadge rating={d["SUTQ RATING"]} className="scale-90 origin-left" />
                     </div>
                   <h3 className="font-bold text-lg leading-tight mb-1">
-                    <Link href={detailHref} className="hover:underline">
+                    <Link href={detailHref} className="hover:underline" onClick={() => storeNavContext("state", returnTo)}>
                       {displayName}
                     </Link>
                   </h3>
@@ -1034,7 +1034,7 @@ export default function GlobalDashboard({
                 
                 <div className="hidden sm:flex flex-col items-end gap-3 min-w-[120px]">
                   <SutqBadge rating={d["SUTQ RATING"]} />
-                  <Link href={detailHref}>
+                  <Link href={detailHref} onClick={() => storeNavContext("state", returnTo)}>
                       <Button variant="outline" size="sm" className="w-full">
                           View Details
                       </Button>
@@ -1042,7 +1042,7 @@ export default function GlobalDashboard({
                 </div>
                 
                 <div className="sm:hidden">
-                    <Link href={detailHref}>
+                    <Link href={detailHref} onClick={() => storeNavContext("state", returnTo)}>
                         <Button variant="outline" size="sm" className="w-full">
                             View Details
                         </Button>
