@@ -9,7 +9,6 @@ import { notFound, permanentRedirect } from "next/navigation";
 
 type Props = {
   params: Promise<{ slug: string }>;
-  searchParams: Promise<{ context?: string | string[]; returnTo?: string | string[] }>;
 };
 
 type DaycareRow = Record<string, string>;
@@ -452,9 +451,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default async function DaycarePage({ params, searchParams }: Props) {
+export default async function DaycarePage({ params }: Props) {
   const { slug } = await params;
-  const query = await searchParams;
   const daycare = findDaycareBySlug(slug);
 
   if (!daycare) {
@@ -462,8 +460,7 @@ export default async function DaycarePage({ params, searchParams }: Props) {
   }
 
   const canonicalSlug = canonicalDaycareSlug(daycare);
-  const hasLegacyNavParams = query.context !== undefined || query.returnTo !== undefined;
-  if (slug !== canonicalSlug || hasLegacyNavParams) {
+  if (slug !== canonicalSlug) {
     permanentRedirect(`/daycare/${canonicalSlug}`);
   }
 
