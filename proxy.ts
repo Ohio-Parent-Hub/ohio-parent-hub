@@ -2,8 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 
 const LEGACY_DETAIL_QUERY_PARAMS = ["context", "returnTo"] as const;
 
+function matchesPrefix(pathname: string, prefix: string) {
+  return pathname === prefix || pathname.startsWith(`${prefix}/`);
+}
+
 export function proxy(request: NextRequest) {
-  if (request.nextUrl.pathname.startsWith("/daycare/")) {
+  const { pathname } = request.nextUrl;
+
+  if (matchesPrefix(pathname, "/daycare")) {
     const cleanedUrl = request.nextUrl.clone();
     let removedLegacyParam = false;
 
@@ -17,15 +23,21 @@ export function proxy(request: NextRequest) {
     if (removedLegacyParam) {
       return NextResponse.redirect(cleanedUrl, 308);
     }
+
+    return NextResponse.next();
   }
 
-  if (process.env.NODE_ENV === "production") {
-    return new NextResponse("Not Found", { status: 404 });
+  if (matchesPrefix(pathname, "/draft") || matchesPrefix(pathname, "/design-preview")) {
+    if (process.env.NODE_ENV === "production") {
+      return new NextResponse("Not Found", { status: 404 });
+    }
+
+    const response = NextResponse.next();
+    response.headers.set("X-Robots-Tag", "noindex, nofollow, noarchive");
+    return response;
   }
 
-  const response = NextResponse.next();
-  response.headers.set("X-Robots-Tag", "noindex, nofollow, noarchive");
-  return response;
+  return NextResponse.next();
 }
 
 export const config = {
