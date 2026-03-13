@@ -9,6 +9,7 @@ import { notFound, permanentRedirect } from "next/navigation";
 
 type Props = {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ context?: string | string[]; returnTo?: string | string[] }>;
 };
 
 type DaycareRow = Record<string, string>;
@@ -266,7 +267,7 @@ function normalizeProgramType(programType: string) {
   if (!cleanType || cleanType.toLowerCase() === "not specified") {
     return "daycare program";
   }
-  return cleanType.toLowerCase();
+  return cleanType.toLowerCase().replace(/^licensed\s+/, "");
 }
 
 function trimForMeta(text: string, maxLength = 155) {
@@ -279,6 +280,35 @@ function trimForMeta(text: string, maxLength = 155) {
   }
 
   return `${trimmed}…`;
+}
+
+function trimForTitle(text: string, maxLength = 65) {
+  if (text.length <= maxLength) return text;
+
+  const trimmed = text.slice(0, maxLength - 1);
+  const lastSpace = trimmed.lastIndexOf(" ");
+  if (lastSpace > 30) {
+    return `${trimmed.slice(0, lastSpace)}…`;
+  }
+
+  return `${trimmed}…`;
+}
+
+function buildDaycareTitle(name: string, city: string) {
+  const location = city ? `${city}, OH` : "Ohio";
+  const templates = [
+    `${name} - ${location} Licensed Daycare`,
+    `${name} - ${location} Daycare`,
+    `${name} in ${location}`,
+  ];
+
+  for (const template of templates) {
+    if (template.length <= 65) {
+      return template;
+    }
+  }
+
+  return trimForTitle(templates[0], 65);
 }
 
 function buildDaycareDescription(params: {
@@ -385,9 +415,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     programType,
     maxLength: 140,
   });
+  const pageTitle = buildDaycareTitle(name, city);
   
   return {
-    title: `${name} in ${city}, OH | Daycare Profile`,
+    title: pageTitle,
     description: pageDescription,
     keywords: [
       `${name}`,
@@ -400,7 +431,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       canonical: `/daycare/${canonicalSlug}`,
     },
     openGraph: {
-      title: `${name} in ${city}, Ohio | Daycare Profile`,
+      title: pageTitle,
       description: socialDescription,
       url: `https://ohioparenthub.com/daycare/${canonicalSlug}`,
       images: [
@@ -414,15 +445,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     twitter: {
       card: "summary_large_image",
-      title: `${name} in ${city}, Ohio | Daycare Profile`,
+      title: pageTitle,
       description: socialDescription,
       images: ["/og-default.png"],
     },
   };
 }
 
-export default async function DaycarePage({ params }: Props) {
+export default async function DaycarePage({ params, searchParams }: Props) {
   const { slug } = await params;
+  const query = await searchParams;
   const daycare = findDaycareBySlug(slug);
 
   if (!daycare) {
@@ -430,7 +462,8 @@ export default async function DaycarePage({ params }: Props) {
   }
 
   const canonicalSlug = canonicalDaycareSlug(daycare);
-  if (slug !== canonicalSlug) {
+  const hasLegacyNavParams = query.context !== undefined || query.returnTo !== undefined;
+  if (slug !== canonicalSlug || hasLegacyNavParams) {
     permanentRedirect(`/daycare/${canonicalSlug}`);
   }
 
@@ -543,7 +576,7 @@ export default async function DaycarePage({ params }: Props) {
     "@context": "https://schema.org",
     "@type": "ChildCare",
     name,
-    description: `${name} is a licensed ${programType.toLowerCase()} in ${city}, Ohio.`,
+    description: `${name} is a licensed ${normalizeProgramType(programType)} in ${city}, Ohio.`,
     address: {
       "@type": "PostalAddress",
       streetAddress: street,
@@ -584,24 +617,8 @@ export default async function DaycarePage({ params }: Props) {
     licenseExpires,
   );
 
-  const faqSchema = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: detailFaqs.map((f) => ({
-      "@type": "Question",
-      name: f.question,
-      acceptedAnswer: { "@type": "Answer", text: f.schemaAnswer },
-    })),
-  };
-
   const faqSection = (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(faqSchema).replace(/</g, "\\u003c"),
-        }}
-      />
       <section
         className="px-6 pb-24 pt-16"
         style={{ background: cream }}

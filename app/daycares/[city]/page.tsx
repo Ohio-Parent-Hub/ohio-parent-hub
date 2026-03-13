@@ -256,9 +256,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   const citySnippetCopy = buildCitySnippetCopy(cityDisplay, count);
+  const pageTitle = `${count} Daycares in ${cityDisplay}, OH | Compare`;
   
   return {
-    title: `Best Daycares in ${cityDisplay}, Ohio`,
+    title: pageTitle,
     description: citySnippetCopy,
     keywords: [
       `best daycares in ${cityDisplay}`,
@@ -271,7 +272,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       canonical: `/daycares/${citySlug}`,
     },
     openGraph: {
-      title: `Best Daycares in ${cityDisplay}, Ohio`,
+      title: pageTitle,
       description: citySnippetCopy,
       url: `https://ohioparenthub.com/daycares/${citySlug}`,
       images: [
@@ -285,7 +286,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     twitter: {
       card: "summary_large_image",
-      title: `Best Daycares in ${cityDisplay}, Ohio`,
+      title: pageTitle,
       description: citySnippetCopy,
       images: ["/og-default.png"],
     },
@@ -351,27 +352,11 @@ export default async function CityDaycaresPage({ params }: Props) {
   };
   const itemListJson = JSON.stringify(itemListSchema).replace(/</g, "\\u003c");
 
-  const faqSchema = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: cityFaqs.map(({ question, schemaAnswer }) => ({
-      "@type": "Question",
-      name: question,
-      acceptedAnswer: { "@type": "Answer", text: schemaAnswer },
-    })),
-  };
-
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: itemListJson }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(faqSchema).replace(/</g, "\\u003c"),
-        }}
       />
       <DraftCityDaycaresPageClient
         cityDisplay={cityDisplay}

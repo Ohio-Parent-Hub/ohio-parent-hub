@@ -242,9 +242,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   const countySnippetCopy = buildCountySnippetCopy(countyDisplay, count);
+  const pageTitle = `${count} Daycares in ${countyDisplay} County, OH | Compare`;
 
   return {
-    title: `Best Daycares in ${countyDisplay} County, Ohio`,
+    title: pageTitle,
     description: countySnippetCopy,
     keywords: [
       `best daycares in ${countyDisplay} county`,
@@ -257,7 +258,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       canonical: `/daycares/county/${countySlug}`,
     },
     openGraph: {
-      title: `Best Daycares in ${countyDisplay} County, Ohio`,
+      title: pageTitle,
       description: countySnippetCopy,
       url: `https://ohioparenthub.com/daycares/county/${countySlug}`,
       images: [
@@ -271,7 +272,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     twitter: {
       card: "summary_large_image",
-      title: `Best Daycares in ${countyDisplay} County, Ohio`,
+      title: pageTitle,
       description: countySnippetCopy,
       images: ["/og-default.png"],
     },
@@ -300,16 +301,6 @@ export default async function CountyDaycaresPage({ params }: Props) {
   const sutqStats = buildCountySutqStats(matches);
   const countyFaqs = buildCountyFaqs(countyDisplay);
 
-  const faqSchema = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: countyFaqs.map(({ question, schemaAnswer }) => ({
-      "@type": "Question",
-      name: question,
-      acceptedAnswer: { "@type": "Answer", text: schemaAnswer },
-    })),
-  };
-
   return (
     <>
       <CountyDaycaresPageClient
@@ -330,12 +321,6 @@ export default async function CountyDaycaresPage({ params }: Props) {
       />
 
       {/* FAQ Section — SSR, county-specific */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(faqSchema).replace(/</g, "\\u003c"),
-        }}
-      />
       <section className="px-6 pb-24 pt-16" style={{ background: cream }}>
         <div className="mx-auto max-w-3xl">
           <div className="mb-10">

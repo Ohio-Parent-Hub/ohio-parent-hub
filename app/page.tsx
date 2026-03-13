@@ -390,20 +390,6 @@ export default function HomePage() {
 
       {/* FAQ Section */}
       <section className="px-6 pb-24 pt-16" style={{ background: cream }}>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "FAQPage",
-              mainEntity: homeFaqs.map(({ question, schemaAnswer }) => ({
-                "@type": "Question",
-                name: question,
-                acceptedAnswer: { "@type": "Answer", text: schemaAnswer },
-              })),
-            }).replace(/</g, "\\u003c"),
-          }}
-        />
         <div className="mx-auto max-w-3xl">
           <div className="mb-10">
             <SparkleDecor className="mb-4 h-5 w-5" style={{ color: `${gold}60` }} />

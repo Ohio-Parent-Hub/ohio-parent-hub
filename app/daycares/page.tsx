@@ -227,16 +227,6 @@ export default function GlobalSearchPage() {
   const statewideSnippetCopy = buildStatewideSnippetCopy(daycares.length);
   const statewideEditorialCopy = buildStatewideEditorialCopy(daycares.length);
 
-  const faqSchema = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: daycaresFaqs.map(({ question, schemaAnswer }) => ({
-      "@type": "Question",
-      name: question,
-      acceptedAnswer: { "@type": "Answer", text: schemaAnswer },
-    })),
-  };
-
   return (
     <>
       <DraftDaycaresPageClient
@@ -255,12 +245,6 @@ export default function GlobalSearchPage() {
       />
 
       {/* FAQ Section — SSR, no JS required */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(faqSchema).replace(/</g, "\\u003c"),
-        }}
-      />
       <section className="px-6 pb-24 pt-16" style={{ background: cream }}>
         <div className="mx-auto max-w-3xl">
           <div className="mb-10">
