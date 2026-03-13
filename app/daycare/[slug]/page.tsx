@@ -1,6 +1,8 @@
 import DaycareDetailPageShell from "@/components/DaycareDetailPageShell";
 import { slugify, toTitleCaseIfAllCaps } from "@/lib/utils";
 import { getMetroForDaycare, resolveCanonicalCityName, resolveCanonicalCitySlugFromName } from "@/lib/metroAreas";
+import { loadPublishedPremiumListing } from "@/app/actions/premium";
+import { checkClaimStatus } from "@/app/actions/claims";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import fs from "node:fs";
@@ -604,6 +606,10 @@ export default async function DaycarePage({ params }: Props) {
   };
 
   // ─── FAQ section ────────────────────────────────────────────────────────────
+  const premiumData = (await loadPublishedPremiumListing(programNumber)) ?? undefined;
+  const isClaimed = await checkClaimStatus(programNumber);
+  const ownerFaqs = premiumData?.custom_faqs ?? [];
+
   const detailFaqs = buildDetailFaqs(
     name,
     sutq,
@@ -634,6 +640,32 @@ export default async function DaycarePage({ params }: Props) {
             </p>
           </div>
           <div className="space-y-4">
+            {ownerFaqs.map(({ question, answer }) => (
+              <details
+                key={`owner-${question}`}
+                className="group rounded-2xl border shadow-sm"
+                style={{ background: "#fff", borderColor: `${sage}55` }}
+              >
+                <summary
+                  className="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-5 marker:hidden [&::-webkit-details-marker]:hidden"
+                  style={{ color: dark }}
+                >
+                  <h3 className="font-serif text-lg font-semibold leading-snug" style={{ color: dark }}>
+                    {question}
+                  </h3>
+                  <span
+                    className="flex-shrink-0 text-xl leading-none transition-transform duration-200 group-open:rotate-180"
+                    style={{ color: teal }}
+                    aria-hidden="true"
+                  >
+                    ▾
+                  </span>
+                </summary>
+                <div className="border-t px-6 pb-6 pt-4" style={{ borderColor: `${sage}33` }}>
+                  <p>{answer}</p>
+                </div>
+              </details>
+            ))}
             {detailFaqs.map(({ question, answer }) => (
               <details
                 key={question}
@@ -707,6 +739,8 @@ export default async function DaycarePage({ params }: Props) {
       lng={lng}
       schema={schema}
       faqSection={faqSection}
+      premiumData={premiumData}
+      isClaimed={isClaimed}
     />
   );
 }

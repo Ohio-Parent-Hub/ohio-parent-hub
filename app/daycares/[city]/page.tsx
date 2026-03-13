@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { notFound, permanentRedirect } from "next/navigation";
 import DraftCityDaycaresPageClient from "@/components/DraftCityDaycaresPageClient";
+import { loadVerifiedProgramNumbers } from "@/app/actions/premium";
 import { slugify, toTitleCaseIfAllCaps } from "@/lib/utils";
 import { projectDaycareListRows } from "@/lib/daycareProjection";
 import {
@@ -371,6 +372,7 @@ export default async function CityDaycaresPage({ params }: Props) {
         sutqStats={sutqStats}
         countyLinks={countyLinks}
         initialDaycares={projectDaycareListRows(matches.slice(0, 15))}
+        verifiedProgramNumbers={[...(await loadVerifiedProgramNumbers())]}
         basePath=""
         homeHref="/"
         citiesHref="/cities"

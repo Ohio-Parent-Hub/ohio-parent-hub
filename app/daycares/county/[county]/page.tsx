@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import CountyDaycaresPageClient from "@/components/CountyDaycaresPageClient";
+import { loadVerifiedProgramNumbers } from "@/app/actions/premium";
 import { slugify } from "@/lib/utils";
 import { projectDaycareListRows } from "@/lib/daycareProjection";
 
@@ -315,6 +316,7 @@ export default async function CountyDaycaresPage({ params }: Props) {
         countyNotRatedCopy={countyEditorialCopy.notRated}
         sutqStats={sutqStats}
         initialDaycares={projectDaycareListRows(matches.slice(0, 15))}
+        verifiedProgramNumbers={[...(await loadVerifiedProgramNumbers())]}
         basePath=""
         homeHref="/"
         countiesHref="/counties"

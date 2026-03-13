@@ -40,6 +40,7 @@ export interface MapProps {
     streetAddress?: string;
     city?: string;
     zipCode?: string;
+    verified?: boolean;
   }>;
   userLocation?: [number, number] | null; // New prop for user's searched location
   interactive?: boolean; // If false, disable interactions (static-like mode)
@@ -268,6 +269,9 @@ function ClusteredMarkersLayer({ markers }: { markers: NonNullable<MapProps["mar
       const addressLine2 = [safeCity, safeZip].filter(Boolean).join(", ");
 
       const metadataBadges = [
+        markerData.verified
+          ? `<span style="display:inline-flex;align-items:center;gap:4px;background:#4A6B67;color:#fff;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:500;letter-spacing:0.025em;line-height:1.4;"><svg width="12" height="12" viewBox="0 0 20 20" fill="none"><path d="M10 1L3 4.5V9.5C3 14.15 5.96 18.49 10 19.5C14.04 18.49 17 14.15 17 9.5V4.5L10 1Z" fill="#DCB346"/><path d="M7 10.5L9 12.5L13 8" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Provider Verified</span>`
+          : "",
         `<span style="display:inline-block;background:${ratingColor};color:#fff;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:600;line-height:1.4;">${escapeHtml(ratingLabel)}</span>`,
         safeProgramType
           ? `<span style="display:inline-block;background:#EEF2F7;color:#334155;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:600;line-height:1.4;">${safeProgramType}</span>`

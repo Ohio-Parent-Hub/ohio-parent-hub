@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { SutqBadge } from "@/components/SutqBadge";
 import InteractiveMap from "@/components/InteractiveMap";
+import VerifiedProviderBadge from "@/components/premium/VerifiedProviderBadge";
 import FilterInput from "@/components/FilterInput";
 import LocationSearch from "@/components/LocationSearch";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -75,6 +76,7 @@ interface CityDashboardProps {
   cityDisplay: string;
   initialTotalCount?: number;
   basePath?: string;
+  verifiedProgramNumbers?: string[];
   externalMapCenter?: [number, number] | null;
   onExternalMapCenterChange?: (coords: [number, number] | null) => void;
   externalMapZoom?: number | null;
@@ -364,6 +366,7 @@ export default function CityDashboard({
   cityDisplay,
   initialTotalCount,
   basePath = "",
+  verifiedProgramNumbers = [],
   externalMapCenter,
   onExternalMapCenterChange,
   externalMapZoom,
@@ -675,6 +678,8 @@ export default function CityDashboard({
   const displayList = mapViewSortedDaycares.slice(0, 50);
 
   // Map markers based on FILTERED results
+  const verifiedSet = useMemo(() => new Set(verifiedProgramNumbers), [verifiedProgramNumbers]);
+
   const markers = useMemo(() => {
     return filteredDaycares
       .filter((d) => d["LAT"] && d["LNG"])
@@ -697,9 +702,10 @@ export default function CityDashboard({
           streetAddress: toTitleCaseIfAllCaps(d["STREET ADDRESS"] || ""),
           city: displayCity || "",
           zipCode: d["ZIP CODE"] || "",
+          verified: verifiedSet.has(id || ""),
         };
       });
-  }, [filteredDaycares, cityDisplay, basePath, linkContext, returnTo]);
+  }, [filteredDaycares, cityDisplay, basePath, linkContext, returnTo, verifiedSet]);
 
   // Center on the first result if available, otherwise default to a central Ohio coordinate (or the first original result)
   const markerCenter: [number, number] | null = markers.length > 0
@@ -892,6 +898,9 @@ export default function CityDashboard({
                       <Link href={detailHref} className="hover:underline" onClick={() => storeNavContext(linkContext, returnTo)}>
                         {displayName}
                       </Link>
+                      {verifiedSet.has(id) && (
+                        <span className="ml-2 inline-block align-middle"><VerifiedProviderBadge /></span>
+                      )}
                     </h3>
                     <p className="text-sm text-neutral-500 mb-1">
                       {displayCity && <span className="font-medium text-black">{displayCity}</span>}

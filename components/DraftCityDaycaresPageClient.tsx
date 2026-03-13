@@ -29,6 +29,7 @@ interface DraftCityDaycaresPageClientProps {
   cityNotRatedCopy: string;
   sutqStats?: CitySutqStats;
   initialDaycares: DaycareRow[];
+  verifiedProgramNumbers?: string[];
   basePath?: string;
   homeHref?: string;
   citiesHref?: string;
@@ -64,6 +65,7 @@ export default function DraftCityDaycaresPageClient({
   cityNotRatedCopy,
   sutqStats,
   initialDaycares,
+  verifiedProgramNumbers = [],
   basePath = "/draft",
   homeHref = "/draft",
   citiesHref = "/draft/cities",
@@ -293,6 +295,7 @@ export default function DraftCityDaycaresPageClient({
             citySlug={citySlug}
             cityDisplay={cityDisplay}
             initialTotalCount={cityCount}
+            verifiedProgramNumbers={verifiedProgramNumbers}
             basePath={basePath}
             externalMapCenter={mapCenter}
             onExternalMapCenterChange={setMapCenter}

@@ -1,15 +1,13 @@
-import { NextRequest, NextResponse } from "next/server";
+import { createServerClient } from "@supabase/ssr";
+import { NextResponse, type NextRequest } from "next/server";
 
 const LEGACY_DETAIL_QUERY_PARAMS = ["context", "returnTo"] as const;
 
-function matchesPrefix(pathname: string, prefix: string) {
-  return pathname === prefix || pathname.startsWith(`${prefix}/`);
-}
-
-export function proxy(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  if (matchesPrefix(pathname, "/daycare")) {
+  // SEO: strip legacy detail query params (?context=...&returnTo=...)
+  if (pathname === "/daycare" || pathname.startsWith("/daycare/")) {
     const cleanedUrl = request.nextUrl.clone();
     let removedLegacyParam = false;
 
@@ -23,23 +21,52 @@ export function proxy(request: NextRequest) {
     if (removedLegacyParam) {
       return NextResponse.redirect(cleanedUrl, 308);
     }
-
-    return NextResponse.next();
   }
 
-  if (matchesPrefix(pathname, "/draft") || matchesPrefix(pathname, "/design-preview")) {
-    if (process.env.NODE_ENV === "production") {
-      return new NextResponse("Not Found", { status: 404 });
-    }
+  // Block draft/preview routes in production
+  if (
+    process.env.NODE_ENV === "production" &&
+    (pathname.startsWith("/draft") || pathname.startsWith("/design-preview"))
+  ) {
+    return new NextResponse("Not Found", { status: 404 });
+  }
 
-    const response = NextResponse.next();
+  let response = NextResponse.next({ request });
+
+  // Noindex draft/preview routes in dev
+  if (pathname.startsWith("/draft") || pathname.startsWith("/design-preview")) {
     response.headers.set("X-Robots-Tag", "noindex, nofollow, noarchive");
-    return response;
   }
 
-  return NextResponse.next();
+  // Refresh the Supabase auth session — required for Server Components
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll();
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value }) =>
+            request.cookies.set(name, value)
+          );
+          response = NextResponse.next({ request });
+          cookiesToSet.forEach(({ name, value, options }) =>
+            response.cookies.set(name, value, options)
+          );
+        },
+      },
+    }
+  );
+
+  await supabase.auth.getUser();
+
+  return response;
 }
 
 export const config = {
-  matcher: ["/daycare/:path*", "/draft/:path*", "/design-preview/:path*"],
+  matcher: [
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+  ],
 };

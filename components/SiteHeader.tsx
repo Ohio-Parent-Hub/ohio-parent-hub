@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ChevronRight, House, MapPin, Menu, Search } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { ChevronRight, House, LogOut, MapPin, Menu, Search, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -13,6 +14,8 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { createClient } from "@/lib/supabase/client";
+import type { User as SupabaseUser } from "@supabase/supabase-js";
 
 const teal = "#7EA8A4";
 const pink = "#E8A0AC";
@@ -20,7 +23,9 @@ const cream = "#F5EDE4";
 const dark = "#4A6B67";
 
 export default function SiteHeader() {
+  const router = useRouter();
   const [isSticky, setIsSticky] = useState(false);
+  const [user, setUser] = useState<SupabaseUser | null>(null);
 
   useEffect(() => {
     const onScroll = () => {
@@ -31,6 +36,24 @@ export default function SiteHeader() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data: { user } }) => setUser(user));
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
+
+  async function handleSignOut() {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push("/");
+    router.refresh();
+  }
 
   return (
     <nav
@@ -124,6 +147,46 @@ export default function SiteHeader() {
                         <ChevronRight className="h-4 w-4" style={{ color: `${dark}88` }} />
                       </Link>
                     </SheetClose>
+
+                    {user ? (
+                      <>
+                        <SheetClose asChild>
+                          <Link
+                            href="/dashboard"
+                            className="flex h-11 w-full items-center justify-between rounded-xl border px-4 text-sm font-medium transition-colors hover:bg-primary/10"
+                            style={{ borderColor: `${teal}40`, color: dark }}
+                          >
+                            <span className="flex items-center gap-2">
+                              <User className="h-4 w-4" style={{ color: teal }} />
+                              Dashboard
+                            </span>
+                            <ChevronRight className="h-4 w-4" style={{ color: `${dark}88` }} />
+                          </Link>
+                        </SheetClose>
+                        <SheetClose asChild>
+                          <button
+                            onClick={handleSignOut}
+                            className="flex h-11 w-full items-center justify-between rounded-xl border px-4 text-sm font-medium transition-colors hover:bg-red-50"
+                            style={{ borderColor: `${teal}40`, color: dark }}
+                          >
+                            <span className="flex items-center gap-2">
+                              <LogOut className="h-4 w-4" style={{ color: "#e55" }} />
+                              Sign Out
+                            </span>
+                          </button>
+                        </SheetClose>
+                      </>
+                    ) : (
+                      <SheetClose asChild>
+                        <Link
+                          href="/auth/login"
+                          className="flex h-11 w-full items-center justify-center rounded-xl text-sm font-semibold"
+                          style={{ backgroundColor: teal, color: "#fff" }}
+                        >
+                          Sign In
+                        </Link>
+                      </SheetClose>
+                    )}
                   </div>
                 </div>
               </SheetContent>
@@ -137,6 +200,20 @@ export default function SiteHeader() {
             <Button size="sm" className="rounded-full px-5 font-bold" style={{ background: pink, color: "#fff" }} asChild>
               <Link href="/daycares"><Search className="mr-1.5 h-3.5 w-3.5" />Find a Daycare</Link>
             </Button>
+            {user ? (
+              <>
+                <Button size="sm" variant="outline" className="rounded-full px-4 font-medium" style={{ borderColor: teal, color: dark }} asChild>
+                  <Link href="/dashboard"><User className="mr-1.5 h-3.5 w-3.5" />Dashboard</Link>
+                </Button>
+                <Button size="sm" variant="ghost" className="rounded-full px-3" style={{ color: dark }} onClick={handleSignOut}>
+                  <LogOut className="h-3.5 w-3.5" />
+                </Button>
+              </>
+            ) : (
+              <Button size="sm" variant="outline" className="rounded-full px-4 font-medium" style={{ borderColor: teal, color: dark }} asChild>
+                <Link href="/auth/login">Sign In</Link>
+              </Button>
+            )}
           </div>
         </div>
       </div>

@@ -39,3 +39,13 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# service account keys
+gsc-service-account.json
+
+# dev screenshots
+*.png
+!public/**/*.png
+
+# playwright MCP local config
+.playwright-mcp/

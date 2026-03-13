@@ -1,15 +1,23 @@
 "use client";
 
 import type { ReactNode } from "react";
+import type { PremiumListingData } from "@/lib/premiumTypes";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { SutqBadge } from "@/components/SutqBadge";
 import StaticMap from "@/components/StaticMap";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import BackToResultsButton from "@/components/BackToResultsButton";
+import VerifiedProviderBadge from "@/components/premium/VerifiedProviderBadge";
+import PremiumPhotoGallery from "@/components/premium/PremiumPhotoGallery";
+import PremiumHoursTable from "@/components/premium/PremiumHoursTable";
+import PremiumPricingTable from "@/components/premium/PremiumPricingTable";
+import PremiumAmenities from "@/components/premium/PremiumAmenities";
+import PremiumOwnerDescription from "@/components/premium/PremiumOwnerDescription";
+import ClaimListingDialog from "@/components/premium/ClaimListingDialog";
 import Link from "next/link";
 import TrackedUplinkLink from "@/components/TrackedUplinkLink";
-import { ChevronDown, ExternalLink, Star } from "lucide-react";
+import { ChevronDown, ExternalLink, Globe, Star } from "lucide-react";
 import { useState } from "react";
 
 type RelatedDaycareCard = {
@@ -51,6 +59,8 @@ type DaycareDetailPageShellProps = {
   lng: number;
   schema?: Record<string, unknown>;
   faqSection?: ReactNode;
+  premiumData?: PremiumListingData;
+  isClaimed?: boolean;
 };
 
 const teal = "#7EA8A4";
@@ -150,6 +160,8 @@ export default function DaycareDetailPageShell({
   lng,
   schema,
   faqSection,
+  premiumData,
+  isClaimed,
 }: DaycareDetailPageShellProps) {
   const [isSutqDetailsOpen, setIsSutqDetailsOpen] = useState(false);
   const [isAboutOpenMobile, setIsAboutOpenMobile] = useState(false);
@@ -241,13 +253,40 @@ export default function DaycareDetailPageShell({
           </div>
 
           <header className="rounded-2xl border p-6 sm:p-8" style={{ background: "#fff", borderColor: `${sage}55` }}>
-            <Badge variant="outline" className="mb-4" style={{ borderColor: `${teal}55`, color: dark }}>
-              {programType}
-            </Badge>
-            <h1 className="font-serif text-3xl font-bold tracking-tight sm:text-4xl" style={{ color: dark }}>
-              {name}
-            </h1>
-            <p className="mt-2 text-muted-foreground">{city}, Ohio</p>
+            {premiumData ? (
+              <div className="mb-4">
+                <VerifiedProviderBadge />
+              </div>
+            ) : (
+              <Badge variant="outline" className="mb-4" style={{ borderColor: `${teal}55`, color: dark }}>
+                {programType}
+              </Badge>
+            )}
+            {premiumData?.logo_url ? (
+              <div className="flex items-start gap-4">
+                <img
+                  src={premiumData.logo_url}
+                  alt={`${name} logo`}
+                  className="h-16 w-16 rounded-lg object-cover shadow-sm border"
+                  style={{ borderColor: `${sage}55` }}
+                />
+                <div>
+                  <h1 className="font-serif text-3xl font-bold tracking-tight sm:text-4xl" style={{ color: dark }}>
+                    {name}
+                  </h1>
+                  <p className="mt-2 text-muted-foreground">{programType} · {city}, Ohio</p>
+                </div>
+              </div>
+            ) : (
+              <>
+                <h1 className="font-serif text-3xl font-bold tracking-tight sm:text-4xl" style={{ color: dark }}>
+                  {name}
+                </h1>
+                <p className="mt-2 text-muted-foreground">
+                  {premiumData ? `${programType} · ` : ""}{city}, Ohio
+                </p>
+              </>
+            )}
 
             <div className="mt-4 flex flex-wrap gap-2">
               <button
@@ -466,7 +505,28 @@ export default function DaycareDetailPageShell({
                     </a>
                   </div>
                 )}
+                {premiumData?.website_url && (
+                  <div>
+                    <div className="text-sm font-medium text-muted-foreground">Website</div>
+                    <a
+                      href={premiumData.website_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 text-primary hover:underline"
+                    >
+                      <Globe className="h-3.5 w-3.5" />
+                      {premiumData.website_url.replace(/^https?:\/\//, "")}
+                    </a>
+                  </div>
+                )}
               </div>
+
+              {!isClaimed && (
+                <ClaimListingDialog
+                  programNumber={programNumber}
+                  daycareName={name}
+                />
+              )}
             </section>
 
             <section className="rounded-2xl border border-primary/20 bg-card p-6 shadow-sm lg:col-span-3">
@@ -493,6 +553,30 @@ export default function DaycareDetailPageShell({
           </div>
         </div>
       </section>
+
+      {premiumData && (
+        <section className="px-6 py-8">
+          <div className="mx-auto max-w-7xl rounded-3xl border p-4 sm:p-6 shadow-sm" style={{ background: "#fff", borderColor: `${sage}55` }}>
+            <h2 className="mb-6 font-serif text-2xl font-bold" style={{ color: dark }}>
+              Direct from Provider
+            </h2>
+
+            {premiumData.photos.length > 0 && (
+              <PremiumPhotoGallery photos={premiumData.photos} daycareName={name} />
+            )}
+
+            {premiumData.hours && <PremiumHoursTable hours={premiumData.hours} />}
+
+            {premiumData.pricing && <PremiumPricingTable pricing={premiumData.pricing} />}
+
+            {premiumData.amenities && <PremiumAmenities amenities={premiumData.amenities} />}
+          </div>
+        </section>
+      )}
+
+      {premiumData?.description && (
+        <PremiumOwnerDescription description={premiumData.description} />
+      )}
 
       {faqSection}
 

@@ -31,6 +31,7 @@ interface InteractiveMapProps {
     streetAddress?: string;
     city?: string;
     zipCode?: string;
+    verified?: boolean;
   }>;
   userLocation?: [number, number] | null; // Pass through new prop
   height?: string;

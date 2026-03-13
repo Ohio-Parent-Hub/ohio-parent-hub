@@ -28,6 +28,7 @@ interface CountyDaycaresPageClientProps {
   countyNotRatedCopy: string;
   sutqStats?: CountySutqStats;
   initialDaycares: DaycareRow[];
+  verifiedProgramNumbers?: string[];
   basePath?: string;
   homeHref?: string;
   countiesHref?: string;
@@ -62,6 +63,7 @@ export default function CountyDaycaresPageClient({
   countyNotRatedCopy,
   sutqStats,
   initialDaycares,
+  verifiedProgramNumbers = [],
   basePath = "",
   homeHref = "/",
   countiesHref = "/counties",
@@ -277,6 +279,7 @@ export default function CountyDaycaresPageClient({
             countySlug={countySlug}
             cityDisplay={`${countyDisplay} County`}
             initialTotalCount={countyCount}
+            verifiedProgramNumbers={verifiedProgramNumbers}
             basePath={basePath}
             externalMapCenter={mapCenter}
             onExternalMapCenterChange={setMapCenter}

@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { SutqBadge } from "@/components/SutqBadge";
 import InteractiveMap from "@/components/InteractiveMap";
+import VerifiedProviderBadge from "@/components/premium/VerifiedProviderBadge";
 import FilterInput from "@/components/FilterInput";
 import LocationSearch from "@/components/LocationSearch";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -434,6 +435,7 @@ function FilterContent({
 interface GlobalDashboardProps {
   initialDaycares?: Daycare[];
   initialTotalCount?: number;
+  verifiedProgramNumbers?: string[];
   basePath?: string;
   externalMapCenter?: [number, number] | null;
   onExternalMapCenterChange?: (coords: [number, number] | null) => void;
@@ -448,6 +450,7 @@ interface GlobalDashboardProps {
 export default function GlobalDashboard({
   initialDaycares = [],
   initialTotalCount,
+  verifiedProgramNumbers = [],
   basePath = "",
   externalMapCenter,
   onExternalMapCenterChange,
@@ -756,6 +759,8 @@ export default function GlobalDashboard({
   const displayMapViewCount = isResultsCountPending ? displayResultsCount : mapVisibleDaycares.length;
   const displayList = mapViewSortedDaycares.slice(0, 50);
 
+  const verifiedSet = useMemo(() => new Set(verifiedProgramNumbers), [verifiedProgramNumbers]);
+
   const mapMarkers = useMemo(() => {
     return filteredDaycares
       .filter((d) => d.LAT && d.LNG)
@@ -774,9 +779,10 @@ export default function GlobalDashboard({
           streetAddress: toTitleCaseIfAllCaps(d["STREET ADDRESS"] || ""),
           city: toTitleCaseIfAllCaps(city),
           zipCode: d["ZIP CODE"] || "",
+          verified: verifiedSet.has(d["PROGRAM NUMBER"] || ""),
         };
       });
-  }, [filteredDaycares, basePath, returnTo]);
+  }, [filteredDaycares, basePath, returnTo, verifiedSet]);
 
   // Ohio Center
   const defaultCenterCoords: [number, number] = [40.4173, -82.9071];
@@ -1009,6 +1015,9 @@ export default function GlobalDashboard({
                     <Link href={detailHref} className="hover:underline" onClick={() => storeNavContext("state", returnTo)}>
                       {displayName}
                     </Link>
+                    {verifiedSet.has(d["PROGRAM NUMBER"] || "") && (
+                      <span className="ml-2 inline-block align-middle"><VerifiedProviderBadge /></span>
+                    )}
                   </h3>
                   <p className="text-sm text-neutral-500 mb-1">
                     {displayCity && <span className="font-medium text-black">{displayCity}</span>}

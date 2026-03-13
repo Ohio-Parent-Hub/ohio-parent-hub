@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import Link from "next/link";
 import DraftDaycaresPageClient from "@/components/DraftDaycaresPageClient";
+import { loadVerifiedProgramNumbers } from "@/app/actions/premium";
 import fs from "node:fs";
 import path from "node:path";
 import { resolveCanonicalCityName } from "@/lib/metroAreas";
@@ -220,7 +221,7 @@ function buildStatewideEditorialCopy(count: number) {
   };
 }
 
-export default function GlobalSearchPage() {
+export default async function GlobalSearchPage() {
   const daycares = loadDaycares();
   const cityCount = new Set(daycares.map((d) => resolveCanonicalCityName(d.CITY || "")).filter(Boolean)).size;
   const initialDaycares = getInitialDaycares(daycares);
@@ -239,6 +240,7 @@ export default function GlobalSearchPage() {
         statewideTransparencyCopy={statewideEditorialCopy.transparency}
         statewideNotRatedCopy={statewideEditorialCopy.notRated}
         initialDaycares={initialDaycares}
+        verifiedProgramNumbers={[...(await loadVerifiedProgramNumbers())]}
         basePath=""
         homeHref="/"
         searchHref="/daycares"
