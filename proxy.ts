@@ -1,6 +1,24 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export function proxy() {
+const LEGACY_DETAIL_QUERY_PARAMS = ["context", "returnTo"] as const;
+
+export function proxy(request: NextRequest) {
+  if (request.nextUrl.pathname.startsWith("/daycare/")) {
+    const cleanedUrl = request.nextUrl.clone();
+    let removedLegacyParam = false;
+
+    for (const param of LEGACY_DETAIL_QUERY_PARAMS) {
+      if (cleanedUrl.searchParams.has(param)) {
+        cleanedUrl.searchParams.delete(param);
+        removedLegacyParam = true;
+      }
+    }
+
+    if (removedLegacyParam) {
+      return NextResponse.redirect(cleanedUrl, 308);
+    }
+  }
+
   if (process.env.NODE_ENV === "production") {
     return new NextResponse("Not Found", { status: 404 });
   }
@@ -11,5 +29,5 @@ export function proxy() {
 }
 
 export const config = {
-  matcher: ["/draft/:path*", "/design-preview/:path*"],
+  matcher: ["/daycare/:path*", "/draft/:path*", "/design-preview/:path*"],
 };
