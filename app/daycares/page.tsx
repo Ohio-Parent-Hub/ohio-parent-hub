@@ -221,12 +221,22 @@ function buildStatewideEditorialCopy(count: number) {
   };
 }
 
-export default async function GlobalSearchPage() {
+export default async function GlobalSearchPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ lat?: string; lng?: string; q?: string }>;
+}) {
+  const params = await searchParams;
   const daycares = loadDaycares();
   const cityCount = new Set(daycares.map((d) => resolveCanonicalCityName(d.CITY || "")).filter(Boolean)).size;
   const initialDaycares = getInitialDaycares(daycares);
   const statewideSnippetCopy = buildStatewideSnippetCopy(daycares.length);
   const statewideEditorialCopy = buildStatewideEditorialCopy(daycares.length);
+
+  const initialLocation =
+    params.lat && params.lng
+      ? { lat: parseFloat(params.lat), lng: parseFloat(params.lng), q: params.q ?? "" }
+      : null;
 
   return (
     <>
@@ -242,6 +252,7 @@ export default async function GlobalSearchPage() {
         initialDaycares={initialDaycares}
         verifiedProgramNumbers={[...(await loadVerifiedProgramNumbers())]}
         premiumLogos={await loadPremiumLogos()}
+        initialLocation={initialLocation}
         basePath=""
         homeHref="/"
         searchHref="/daycares"

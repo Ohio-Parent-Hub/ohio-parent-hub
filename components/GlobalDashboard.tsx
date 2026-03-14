@@ -476,6 +476,7 @@ interface GlobalDashboardProps {
   onExternalLocationQueryChange?: (query: string) => void;
   onClearAllFilters?: () => void;
   hideDesktopLocationSearch?: boolean;
+  skipSessionRestore?: boolean;
 }
 
 export default function GlobalDashboard({
@@ -492,6 +493,7 @@ export default function GlobalDashboard({
   onExternalLocationQueryChange,
   onClearAllFilters,
   hideDesktopLocationSearch = false,
+  skipSessionRestore = false,
 }: GlobalDashboardProps) {
   const pathname = usePathname();
   const storageKey = useMemo(() => `global-dashboard-state:${pathname}`, [pathname]);
@@ -558,7 +560,7 @@ export default function GlobalDashboard({
   useEffect(() => {
     try {
       const rawState = sessionStorage.getItem(storageKey);
-      if (!rawState) {
+      if (!rawState || skipSessionRestore) {
         setRestoredStateReady(true);
         return;
       }

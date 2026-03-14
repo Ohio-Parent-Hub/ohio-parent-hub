@@ -36,6 +36,7 @@ interface DraftDaycaresPageClientProps {
   initialDaycares?: Record<string, string>[];
   verifiedProgramNumbers?: string[];
   premiumLogos?: Record<string, string>;
+  initialLocation?: { lat: number; lng: number; q: string } | null;
   basePath?: string;
   homeHref?: string;
   searchHref?: string;
@@ -53,13 +54,16 @@ export default function DraftDaycaresPageClient({
   initialDaycares = [],
   verifiedProgramNumbers = [],
   premiumLogos = {},
+  initialLocation = null,
   basePath = "/draft",
   homeHref = "/draft",
   searchHref = "/draft/daycares",
 }: DraftDaycaresPageClientProps) {
-  const [mapCenter, setMapCenter] = useState<[number, number] | null>(null);
-  const [mapZoom, setMapZoom] = useState<number | null>(null);
-  const [locationQuery, setLocationQuery] = useState("");
+  const [mapCenter, setMapCenter] = useState<[number, number] | null>(
+    initialLocation ? [initialLocation.lat, initialLocation.lng] : null
+  );
+  const [mapZoom, setMapZoom] = useState<number | null>(initialLocation ? 12 : null);
+  const [locationQuery, setLocationQuery] = useState(initialLocation?.q ?? "");
   const [heroSearchClearSignal, setHeroSearchClearSignal] = useState(0);
   const [isAboutOpenMobile, setIsAboutOpenMobile] = useState(false);
   const [isSutqOpenMobile, setIsSutqOpenMobile] = useState(false);
@@ -257,6 +261,7 @@ export default function DraftDaycaresPageClient({
             onExternalLocationQueryChange={setLocationQuery}
             onClearAllFilters={() => setHeroSearchClearSignal((value) => value + 1)}
             hideDesktopLocationSearch
+            skipSessionRestore={!!initialLocation}
           />
         </div>
       </section>
