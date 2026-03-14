@@ -111,20 +111,20 @@ export default function EditorHours({ hours, onChange }: Props) {
               backgroundColor: dayData.open ? "white" : "#F9FAFB",
             }}
           >
-            <div className="flex items-center gap-3">
-              {/* Day label */}
+            {/* Row 1: Day label + Toggle */}
+            {/* Row 1: Day + Status + (mobile: Split/Copy) | (desktop: times + Split/Copy) */}
+            <div className="flex items-center gap-1.5 sm:gap-3">
               <span
-                className="w-24 text-sm font-medium"
+                className="w-[72px] sm:w-24 text-xs sm:text-sm font-medium shrink-0"
                 style={{ color: dayData.open ? "#4A6B67" : "#9CA3AF" }}
               >
                 {DAY_LABELS[day]}
               </span>
 
-              {/* Toggle */}
               <button
                 type="button"
                 onClick={() => toggleDay(day)}
-                className="rounded-full px-3 py-1 text-xs font-medium transition-colors"
+                className="rounded-full px-2 sm:px-3 py-0.5 sm:py-1 text-[11px] sm:text-xs font-medium transition-colors shrink-0"
                 style={{
                   backgroundColor: dayData.open ? "#D5E5E3" : "#F3F4F6",
                   color: dayData.open ? "#4A6B67" : "#9CA3AF",
@@ -133,9 +133,34 @@ export default function EditorHours({ hours, onChange }: Props) {
                 {dayData.open ? "Open" : "Closed"}
               </button>
 
-              {/* Time ranges (when open) */}
+              {/* Mobile: Split + Copy right-aligned */}
               {dayData.open && (
-                <div className="flex flex-1 flex-col gap-1">
+                <div className="sm:hidden flex items-center gap-1.5 ml-auto shrink-0">
+                  {dayData.ranges.length < 2 && (
+                    <button
+                      type="button"
+                      onClick={() => addRange(day)}
+                      className="inline-flex items-center gap-0.5 rounded-full border px-1.5 py-0.5 text-[11px] font-medium transition-colors"
+                      style={{ borderColor: "#7EA8A4", color: "#7EA8A4", backgroundColor: "rgba(126,168,164,0.06)" }}
+                    >
+                      <Plus className="h-3 w-3" /> Split
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => copyToWeekdays(day)}
+                    className="inline-flex items-center gap-0.5 rounded-full border px-1.5 py-0.5 text-[11px] font-medium transition-colors"
+                    style={{ borderColor: "#7EA8A4", color: "#7EA8A4", backgroundColor: "rgba(126,168,164,0.06)" }}
+                    title="Copy to all weekdays (Mon–Fri)"
+                  >
+                    <Copy className="h-3 w-3" /> M–F
+                  </button>
+                </div>
+              )}
+
+              {/* Desktop: time ranges inline */}
+              {dayData.open && (
+                <div className="hidden sm:flex flex-1 flex-col gap-1">
                   {dayData.ranges.map((range, ri) => (
                     <div key={ri} className="flex items-center gap-1.5">
                       <TimeSelect
@@ -166,24 +191,22 @@ export default function EditorHours({ hours, onChange }: Props) {
                 </div>
               )}
 
-              {/* Add split hours */}
+              {/* Desktop: Split + Copy */}
               {dayData.open && dayData.ranges.length < 2 && (
                 <button
                   type="button"
                   onClick={() => addRange(day)}
-                  className="inline-flex items-center gap-1 rounded-full border px-3 py-1 text-xs font-medium transition-colors"
+                  className="hidden sm:inline-flex items-center gap-1 rounded-full border px-3 py-1 text-xs font-medium transition-colors"
                   style={{ borderColor: "#7EA8A4", color: "#7EA8A4", backgroundColor: "rgba(126,168,164,0.06)" }}
                 >
                   <Plus className="h-3 w-3" /> Split
                 </button>
               )}
-
-              {/* Copy to weekdays */}
               {dayData.open && (
                 <button
                   type="button"
                   onClick={() => copyToWeekdays(day)}
-                  className="inline-flex items-center gap-1 rounded-full border px-3 py-1 text-xs font-medium transition-colors"
+                  className="hidden sm:inline-flex items-center gap-1 rounded-full border px-3 py-1 text-xs font-medium transition-colors"
                   style={{ borderColor: "#7EA8A4", color: "#7EA8A4", backgroundColor: "rgba(126,168,164,0.06)" }}
                   title="Copy to all weekdays (Mon–Fri)"
                 >
@@ -191,6 +214,37 @@ export default function EditorHours({ hours, onChange }: Props) {
                 </button>
               )}
             </div>
+
+            {/* Row 2 (mobile only): Time ranges */}
+            {dayData.open && (
+              <div className="mt-1.5 flex flex-wrap items-center gap-1.5 pl-0 sm:hidden">
+                {dayData.ranges.map((range, ri) => (
+                  <div key={ri} className="flex items-center gap-1.5">
+                    <TimeSelect
+                      value={range[0]}
+                      onChange={(v) => setRangeTime(day, ri, 0, v)}
+                      placeholder="Open"
+                    />
+                    <span className="text-xs" style={{ color: "#6B8A86" }}>—</span>
+                    <TimeSelect
+                      value={range[1]}
+                      onChange={(v) => setRangeTime(day, ri, 1, v)}
+                      placeholder="Close"
+                    />
+                    {ri > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => removeRange(day, ri)}
+                        className="ml-1 rounded-full p-0.5 text-red-400 hover:text-red-600"
+                        aria-label="Remove time range"
+                      >
+                        <X className="h-3.5 w-3.5" />
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         );
       })}

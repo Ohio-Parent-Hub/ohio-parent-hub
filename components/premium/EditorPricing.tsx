@@ -86,111 +86,200 @@ export default function EditorPricing({ pricing, onChange }: Props) {
           {pricing.tiers.map((tier, index) => (
             <div
               key={index}
-              className="flex flex-wrap items-center gap-2 rounded-lg border p-3"
+              className="rounded-lg border px-3 py-2.5"
               style={{ borderColor: "#B8C5B2" }}
             >
-              {/* Label */}
-              <input
-                type="text"
-                value={tier.label}
-                onChange={(e) => updateTier(index, { label: e.target.value })}
-                placeholder="Label (e.g. Infant)"
-                className="w-28 rounded-lg border px-3 py-1.5 text-sm focus:outline-none focus:ring-2"
-                style={{ borderColor: "#D5E5E3", color: "#4A6B67" }}
-              />
-
-              {/* Age range */}
-              <select
-                value={tier.age_start}
-                onChange={(e) => updateTier(index, { age_start: Number(e.target.value) })}
-                className="rounded-lg border bg-white px-3 py-1.5 text-xs focus:outline-none focus:ring-2"
-                style={{ borderColor: "#D5E5E3", color: "#4A6B67" }}
-              >
-                {AGE_OPTIONS.map((a) => (
-                  <option key={a.value} value={a.value}>
-                    {a.label}
-                  </option>
-                ))}
-              </select>
-              <span className="text-xs" style={{ color: "#6B8A86" }}>
-                to
-              </span>
-              <select
-                value={tier.age_end}
-                onChange={(e) => updateTier(index, { age_end: Number(e.target.value) })}
-                className="rounded-lg border bg-white px-3 py-1.5 text-xs focus:outline-none focus:ring-2"
-                style={{ borderColor: "#D5E5E3", color: "#4A6B67" }}
-              >
-                {AGE_OPTIONS.map((a) => (
-                  <option key={a.value} value={a.value}>
-                    {a.label}
-                  </option>
-                ))}
-              </select>
-
-              {/* Rates */}
-              <div className="flex items-center gap-1">
-                <span className="text-xs" style={{ color: "#6B8A86" }}>
-                  PT $
-                </span>
+              {/* Desktop: single row */}
+              <div className="hidden sm:flex flex-wrap items-center gap-2">
                 <input
-                  type="number"
-                  min={0}
-                  value={tier.part_time ?? ""}
-                  onChange={(e) =>
-                    updateTier(index, {
-                      part_time: e.target.value ? Number(e.target.value) : null,
-                    })
-                  }
-                  placeholder="—"
-                  className="w-16 rounded-lg border px-3 py-1.5 text-sm focus:outline-none focus:ring-2"
+                  type="text"
+                  value={tier.label}
+                  onChange={(e) => updateTier(index, { label: e.target.value })}
+                  placeholder="e.g. Infant"
+                  className="w-24 min-w-0 rounded-md border px-2.5 py-1.5 text-xs focus:outline-none focus:ring-2"
                   style={{ borderColor: "#D5E5E3", color: "#4A6B67" }}
                 />
-              </div>
-              <div className="flex items-center gap-1">
-                <span className="text-xs" style={{ color: "#6B8A86" }}>
-                  FT $
-                </span>
-                <input
-                  type="number"
-                  min={0}
-                  value={tier.full_time ?? ""}
-                  onChange={(e) =>
-                    updateTier(index, {
-                      full_time: e.target.value ? Number(e.target.value) : null,
-                    })
-                  }
-                  placeholder="—"
-                  className="w-16 rounded-lg border px-3 py-1.5 text-sm focus:outline-none focus:ring-2"
+                <select
+                  value={tier.age_start}
+                  onChange={(e) => updateTier(index, { age_start: Number(e.target.value) })}
+                  className="rounded-md border bg-white px-1.5 py-1.5 text-xs focus:outline-none focus:ring-2"
                   style={{ borderColor: "#D5E5E3", color: "#4A6B67" }}
-                />
+                >
+                  {AGE_OPTIONS.map((a) => (
+                    <option key={a.value} value={a.value}>
+                      {a.label}
+                    </option>
+                  ))}
+                </select>
+                <span className="text-[11px]" style={{ color: "#6B8A86" }}>to</span>
+                <select
+                  value={tier.age_end}
+                  onChange={(e) => updateTier(index, { age_end: Number(e.target.value) })}
+                  className="rounded-md border bg-white px-1.5 py-1.5 text-xs focus:outline-none focus:ring-2"
+                  style={{ borderColor: "#D5E5E3", color: "#4A6B67" }}
+                >
+                  {AGE_OPTIONS.map((a) => (
+                    <option key={a.value} value={a.value}>
+                      {a.label}
+                    </option>
+                  ))}
+                </select>
+                <div className="flex items-center gap-1">
+                  <span className="text-[11px]" style={{ color: "#6B8A86" }}>PT$</span>
+                  <input
+                    type="number"
+                    min={0}
+                    value={tier.part_time ?? ""}
+                    onChange={(e) =>
+                      updateTier(index, {
+                        part_time: e.target.value ? Number(e.target.value) : null,
+                      })
+                    }
+                    placeholder="—"
+                    className="w-16 min-w-0 rounded-md border px-2 py-1.5 text-xs focus:outline-none focus:ring-2"
+                    style={{ borderColor: "#D5E5E3", color: "#4A6B67" }}
+                  />
+                </div>
+                <div className="flex items-center gap-1">
+                  <span className="text-[11px]" style={{ color: "#6B8A86" }}>FT$</span>
+                  <input
+                    type="number"
+                    min={0}
+                    value={tier.full_time ?? ""}
+                    onChange={(e) =>
+                      updateTier(index, {
+                        full_time: e.target.value ? Number(e.target.value) : null,
+                      })
+                    }
+                    placeholder="—"
+                    className="w-16 min-w-0 rounded-md border px-2 py-1.5 text-xs focus:outline-none focus:ring-2"
+                    style={{ borderColor: "#D5E5E3", color: "#4A6B67" }}
+                  />
+                </div>
+                <select
+                  value={tier.period}
+                  onChange={(e) =>
+                    updateTier(index, { period: e.target.value as PremiumPricingTier["period"] })
+                  }
+                  className="rounded-md border bg-white px-1.5 py-1.5 text-xs focus:outline-none focus:ring-2"
+                  style={{ borderColor: "#D5E5E3", color: "#4A6B67" }}
+                >
+                  {PERIOD_OPTIONS.map((p) => (
+                    <option key={p} value={p}>
+                      {p}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  type="button"
+                  onClick={() => removeTier(index)}
+                  className="ml-auto rounded-full p-1.5 text-red-400 transition-colors hover:bg-red-50 hover:text-red-600"
+                  aria-label="Remove tier"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
               </div>
 
-              {/* Period */}
-              <select
-                value={tier.period}
-                onChange={(e) =>
-                  updateTier(index, { period: e.target.value as PremiumPricingTier["period"] })
-                }
-                className="rounded-lg border bg-white px-3 py-1.5 text-xs focus:outline-none focus:ring-2"
-                style={{ borderColor: "#D5E5E3", color: "#4A6B67" }}
-              >
-                {PERIOD_OPTIONS.map((p) => (
-                  <option key={p} value={p}>
-                    {p}
-                  </option>
-                ))}
-              </select>
-
-              {/* Remove */}
-              <button
-                type="button"
-                onClick={() => removeTier(index)}
-                className="ml-auto rounded-full p-1.5 text-red-400 transition-colors hover:bg-red-50 hover:text-red-600"
-                aria-label="Remove tier"
-              >
-                <X className="h-4 w-4" />
-              </button>
+              {/* Mobile: 3 rows */}
+              <div className="sm:hidden space-y-2">
+                {/* Row 1: Label + Period + Delete */}
+                <div className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    value={tier.label}
+                    onChange={(e) => updateTier(index, { label: e.target.value })}
+                    placeholder="e.g. Infant"
+                    className="flex-1 min-w-0 rounded-md border px-2 py-1.5 text-xs focus:outline-none focus:ring-2"
+                    style={{ borderColor: "#D5E5E3", color: "#4A6B67" }}
+                  />
+                  <select
+                    value={tier.period}
+                    onChange={(e) =>
+                      updateTier(index, { period: e.target.value as PremiumPricingTier["period"] })
+                    }
+                    className="shrink-0 rounded-md border bg-white px-1.5 py-1.5 text-xs focus:outline-none focus:ring-2"
+                    style={{ borderColor: "#D5E5E3", color: "#4A6B67" }}
+                  >
+                    {PERIOD_OPTIONS.map((p) => (
+                      <option key={p} value={p}>
+                        {p}
+                      </option>
+                    ))}
+                  </select>
+                  <button
+                    type="button"
+                    onClick={() => removeTier(index)}
+                    className="shrink-0 rounded-full p-1 text-red-400 transition-colors hover:bg-red-50 hover:text-red-600"
+                    aria-label="Remove tier"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+                {/* Row 2: Ages */}
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[11px] shrink-0" style={{ color: "#6B8A86" }}>Ages</span>
+                  <select
+                    value={tier.age_start}
+                    onChange={(e) => updateTier(index, { age_start: Number(e.target.value) })}
+                    className="flex-1 min-w-0 rounded-md border bg-white px-1.5 py-1.5 text-xs focus:outline-none focus:ring-2"
+                    style={{ borderColor: "#D5E5E3", color: "#4A6B67", marginRight: "-4px" }}
+                  >
+                    {AGE_OPTIONS.map((a) => (
+                      <option key={a.value} value={a.value}>
+                        {a.label}
+                      </option>
+                    ))}
+                  </select>
+                  <span className="text-[11px] shrink-0" style={{ color: "#6B8A86" }}>to</span>
+                  <select
+                    value={tier.age_end}
+                    onChange={(e) => updateTier(index, { age_end: Number(e.target.value) })}
+                    className="flex-1 min-w-0 rounded-md border bg-white px-1.5 py-1.5 text-xs focus:outline-none focus:ring-2"
+                    style={{ borderColor: "#D5E5E3", color: "#4A6B67" }}
+                  >
+                    {AGE_OPTIONS.map((a) => (
+                      <option key={a.value} value={a.value}>
+                        {a.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                {/* Row 3: Prices */}
+                <div className="flex items-center gap-2">
+                  <div className="flex flex-1 items-center gap-1 min-w-0">
+                    <span className="text-[11px] shrink-0" style={{ color: "#6B8A86" }}>PT$</span>
+                    <input
+                      type="number"
+                      min={0}
+                      value={tier.part_time ?? ""}
+                      onChange={(e) =>
+                        updateTier(index, {
+                          part_time: e.target.value ? Number(e.target.value) : null,
+                        })
+                      }
+                      placeholder="—"
+                      className="flex-1 min-w-0 rounded-md border px-2 py-1.5 text-xs focus:outline-none focus:ring-2"
+                      style={{ borderColor: "#D5E5E3", color: "#4A6B67" }}
+                    />
+                  </div>
+                  <div className="flex flex-1 items-center gap-1 min-w-0">
+                    <span className="text-[11px] shrink-0" style={{ color: "#6B8A86" }}>FT$</span>
+                    <input
+                      type="number"
+                      min={0}
+                      value={tier.full_time ?? ""}
+                      onChange={(e) =>
+                        updateTier(index, {
+                          full_time: e.target.value ? Number(e.target.value) : null,
+                        })
+                      }
+                      placeholder="—"
+                      className="flex-1 min-w-0 rounded-md border px-2 py-1.5 text-xs focus:outline-none focus:ring-2"
+                      style={{ borderColor: "#D5E5E3", color: "#4A6B67" }}
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
           ))}
         </div>
@@ -210,7 +299,7 @@ export default function EditorPricing({ pricing, onChange }: Props) {
       {/* Additional Rates */}
       <div>
         <h3 className="mb-2 text-sm font-semibold" style={{ color: "#4A6B67" }}>
-          Additional Rates (optional)
+          Additional Rates
         </h3>
         <div className="space-y-2">
           <AdditionalRateRow
@@ -237,7 +326,7 @@ export default function EditorPricing({ pricing, onChange }: Props) {
       {/* Pricing Notes */}
       <div>
         <h3 className="mb-2 text-sm font-semibold" style={{ color: "#4A6B67" }}>
-          Pricing Notes (optional)
+          Pricing Notes
         </h3>
         <textarea
           value={pricing.notes ?? ""}
@@ -266,32 +355,34 @@ function AdditionalRateRow({
   onPeriodChange: (p: PremiumPricingTier["period"]) => void;
 }) {
   return (
-    <div className="flex items-center gap-2">
-      <span className="w-36 text-sm" style={{ color: "#4A6B67" }}>
+    <div className="flex items-center gap-1.5 sm:gap-2">
+      <span className="w-24 sm:w-36 text-xs sm:text-sm shrink-0" style={{ color: "#4A6B67" }}>
         {label}
       </span>
-      <span className="text-sm" style={{ color: "#6B8A86" }}>
-        $
-      </span>
-      <input
-        type="number"
-        min={0}
-        value={rate ?? ""}
-        onChange={(e) => onRateChange(e.target.value ? Number(e.target.value) : null)}
-        placeholder="—"
-        className="w-20 rounded-lg border px-3 py-1.5 text-sm focus:outline-none focus:ring-2"
-        style={{ borderColor: "#D5E5E3", color: "#4A6B67" }}
-      />
-      <select
-        value={period}
-        onChange={(e) => onPeriodChange(e.target.value as PremiumPricingTier["period"])}
-        className="rounded-lg border bg-white px-3 py-1.5 text-xs focus:outline-none focus:ring-2"
-        style={{ borderColor: "#D5E5E3", color: "#4A6B67" }}
-      >
-        <option value="daily">daily</option>
-        <option value="weekly">weekly</option>
-        <option value="monthly">monthly</option>
-      </select>
+      <div className="flex items-center gap-1.5 sm:gap-2 ml-auto sm:ml-0 shrink-0">
+        <span className="text-xs sm:text-sm" style={{ color: "#6B8A86" }}>
+          $
+        </span>
+        <input
+          type="number"
+          min={0}
+          value={rate ?? ""}
+          onChange={(e) => onRateChange(e.target.value ? Number(e.target.value) : null)}
+          placeholder="—"
+          className="w-16 sm:w-20 rounded-lg border px-2 sm:px-3 py-1.5 text-xs sm:text-sm focus:outline-none focus:ring-2"
+          style={{ borderColor: "#D5E5E3", color: "#4A6B67" }}
+        />
+        <select
+          value={period}
+          onChange={(e) => onPeriodChange(e.target.value as PremiumPricingTier["period"])}
+          className="rounded-lg border bg-white px-1 sm:px-3 py-1.5 text-[11px] sm:text-xs focus:outline-none focus:ring-2"
+          style={{ borderColor: "#D5E5E3", color: "#4A6B67" }}
+        >
+          <option value="daily">daily</option>
+          <option value="weekly">weekly</option>
+          <option value="monthly">monthly</option>
+        </select>
+      </div>
     </div>
   );
 }
