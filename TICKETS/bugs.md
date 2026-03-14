@@ -6,8 +6,8 @@ better claim page, more saley
 ✅ verify badge bigger, change badge to say owner verified
 ✅ verify badge on results list
 ✅ verify badge filter
-bigger claim button
-claim daycare in the header
+bigger claim button on sign in page
+✅ claim daycare in the header
 homeage immediate search
 homepage city and state links to tiles
 ✅ move errors to the bottom of the edit profile
@@ -16,7 +16,6 @@ homepage city and state links to tiles
 ✅ back to dashboard after saving from editor
 ✅ back to dashboard button from sub screens
 ✅ move logout to dachboard
-
 lists isntead of pills for ammenites
 some text on premium profile is hard to read
 ✅ shows wrong renew date on dashboard

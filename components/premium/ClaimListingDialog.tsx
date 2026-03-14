@@ -101,10 +101,10 @@ export default function ClaimListingDialog({
       <Dialog open={open} onOpenChange={handleOpenChange}>
         <DialogTrigger asChild>
           <button
-            className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed px-4 py-3 text-sm font-medium transition-colors hover:bg-primary/5"
-            style={{ borderColor: `${teal}60`, color: dark }}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-full px-4 py-1.5 text-sm font-semibold text-white shadow-sm transition-colors hover:opacity-90 sm:w-auto sm:py-2"
+            style={{ background: teal }}
           >
-            <Shield className="h-4 w-4" style={{ color: teal }} />
+            <Shield className="h-4 w-4" />
             Are you the owner? Claim this listing
           </button>
         </DialogTrigger>
@@ -162,10 +162,10 @@ export default function ClaimListingDialog({
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <button
-          className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed px-4 py-3 text-sm font-medium transition-colors hover:bg-primary/5"
-          style={{ borderColor: `${teal}60`, color: dark }}
+          className="inline-flex w-full items-center justify-center gap-2 rounded-full px-4 py-1.5 text-sm font-semibold text-white shadow-sm transition-colors hover:opacity-90 sm:w-auto sm:py-2"
+          style={{ background: teal }}
         >
-          <Shield className="h-4 w-4" style={{ color: teal }} />
+          <Shield className="h-4 w-4" />
           Are you the owner? Claim this listing
         </button>
       </DialogTrigger>

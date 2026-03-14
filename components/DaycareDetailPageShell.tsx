@@ -5,7 +5,6 @@ import type { PremiumListingData } from "@/lib/premiumTypes";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { SutqBadge } from "@/components/SutqBadge";
 import StaticMap from "@/components/StaticMap";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import BackToResultsButton from "@/components/BackToResultsButton";
 import VerifiedProviderBadge from "@/components/premium/VerifiedProviderBadge";
@@ -222,46 +221,31 @@ export default function DaycareDetailPageShell({
         />
       )}
 
-      <section className="relative overflow-hidden px-6 pt-8 pb-12" style={{ background: lightTeal }}>
+      <section className="relative overflow-hidden px-6 pt-6 pb-8" style={{ background: lightTeal }}>
         <div className="pointer-events-none absolute -top-16 -right-16 h-48 w-48 rounded-full" style={{ background: `${pink}20` }} />
         <div className="pointer-events-none absolute -bottom-20 -left-20 h-52 w-52 rounded-full" style={{ background: `${gold}20` }} />
 
         <div className="relative z-10 mx-auto max-w-7xl">
-          <Breadcrumbs items={breadcrumbs} className="mb-6" />
+          <Breadcrumbs items={breadcrumbs} className="mb-3" />
 
-          <div className="mb-6">
+          <div className="mb-4">
             <BackToResultsButton fallbackHref={backHref} label={backLabel} trackingContext={uplinkContext} />
-
-            {browseLinks.length > 0 && (
-              <div className="mt-3 text-sm text-muted-foreground">
-                <span className="font-medium">Browse more:</span>{" "}
-                {browseLinks.map((link, index) => (
-                  <span key={`${link.label}-${link.href}`}>
-                    {index > 0 && <span className="mx-1.5">•</span>}
-                    <TrackedUplinkLink
-                      href={link.href}
-                      target={link.label}
-                      context={uplinkContext}
-                      className={link.isActive ? "font-semibold text-foreground" : "hover:text-foreground hover:underline"}
-                    >
-                      {link.label}
-                    </TrackedUplinkLink>
-                  </span>
-                ))}
-              </div>
-            )}
           </div>
 
           <header className="rounded-2xl border p-6 sm:p-8" style={{ background: "#fff", borderColor: `${sage}55` }}>
-            {premiumData ? (
-              <div className="mb-4">
+            <div className="mb-4 flex flex-col-reverse items-start gap-2 sm:flex-row sm:items-center">
+              {!isClaimed && (
+                <ClaimListingDialog
+                  programNumber={programNumber}
+                  daycareName={name}
+                />
+              )}
+              {premiumData ? (
                 <VerifiedProviderBadge />
-              </div>
-            ) : (
-              <Badge variant="outline" className="mb-4" style={{ borderColor: `${teal}55`, color: dark }}>
-                {programType}
-              </Badge>
-            )}
+              ) : (
+                null
+              )}
+            </div>
             {premiumData?.logo_url ? (
               <div className="flex items-start gap-4">
                 <img
@@ -274,7 +258,7 @@ export default function DaycareDetailPageShell({
                   <h1 className="font-serif text-3xl font-bold tracking-tight sm:text-4xl" style={{ color: dark }}>
                     {name}
                   </h1>
-                  <p className="mt-2 text-muted-foreground">{programType} · {city}, Ohio</p>
+                  <p className="mt-2 text-muted-foreground">{programType}<br className="sm:hidden" /><span className="hidden sm:inline"> · </span>{city}, Ohio</p>
                 </div>
               </div>
             ) : (
@@ -283,7 +267,7 @@ export default function DaycareDetailPageShell({
                   {name}
                 </h1>
                 <p className="mt-2 text-muted-foreground">
-                  {premiumData ? `${programType} · ` : ""}{city}, Ohio
+                  {programType}<br className="sm:hidden" /><span className="hidden sm:inline"> · </span>{city}, Ohio
                 </p>
               </>
             )}
@@ -314,6 +298,25 @@ export default function DaycareDetailPageShell({
               </ul>
             </div>
           </header>
+
+          {browseLinks.length > 0 && (
+            <div className="mt-3 text-sm text-muted-foreground">
+              <span className="font-medium">Browse more:</span>{" "}
+              {browseLinks.map((link, index) => (
+                <span key={`${link.label}-${link.href}`}>
+                  {index > 0 && <span className="mx-1.5">•</span>}
+                  <TrackedUplinkLink
+                    href={link.href}
+                    target={link.label}
+                    context={uplinkContext}
+                    className={link.isActive ? "font-semibold text-foreground" : "hover:text-foreground hover:underline"}
+                  >
+                    {link.label}
+                  </TrackedUplinkLink>
+                </span>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -521,12 +524,6 @@ export default function DaycareDetailPageShell({
                 )}
               </div>
 
-              {!isClaimed && (
-                <ClaimListingDialog
-                  programNumber={programNumber}
-                  daycareName={name}
-                />
-              )}
             </section>
 
             <section className="rounded-2xl border border-primary/20 bg-card p-6 shadow-sm lg:col-span-3">

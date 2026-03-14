@@ -40,13 +40,13 @@ export function Breadcrumbs({ items, className = "" }: BreadcrumbsProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
       />
       
-      <ol className="flex items-center gap-2 flex-wrap">
+      <ol className="flex items-center gap-1 sm:gap-2 flex-wrap">
         {items.map((item, index) => {
           const isLast = index === items.length - 1;
           const isHome = item.href === "/";
           
           return (
-            <li key={item.href} className="flex items-center gap-2">
+            <li key={item.href} className="flex items-center gap-1 sm:gap-2">
               {index > 0 && (
                 <ChevronRight className="h-4 w-4 text-muted-foreground/50" />
               )}
