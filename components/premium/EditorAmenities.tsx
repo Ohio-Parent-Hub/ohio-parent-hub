@@ -51,12 +51,6 @@ const AMENITY_CATEGORIES: AmenityCategory[] = [
       { key: "indoor_play_area", label: "Indoor play area" },
       { key: "security_cameras", label: "Security cameras" },
       { key: "keypad_entry", label: "Keypad entry" },
-      {
-        key: "live_parent_camera",
-        label: "Live parent camera access",
-        hasTextField: true,
-        textPlaceholder: "System name (e.g. WatchMeGrow)",
-      },
     ],
   },
   {
@@ -67,6 +61,12 @@ const AMENITY_CATEGORIES: AmenityCategory[] = [
         label: "Parent communication app",
         hasTextField: true,
         textPlaceholder: "App name (e.g. Brightwheel)",
+      },
+      {
+        key: "live_parent_camera",
+        label: "Live parent camera access",
+        hasTextField: true,
+        textPlaceholder: "System name (e.g. WatchMeGrow)",
       },
     ],
   },

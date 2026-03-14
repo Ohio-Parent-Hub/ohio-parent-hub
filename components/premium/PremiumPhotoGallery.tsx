@@ -43,7 +43,7 @@ export default function PremiumPhotoGallery({ photos, daycareName }: Props) {
             Photos
           </h3>
         </div>
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
           {photos.map((photo, index) => (
             <button
               key={index}
@@ -58,7 +58,7 @@ export default function PremiumPhotoGallery({ photos, daycareName }: Props) {
               <img
                 src={photo}
                 alt={`${daycareName} - Photo ${index + 1}`}
-                className={`w-full object-cover transition-transform group-hover:scale-105 ${
+                className={`h-full w-full object-cover transition-transform group-hover:scale-105 ${
                   index === 0 ? "aspect-[4/3]" : "aspect-square"
                 }`}
               />

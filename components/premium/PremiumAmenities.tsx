@@ -1,5 +1,6 @@
-import { Check, Sparkles } from "lucide-react";
+import { Check, Sparkles, Baby, UtensilsCrossed, ShieldCheck, MessageCircle, GraduationCap, CalendarClock, Star } from "lucide-react";
 import type { PremiumAmenitiesData } from "@/lib/premiumTypes";
+import type { LucideIcon } from "lucide-react";
 
 const AMENITY_LABELS: Record<string, string> = {
   diapers_provided: "Diapers Provided",
@@ -36,13 +37,15 @@ const AMENITY_LABELS: Record<string, string> = {
   transportation_available: "Transportation Available",
 };
 
-const AMENITY_CATEGORIES: { label: string; keys: string[] }[] = [
+const AMENITY_CATEGORIES: { label: string; icon: LucideIcon; keys: string[] }[] = [
   {
     label: "Daily Essentials",
+    icon: Baby,
     keys: ["diapers_provided", "wipes_provided", "crib_sheets_provided", "car_seat_storage"],
   },
   {
     label: "Meals & Feeding",
+    icon: UtensilsCrossed,
     keys: [
       "breakfast",
       "lunch",
@@ -54,21 +57,23 @@ const AMENITY_CATEGORIES: { label: string; keys: string[] }[] = [
   },
   {
     label: "Facilities & Safety",
+    icon: ShieldCheck,
     keys: [
       "outdoor_playground",
       "fenced_playground",
       "indoor_play_area",
       "security_cameras",
       "keypad_entry",
-      "live_parent_camera",
     ],
   },
   {
     label: "Communication",
-    keys: ["parent_communication_app"],
+    icon: MessageCircle,
+    keys: ["parent_communication_app", "live_parent_camera"],
   },
   {
     label: "Programs & Learning",
+    icon: GraduationCap,
     keys: [
       "structured_curriculum",
       "stem_activities",
@@ -79,6 +84,7 @@ const AMENITY_CATEGORIES: { label: string; keys: string[] }[] = [
   },
   {
     label: "Scheduling & Flexibility",
+    icon: CalendarClock,
     keys: [
       "part_time_care",
       "full_time_care",
@@ -108,46 +114,47 @@ export default function PremiumAmenities({
 
   return (
     <div className="mb-6">
-      <div className="mb-3 flex items-center gap-2">
-        <Sparkles className="h-4 w-4" style={{ color: "#7EA8A4" }} />
-        <h3 className="font-serif text-lg font-semibold" style={{ color: "#4A6B67" }}>
+      <div className="mb-4 flex items-center gap-2">
+        <Sparkles className="h-5 w-5" style={{ color: "#7EA8A4" }} />
+        <h3 className="font-serif text-xl font-semibold" style={{ color: "#3D5A56" }}>
           Amenities & Services
         </h3>
       </div>
 
-      <div className="space-y-4">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {activeCategories.map((category) => {
           const activeKeys = category.keys.filter((key) => checkedSet.has(key));
           if (activeKeys.length === 0) return null;
           return (
-            <div key={category.label}>
+            <div
+              key={category.label}
+              className="rounded-xl p-4"
+              style={{ backgroundColor: "#F8F6F2" }}
+            >
               <h4
-                className="mb-2 text-xs font-semibold uppercase tracking-wider"
-                style={{ color: "#7EA8A4" }}
+                className="mb-2.5 flex items-center gap-1.5 text-[15px] font-semibold"
+                style={{ color: "#4A6B67" }}
               >
+                <category.icon className="h-4 w-4" style={{ color: "#7EA8A4" }} />
                 {category.label}
               </h4>
-              <div className="flex flex-wrap gap-2">
+              <div className="space-y-1">
                 {activeKeys.map((key) => {
                   const textExtra = amenities.text_fields[key];
                   return (
-                    <span
+                    <div
                       key={key}
-                      className="inline-flex items-center gap-1 rounded-full border px-3 py-1 text-xs font-medium"
-                      style={{
-                        borderColor: "#7EA8A455",
-                        color: "#4A6B67",
-                        background: "#D5E5E320",
-                      }}
+                      className="flex items-center gap-2 text-sm"
+                      style={{ color: "#3D5A56" }}
                     >
-                      <Check className="h-3 w-3" style={{ color: "#7EA8A4" }} />
-                      {AMENITY_LABELS[key] || key}
+                      <Check className="h-3.5 w-3.5 shrink-0" style={{ color: "#7EA8A4" }} />
+                      <span>{AMENITY_LABELS[key] || key}</span>
                       {textExtra && (
-                        <span className="ml-0.5 text-[10px]" style={{ color: "#4A6B6788" }}>
+                        <span className="text-xs" style={{ color: "#4A6B6799" }}>
                           ({textExtra})
                         </span>
                       )}
-                    </span>
+                    </div>
                   );
                 })}
               </div>
@@ -156,26 +163,28 @@ export default function PremiumAmenities({
         })}
 
         {amenities.custom.length > 0 && (
-          <div>
+          <div
+            className="rounded-xl p-4"
+            style={{ backgroundColor: "#F8F6F2" }}
+          >
             <h4
-              className="mb-2 text-xs font-semibold uppercase tracking-wider"
-              style={{ color: "#7EA8A4" }}
+              className="mb-2.5 flex items-center gap-1.5 text-[15px] font-semibold"
+              style={{ color: "#4A6B67" }}
             >
+              <Star className="h-4 w-4" style={{ color: "#DCB346" }} />
               Additional Details
             </h4>
-            <div className="flex flex-wrap gap-2">
+            <div className="space-y-1">
               {amenities.custom.map((item, i) => (
-                <span
+                <div
                   key={i}
-                  className="inline-flex items-center gap-1 rounded-full border px-3 py-1 text-xs font-medium"
-                  style={{
-                    borderColor: "#DCB34655",
-                    color: "#4A6B67",
-                    background: "#DCB34610",
-                  }}
+                  className="flex items-center gap-2 text-sm"
+                  style={{ color: "#3D5A56" }}
                 >
-                  <span className="font-semibold">{item.label}:</span> {item.value}
-                </span>
+                  <Check className="h-3.5 w-3.5 shrink-0" style={{ color: "#DCB346" }} />
+                  <span className="font-semibold">{item.label}:</span>
+                  <span>{item.value}</span>
+                </div>
               ))}
             </div>
           </div>
