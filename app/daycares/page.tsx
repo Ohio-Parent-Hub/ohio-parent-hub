@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import Link from "next/link";
 import DraftDaycaresPageClient from "@/components/DraftDaycaresPageClient";
-import { loadVerifiedProgramNumbers } from "@/app/actions/premium";
+import { loadVerifiedProgramNumbers, loadPremiumLogos } from "@/app/actions/premium";
 import fs from "node:fs";
 import path from "node:path";
 import { resolveCanonicalCityName } from "@/lib/metroAreas";
@@ -241,6 +241,7 @@ export default async function GlobalSearchPage() {
         statewideNotRatedCopy={statewideEditorialCopy.notRated}
         initialDaycares={initialDaycares}
         verifiedProgramNumbers={[...(await loadVerifiedProgramNumbers())]}
+        premiumLogos={await loadPremiumLogos()}
         basePath=""
         homeHref="/"
         searchHref="/daycares"

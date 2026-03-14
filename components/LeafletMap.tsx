@@ -41,6 +41,7 @@ export interface MapProps {
     city?: string;
     zipCode?: string;
     verified?: boolean;
+    logoUrl?: string;
   }>;
   userLocation?: [number, number] | null; // New prop for user's searched location
   interactive?: boolean; // If false, disable interactions (static-like mode)
@@ -263,6 +264,7 @@ function ClusteredMarkersLayer({ markers }: { markers: NonNullable<MapProps["mar
       const safeStreetAddress = escapeHtml(markerData.streetAddress || "");
       const safeCity = escapeHtml(markerData.city || "");
       const safeZip = escapeHtml(markerData.zipCode || "");
+      const safeLogoUrl = markerData.logoUrl ? escapeHtml(markerData.logoUrl) : "";
       const ratingLabel = sutqLabelFromTier(tier);
       const ratingColor = sutqBadgeColor(tier);
 
@@ -290,9 +292,13 @@ function ClusteredMarkersLayer({ markers }: { markers: NonNullable<MapProps["mar
         .filter(Boolean)
         .join("");
 
+      const logoBlock = safeLogoUrl
+        ? `<div style="margin-bottom:8px;display:flex;align-items:center;gap:8px;"><img src="${safeLogoUrl}" alt="" style="width:36px;height:36px;border-radius:8px;object-fit:cover;border:1px solid #e5e7eb;" /><div style="font-size:14px;font-weight:700;color:#111827;line-height:1.35;">${safeTitle}</div></div>`
+        : `<div style="font-size:14px;font-weight:700;color:#111827;line-height:1.35;">${safeTitle}</div>`;
+
       const popupHtml = safeUrl
-        ? `<div style="font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;max-width:260px;"><div style="font-size:14px;font-weight:700;color:#111827;line-height:1.35;">${safeTitle}</div><div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:4px;">${metadataBadges}</div>${addressBlock}<div style="margin-top:8px;"><a href="${safeUrl}" style="color:#2563EB;text-decoration:none;font-size:12px;font-weight:600;">View Details</a></div></div>`
-        : `<div style="font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;max-width:260px;"><div style="font-size:14px;font-weight:700;color:#111827;line-height:1.35;">${safeTitle}</div><div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:4px;">${metadataBadges}</div>${addressBlock}</div>`;
+        ? `<div style="font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;max-width:260px;">${logoBlock}<div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:4px;">${metadataBadges}</div>${addressBlock}<div style="margin-top:8px;"><a href="${safeUrl}" style="color:#2563EB;text-decoration:none;font-size:12px;font-weight:600;">View Details</a></div></div>`
+        : `<div style="font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;max-width:260px;">${logoBlock}<div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:4px;">${metadataBadges}</div>${addressBlock}</div>`;
 
       marker.bindPopup(popupHtml);
       return marker;

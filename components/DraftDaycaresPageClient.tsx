@@ -35,6 +35,7 @@ interface DraftDaycaresPageClientProps {
   statewideNotRatedCopy: string;
   initialDaycares?: Record<string, string>[];
   verifiedProgramNumbers?: string[];
+  premiumLogos?: Record<string, string>;
   basePath?: string;
   homeHref?: string;
   searchHref?: string;
@@ -51,6 +52,7 @@ export default function DraftDaycaresPageClient({
   statewideNotRatedCopy,
   initialDaycares = [],
   verifiedProgramNumbers = [],
+  premiumLogos = {},
   basePath = "/draft",
   homeHref = "/draft",
   searchHref = "/draft/daycares",
@@ -245,6 +247,7 @@ export default function DraftDaycaresPageClient({
             initialDaycares={initialDaycares}
             initialTotalCount={daycareCount}
             verifiedProgramNumbers={verifiedProgramNumbers}
+            premiumLogos={premiumLogos}
             basePath={basePath}
             externalMapCenter={mapCenter}
             onExternalMapCenterChange={setMapCenter}

@@ -55,6 +55,28 @@ export async function loadVerifiedProgramNumbers(): Promise<Set<string>> {
 }
 
 /**
+ * Load logo URLs for published premium listings.
+ * Returns a map of program_number → logo_url (only entries with a logo).
+ */
+export async function loadPremiumLogos(): Promise<Record<string, string>> {
+  const supabase = createServiceClient();
+
+  const { data, error } = await supabase
+    .from("premium_listings")
+    .select("program_number, logo_url")
+    .eq("published", true)
+    .not("logo_url", "is", null);
+
+  if (error || !data) return {};
+
+  const logos: Record<string, string> = {};
+  for (const row of data) {
+    if (row.logo_url) logos[row.program_number] = row.logo_url;
+  }
+  return logos;
+}
+
+/**
  * Load a published premium listing for the public detail page.
  * Returns null if listing doesn't exist or isn't published.
  */

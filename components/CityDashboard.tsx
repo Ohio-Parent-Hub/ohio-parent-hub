@@ -77,6 +77,7 @@ interface CityDashboardProps {
   initialTotalCount?: number;
   basePath?: string;
   verifiedProgramNumbers?: string[];
+  premiumLogos?: Record<string, string>;
   externalMapCenter?: [number, number] | null;
   onExternalMapCenterChange?: (coords: [number, number] | null) => void;
   externalMapZoom?: number | null;
@@ -396,6 +397,7 @@ export default function CityDashboard({
   initialTotalCount,
   basePath = "",
   verifiedProgramNumbers = [],
+  premiumLogos = {},
   externalMapCenter,
   onExternalMapCenterChange,
   externalMapZoom,
@@ -740,9 +742,10 @@ export default function CityDashboard({
           city: displayCity || "",
           zipCode: d["ZIP CODE"] || "",
           verified: verifiedSet.has(id || ""),
+          logoUrl: premiumLogos[id || ""] || undefined,
         };
       });
-  }, [filteredDaycares, cityDisplay, basePath, linkContext, returnTo, verifiedSet]);
+  }, [filteredDaycares, cityDisplay, basePath, linkContext, returnTo, verifiedSet, premiumLogos]);
 
   // Center on the first result if available, otherwise default to a central Ohio coordinate (or the first original result)
   const markerCenter: [number, number] | null = markers.length > 0
@@ -931,7 +934,15 @@ export default function CityDashboard({
                   key={id}
                   className="group flex flex-col sm:flex-row sm:items-center justify-between rounded-xl border p-4 bg-white hover:border-black transition-colors gap-4"
                 >
-                  <div>
+                  <div className="flex gap-3">
+                    {premiumLogos[id] && (
+                      <img
+                        src={premiumLogos[id]}
+                        alt=""
+                        className="h-10 w-10 rounded-lg object-cover border border-neutral-200 flex-shrink-0 mt-0.5"
+                      />
+                    )}
+                    <div>
                     <div className="flex items-start justify-between sm:hidden mb-2">
                       <SutqBadge rating={sutq} className="scale-90 origin-left" />
                     </div>
@@ -960,6 +971,7 @@ export default function CityDashboard({
                           PFCC
                         </span>
                       )}
+                    </div>
                     </div>
                   </div>
 

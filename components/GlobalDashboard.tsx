@@ -466,6 +466,7 @@ interface GlobalDashboardProps {
   initialDaycares?: Daycare[];
   initialTotalCount?: number;
   verifiedProgramNumbers?: string[];
+  premiumLogos?: Record<string, string>;
   basePath?: string;
   externalMapCenter?: [number, number] | null;
   onExternalMapCenterChange?: (coords: [number, number] | null) => void;
@@ -481,6 +482,7 @@ export default function GlobalDashboard({
   initialDaycares = [],
   initialTotalCount,
   verifiedProgramNumbers = [],
+  premiumLogos = {},
   basePath = "",
   externalMapCenter,
   onExternalMapCenterChange,
@@ -818,9 +820,10 @@ export default function GlobalDashboard({
           city: toTitleCaseIfAllCaps(city),
           zipCode: d["ZIP CODE"] || "",
           verified: verifiedSet.has(d["PROGRAM NUMBER"] || ""),
+          logoUrl: premiumLogos[d["PROGRAM NUMBER"] || ""] || undefined,
         };
       });
-  }, [filteredDaycares, basePath, returnTo, verifiedSet]);
+  }, [filteredDaycares, basePath, returnTo, verifiedSet, premiumLogos]);
 
   // Ohio Center
   const defaultCenterCoords: [number, number] = [40.4173, -82.9071];
@@ -1050,7 +1053,15 @@ export default function GlobalDashboard({
                 key={d["PROGRAM NUMBER"]} 
                 className="group flex flex-col sm:flex-row sm:items-center justify-between rounded-xl border p-4 bg-white hover:border-black transition-colors gap-4"
               >
-                <div>
+                <div className="flex gap-3">
+                  {premiumLogos[d["PROGRAM NUMBER"] || ""] && (
+                    <img
+                      src={premiumLogos[d["PROGRAM NUMBER"] || ""]}
+                      alt=""
+                      className="h-10 w-10 rounded-lg object-cover border border-neutral-200 flex-shrink-0 mt-0.5"
+                    />
+                  )}
+                  <div>
                     <div className="flex items-start justify-between sm:hidden mb-2">
                       <SutqBadge rating={d["SUTQ RATING"]} className="scale-90 origin-left" />
                     </div>
@@ -1081,6 +1092,7 @@ export default function GlobalDashboard({
                             PFCC
                           </span>
                       )}
+                  </div>
                   </div>
                 </div>
                 

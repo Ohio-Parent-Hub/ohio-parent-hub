@@ -251,17 +251,19 @@ export default function PremiumEditorForm({ programNumber, initialData }: Props)
             </div>
           )}
 
-          {/* Actions */}
-          <div className="flex gap-3 border-t pt-6" style={{ borderColor: "#D5E5E3" }}>
-            <button
-              type="button"
-              onClick={handleSave}
-              disabled={saving}
-              className="rounded-xl px-6 py-3 font-semibold text-white transition-colors hover:opacity-90 disabled:opacity-50"
-              style={{ backgroundColor: "#7EA8A4" }}
-            >
-              {saving ? "Saving…" : "Save Changes"}
-            </button>
+          {/* Actions — sticky bottom bar */}
+          <div className="sticky bottom-0 -mx-6 -mb-8 rounded-b-3xl border-t bg-white/95 px-6 py-4 backdrop-blur-sm sm:-mx-8 sm:-mb-8 sm:px-8" style={{ borderColor: "#D5E5E3" }}>
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={handleSave}
+                disabled={saving}
+                className="rounded-xl px-6 py-3 font-semibold text-white transition-colors hover:opacity-90 disabled:opacity-50"
+                style={{ backgroundColor: "#7EA8A4" }}
+              >
+                {saving ? "Saving…" : "Save Changes"}
+              </button>
+            </div>
           </div>
         </div>
       </div>

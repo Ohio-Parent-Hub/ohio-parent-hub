@@ -30,6 +30,7 @@ interface DraftCityDaycaresPageClientProps {
   sutqStats?: CitySutqStats;
   initialDaycares: DaycareRow[];
   verifiedProgramNumbers?: string[];
+  premiumLogos?: Record<string, string>;
   basePath?: string;
   homeHref?: string;
   citiesHref?: string;
@@ -66,6 +67,7 @@ export default function DraftCityDaycaresPageClient({
   sutqStats,
   initialDaycares,
   verifiedProgramNumbers = [],
+  premiumLogos = {},
   basePath = "/draft",
   homeHref = "/draft",
   citiesHref = "/draft/cities",
@@ -296,6 +298,7 @@ export default function DraftCityDaycaresPageClient({
             cityDisplay={cityDisplay}
             initialTotalCount={cityCount}
             verifiedProgramNumbers={verifiedProgramNumbers}
+            premiumLogos={premiumLogos}
             basePath={basePath}
             externalMapCenter={mapCenter}
             onExternalMapCenterChange={setMapCenter}

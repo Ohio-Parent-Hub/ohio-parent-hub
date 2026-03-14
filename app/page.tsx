@@ -222,7 +222,7 @@ export default function HomePage() {
 
   return (
     <div className="flex min-h-screen flex-col" style={{ background: cream, color: dark }}>
-      <section className="relative overflow-hidden px-6 py-28 sm:py-36" style={{ background: lightTeal }}>
+      <section className="relative overflow-hidden px-6 pt-12 pb-28 sm:pt-16 sm:pb-36" style={{ background: lightTeal }}>
         <SparkleDecor className="absolute top-10 left-[8%] h-6 w-6 text-gold/30 animate-pulse" style={{ color: gold }} />
         <SparkleDecor className="absolute top-20 right-[12%] h-4 w-4 text-pink/30 animate-pulse" style={{ color: pink }} />
         <SparkleDecor className="absolute bottom-24 left-[15%] h-5 w-5 text-teal/20 animate-pulse" style={{ color: teal }} />
@@ -243,7 +243,7 @@ export default function HomePage() {
 
             <h1 className="font-serif text-5xl font-bold tracking-tight sm:text-6xl md:text-7xl" style={{ color: dark }}>
               <span className="text-balance">Find the Best Daycares</span>
-              <br className="hidden sm:block" />
+              <br />
               <span style={{ color: pink }}>in Ohio.</span>
             </h1>
 
@@ -264,17 +264,31 @@ export default function HomePage() {
           <div className="lg:col-span-2">
             <div className="grid grid-cols-2 gap-4">
               {[
-                { value: daycares.length.toLocaleString(), label: "Programs", bg: "#FFFFFF", accent: teal },
-                { value: String(cityCounts.size), label: "Cities", bg: lightPink, accent: pink },
-                { value: "100%", label: "Licensed", bg: lightGold, accent: gold },
-                { value: "Free", label: "For Parents", bg: "#F8FBFA", accent: sage },
-              ].map((s) => (
-                <div key={s.label} className="flex flex-col items-start rounded-2xl border p-6 shadow-lg" style={{ background: s.bg, borderColor: `${s.accent}40`, boxShadow: "0 10px 24px rgba(61,90,86,0.12)" }}>
-                  <SparkleDecor className="mb-2 h-4 w-4" style={{ color: `${s.accent}60` }} />
-                  <span className="font-serif text-3xl font-bold" style={{ color: s.accent }}>{s.value}</span>
-                  <span className="mt-1 text-xs font-semibold uppercase tracking-widest" style={{ color: `${dark}88` }}>{s.label}</span>
-                </div>
-              ))}
+                { value: daycares.length.toLocaleString(), label: "Programs", bg: "#FFFFFF", accent: teal, href: "/daycares" },
+                { value: String(cityCounts.size), label: "Cities", bg: lightPink, accent: pink, href: "/cities" },
+                { value: "100%", label: "Licensed", bg: lightGold, accent: gold, href: "/methodology" },
+                { value: "Free", label: "For Parents", bg: "#F8FBFA", accent: dark },
+              ].map((s) => {
+                const content = (
+                  <>
+                    <SparkleDecor className="mb-2 h-4 w-4" style={{ color: `${s.accent}60` }} />
+                    <span className="font-serif text-3xl font-bold" style={{ color: s.accent }}>{s.value}</span>
+                    <span className="mt-1 text-xs font-semibold uppercase tracking-widest" style={{ color: `${dark}88` }}>{s.label}</span>
+                  </>
+                );
+                const className = `flex flex-col items-start rounded-2xl border p-6 shadow-lg transition-colors ${"href" in s && s.href ? "hover:border-opacity-80 hover:shadow-xl cursor-pointer" : ""}`;
+                const style = { background: s.bg, borderColor: `${s.accent}40`, boxShadow: "0 10px 24px rgba(61,90,86,0.12)" };
+
+                return "href" in s && s.href ? (
+                  <Link key={s.label} href={s.href} className={className} style={style}>
+                    {content}
+                  </Link>
+                ) : (
+                  <div key={s.label} className={className} style={style}>
+                    {content}
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
