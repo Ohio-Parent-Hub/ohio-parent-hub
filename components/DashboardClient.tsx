@@ -19,12 +19,24 @@ import {
   CheckCircle2,
   Clock,
   XCircle,
+  LogOut,
 } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
+import { Star } from "lucide-react";
 
 const teal = "#7EA8A4";
 const dark = "#4A6B67";
 const cream = "#F5EDE4";
 const gold = "#DCB346";
+const lightGold = "#F5E9BE";
+
+type DaycareInfo = {
+  programType: string | null;
+  sutqRating: string | null;
+  city: string | null;
+  county: string | null;
+  licensedSince: string | null;
+};
 
 type DashboardClientProps = {
   daycareName: string;
@@ -37,7 +49,22 @@ type DashboardClientProps = {
     currentPeriodEnd: string | null;
   } | null;
   hasStripeCustomer: boolean;
+  daycareInfo: DaycareInfo;
 };
+
+function sutqLabel(rating: string | null): string {
+  if (rating === "3") return "Gold";
+  if (rating === "2") return "Silver";
+  if (rating === "1") return "Bronze";
+  return "Not Rated";
+}
+
+function sutqColor(rating: string | null) {
+  if (rating === "3") return gold;
+  if (rating === "2") return "#94a3b8";
+  if (rating === "1") return "#ea580c";
+  return `${dark}66`;
+}
 
 export default function DashboardClient({
   daycareName,
@@ -46,6 +73,7 @@ export default function DashboardClient({
   subscriptionStatus,
   subscriptionDetails,
   hasStripeCustomer,
+  daycareInfo,
 }: DashboardClientProps) {
   const router = useRouter();
   const [billingLoading, setBillingLoading] = useState(false);
@@ -144,29 +172,65 @@ export default function DashboardClient({
   }
 
   return (
-    <main
-      className="min-h-screen px-4 py-10"
-      style={{ backgroundColor: cream }}
-    >
-      <div className="mx-auto max-w-2xl">
-        {/* Header */}
-        <div className="mb-8">
-          <h1
-            className="font-serif text-3xl font-bold"
-            style={{ color: dark }}
-          >
-            Dashboard
-          </h1>
-          <p className="mt-1 text-sm" style={{ color: `${dark}aa` }}>
-            {daycareName}
-          </p>
-          <p className="text-xs" style={{ color: `${dark}80` }}>
-            {email}
-          </p>
+    <div className="min-h-screen" style={{ backgroundColor: cream }}>
+      {/* ── Hero header ── */}
+      <section className="relative overflow-hidden px-6 pt-8 pb-10" style={{ background: "#D5E5E3" }}>
+        <div className="pointer-events-none absolute -top-16 -right-16 h-48 w-48 rounded-full" style={{ background: "#E8A0AC20" }} />
+        <div className="pointer-events-none absolute -bottom-20 -left-20 h-52 w-52 rounded-full" style={{ background: `${gold}20` }} />
+
+        <div className="relative z-10 mx-auto max-w-2xl">
+          <div className="grid gap-6 lg:grid-cols-5 lg:items-end">
+            <div className="lg:col-span-3">
+              <h1 className="font-serif text-3xl font-bold tracking-tight sm:text-4xl" style={{ color: dark }}>
+                Dashboard
+              </h1>
+              <p className="mt-2 text-sm font-medium" style={{ color: `${dark}cc` }}>
+                {daycareName}
+              </p>
+              <p className="mt-0.5 text-xs" style={{ color: `${dark}88` }}>
+                {email}
+              </p>
+              {daycareInfo.programType && (
+                <div className="mt-3 flex flex-wrap gap-2 text-xs font-medium" style={{ color: `${dark}dd` }}>
+                  <span className="rounded-full border px-3 py-1" style={{ borderColor: `${teal}55` }}>
+                    {daycareInfo.programType}
+                  </span>
+                  {daycareInfo.city && (
+                    <span className="rounded-full border px-3 py-1" style={{ borderColor: `${teal}55` }}>
+                      {daycareInfo.city}{daycareInfo.county ? `, ${daycareInfo.county} County` : ""}
+                    </span>
+                  )}
+                </div>
+              )}
+            </div>
+
+            <div className="lg:col-span-2 grid grid-cols-2 gap-3">
+              <div className="rounded-2xl border p-4 shadow-sm" style={{ background: "#FFFFFF", borderColor: `${teal}40` }}>
+                <div className="flex items-center gap-1.5">
+                  <Star className="h-4 w-4" style={{ color: sutqColor(daycareInfo.sutqRating), fill: sutqColor(daycareInfo.sutqRating) }} />
+                  <span className="font-serif text-lg font-bold" style={{ color: sutqColor(daycareInfo.sutqRating) }}>
+                    {sutqLabel(daycareInfo.sutqRating)}
+                  </span>
+                </div>
+                <div className="mt-1 text-[11px] uppercase tracking-widest" style={{ color: `${dark}88` }}>SUTQ Rating</div>
+              </div>
+              <div className="rounded-2xl border p-4 shadow-sm" style={{ background: lightGold, borderColor: `${gold}40` }}>
+                <span className="font-serif text-lg font-bold" style={{ color: dark }}>
+                  {daycareInfo.licensedSince ?? "N/A"}
+                </span>
+                <div className="mt-1 text-[11px] uppercase tracking-widest" style={{ color: `${dark}88` }}>Licensed Since</div>
+              </div>
+            </div>
+          </div>
         </div>
+      </section>
+
+      {/* ── Body ── */}
+      <main className="px-6 py-8">
+        <div className="mx-auto max-w-2xl space-y-6">
 
         {/* Subscription Card */}
-        <div className="mb-6 rounded-2xl bg-white p-6 shadow-sm">
+        <div className="rounded-2xl bg-white p-6 shadow-sm">
           <div className="mb-4 flex items-center justify-between">
             <h2
               className="font-serif text-lg font-semibold"
@@ -221,7 +285,7 @@ export default function DashboardClient({
         </div>
 
         {/* Quick Actions */}
-        <div className="mb-6 grid gap-3 sm:grid-cols-2">
+        <div className="grid gap-3 sm:grid-cols-2">
           {isActive && (
             <Link
               href="/dashboard/edit"
@@ -300,7 +364,7 @@ export default function DashboardClient({
         </div>
 
         {/* Change Password */}
-        <div className="mb-6 rounded-2xl bg-white p-6 shadow-sm">
+        <div className="rounded-2xl bg-white p-6 shadow-sm">
           <h2
             className="mb-4 flex items-center gap-2 font-serif text-lg font-semibold"
             style={{ color: dark }}
@@ -433,8 +497,26 @@ export default function DashboardClient({
             </div>
           )}
         </div>
-      </div>
-    </main>
+
+        {/* Sign Out */}
+        <div className="flex justify-center">
+          <Button
+            variant="ghost"
+            className="rounded-xl text-sm font-medium"
+            style={{ color: `${dark}99` }}
+            onClick={async () => {
+              const supabase = createClient();
+              await supabase.auth.signOut();
+              router.push("/");
+            }}
+          >
+            <LogOut className="mr-2 h-4 w-4" />
+            Sign Out
+          </Button>
+        </div>
+        </div>
+      </main>
+    </div>
   );
 }
 

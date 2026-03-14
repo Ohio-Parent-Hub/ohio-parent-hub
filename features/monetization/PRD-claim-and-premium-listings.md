@@ -109,7 +109,7 @@ Create tables via Supabase migrations:
 ## Phase 2: Claim Flow
 
 > **Key decision:** Claim IS the signup. No standalone signup page. No manual review queue.
-> If email doesn't match → user contacts ohioparenthub@gmail.com for manual help.
+> If email doesn't match → user contacts info@ohioparenthub.com for manual help.
 
 ### Step 2.1 — "Claim This Listing" CTA on detail page
 - Add a `ClaimListingButton` component to `DaycareDetailPageShell.tsx`
@@ -126,7 +126,7 @@ Create tables via Supabase migrations:
 4. **Match →** `supabase.auth.signUp({ email, password, options: { data: { program_number } } })` creates the account and sends a confirmation email (Supabase built-in). Show "Check Your Email" screen with resend button.
 5. Owner clicks confirmation link → `/auth/callback` → session created → profile row created → redirect to `/dashboard/edit`
 6. From then on, owner logs in with email + password via `/auth/login`
-7. **No match →** Show error: "We couldn't verify your email for this listing. Please contact ohioparenthub@gmail.com for help."
+7. **No match →** Show error: "We couldn't verify your email for this listing. Please contact info@ohioparenthub.com for help."
 
 ### Step 2.3 — Returning users
 - `/auth/login` page remains for returning owners (email + password)
@@ -728,7 +728,7 @@ Lightweight approach to protect site quality without adding build complexity.
    - ✅ Update login page: replaced signup link with "Visit your daycare's page" guidance
    - ✅ Branded confirmation email template configured in Supabase dashboard (Authentication → Email Templates → Confirm signup)
    - Note: No magic links. Standard password-based auth with Supabase email confirmation.
-   - Note: No-match users contact ohioparenthub@gmail.com (manual support, no review queue)
+   - Note: No-match users contact info@ohioparenthub.com (manual support, no review queue)
    - ⚠️  Migration `002_simplify_claim_flow.sql` must be executed in Supabase SQL Editor before testing
    - ⚠️  "Confirm email" must be enabled in Supabase dashboard (Authentication → Providers → Email)
 

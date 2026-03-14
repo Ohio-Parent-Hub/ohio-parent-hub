@@ -186,7 +186,7 @@ export default function EditorAmenities({ amenities, onChange }: Props) {
                       value={amenities.text_fields[item.key] ?? ""}
                       onChange={(e) => setTextField(item.key, e.target.value)}
                       placeholder={item.textPlaceholder}
-                      className="ml-6 mt-1 w-56 rounded border px-2 py-1 text-xs focus:outline-none focus:ring-1"
+                      className="ml-6 mt-1 w-56 rounded-lg border px-3 py-1.5 text-xs focus:outline-none focus:ring-2"
                       style={{ borderColor: "#D5E5E3", color: "#4A6B67" }}
                     />
                   )}
@@ -213,7 +213,7 @@ export default function EditorAmenities({ amenities, onChange }: Props) {
                 value={c.label}
                 onChange={(e) => updateCustom(i, "label", e.target.value)}
                 placeholder="Label (e.g. Languages Spoken)"
-                className="w-44 rounded border px-2 py-1 text-sm focus:outline-none focus:ring-1"
+                className="w-44 rounded-lg border px-3 py-1.5 text-sm focus:outline-none focus:ring-2"
                 style={{ borderColor: "#D5E5E3", color: "#4A6B67" }}
               />
               <input
@@ -221,7 +221,7 @@ export default function EditorAmenities({ amenities, onChange }: Props) {
                 value={c.value}
                 onChange={(e) => updateCustom(i, "value", e.target.value)}
                 placeholder="Value (e.g. English, Spanish)"
-                className="flex-1 rounded border px-2 py-1 text-sm focus:outline-none focus:ring-1"
+                className="flex-1 rounded-lg border px-3 py-1.5 text-sm focus:outline-none focus:ring-2"
                 style={{ borderColor: "#D5E5E3", color: "#4A6B67" }}
               />
               <button
@@ -239,8 +239,8 @@ export default function EditorAmenities({ amenities, onChange }: Props) {
           <button
             type="button"
             onClick={addCustom}
-            className="mt-2 flex items-center gap-1 text-sm hover:underline"
-            style={{ color: "#7EA8A4" }}
+            className="mt-3 inline-flex items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-medium transition-colors hover:bg-opacity-10"
+            style={{ borderColor: "#7EA8A4", color: "#7EA8A4", backgroundColor: "rgba(126,168,164,0.06)" }}
           >
             <Plus className="h-4 w-4" /> Add custom detail
           </button>

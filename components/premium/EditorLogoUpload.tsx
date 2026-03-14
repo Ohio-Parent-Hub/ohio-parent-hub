@@ -3,6 +3,8 @@
 import { useRef, useState } from "react";
 import { Upload, X, Loader2 } from "lucide-react";
 import { uploadListingImage, deleteListingImage } from "@/app/actions/premium";
+import { compressLogo } from "@/lib/compressImage";
+import { useToast } from "@/components/ui/toast";
 
 type Props = {
   logoUrl: string | undefined;
@@ -12,21 +14,23 @@ type Props = {
 export default function EditorLogoUpload({ logoUrl, onChange }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
+  const { toast } = useToast();
 
-  async function handleFile(file: File) {
-    if (!file.type.startsWith("image/")) return;
-    if (file.size > 200 * 1024) {
-      alert("Logo must be under 200 KB.");
+  async function handleFile(raw: File) {
+    if (!raw.type.startsWith("image/")) return;
+    if (raw.size > 5 * 1024 * 1024) {
+      toast("Logo must be under 5 MB.", "error");
       return;
     }
     setUploading(true);
+    const file = await compressLogo(raw);
     const fd = new FormData();
     fd.append("file", file);
     fd.append("kind", "logo");
     const result = await uploadListingImage(fd);
     setUploading(false);
     if (result.error) {
-      alert(result.error);
+      toast(result.error, "error");
       return;
     }
     // Delete old logo if replacing
@@ -75,7 +79,7 @@ export default function EditorLogoUpload({ logoUrl, onChange }: Props) {
       )}
       <div className="text-sm" style={{ color: "#6B8A86" }}>
         <p>Square image recommended (e.g. 512×512).</p>
-        <p className="text-xs">JPG, PNG, or WebP. Max 200 KB.</p>
+        <p className="text-xs">JPG, PNG, or WebP. Max 5 MB.</p>
         {logoUrl && (
           <button
             type="button"

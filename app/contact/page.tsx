@@ -29,7 +29,7 @@ const dark = "#4A6B67";
 const lightTeal = "#D5E5E3";
 const lightPink = "#FADED4";
 const lightGold = "#F5E9BE";
-const emailAddress = "ohioparenthub@gmail.com";
+const emailAddress = "info@ohioparenthub.com";
 
 export default function ContactPage() {
   return (

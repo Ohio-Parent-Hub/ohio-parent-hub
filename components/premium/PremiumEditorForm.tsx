@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import type {
   PremiumListingData,
   PremiumHours,
@@ -9,15 +10,16 @@ import type {
   PremiumAmenitiesData,
   PremiumFaq,
 } from "@/lib/premiumTypes";
-import { savePremiumListing } from "@/app/actions/premium";
+import { savePremiumListing, deleteListingImage } from "@/app/actions/premium";
 import EditorLogoUpload from "./EditorLogoUpload";
 import EditorPhotos from "./EditorPhotos";
 import EditorHours from "./EditorHours";
 import EditorPricing from "./EditorPricing";
 import EditorAmenities from "./EditorAmenities";
 import EditorFaqs from "./EditorFaqs";
-import EditorPreview from "./EditorPreview";
-import { Camera, Clock, DollarSign, ListChecks, MessageSquare, FileText, Globe, Eye } from "lucide-react";
+import { useToast } from "@/components/ui/toast";
+import Link from "next/link";
+import { Camera, Clock, DollarSign, ListChecks, MessageSquare, FileText, Globe } from "lucide-react";
 
 const DEFAULT_HOURS: PremiumHours = {
   mon: { open: false, ranges: [] },
@@ -41,6 +43,13 @@ const DEFAULT_AMENITIES: PremiumAmenitiesData = {
   custom: [],
 };
 
+function normalizeUrl(raw: string): string {
+  const trimmed = raw.trim();
+  if (!trimmed) return "";
+  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+  return `https://${trimmed}`;
+}
+
 type Props = {
   programNumber?: string;
   initialData?: PremiumListingData | null;
@@ -55,9 +64,10 @@ export default function PremiumEditorForm({ programNumber, initialData }: Props)
   const [faqs, setFaqs] = useState<PremiumFaq[]>(initialData?.custom_faqs ?? []);
   const [description, setDescription] = useState(initialData?.description ?? "");
   const [websiteUrl, setWebsiteUrl] = useState(initialData?.website_url ?? "");
-  const [showPreview, setShowPreview] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
+  const { toast } = useToast();
+  const router = useRouter();
 
   const validate = useCallback((): string[] => {
     const errs: string[] = [];
@@ -95,11 +105,6 @@ export default function PremiumEditorForm({ programNumber, initialData }: Props)
       if (!faq.question.trim() && faq.answer.trim()) errs.push("Each FAQ needs a question");
     }
 
-    // Website URL: must start with https://
-    if (websiteUrl && !websiteUrl.startsWith("https://")) {
-      errs.push("Website URL must start with https://");
-    }
-
     return errs;
   }, [hours, pricing, faqs, websiteUrl]);
 
@@ -116,12 +121,12 @@ export default function PremiumEditorForm({ programNumber, initialData }: Props)
       amenities: amenities.checked.length > 0 || amenities.custom.length > 0 ? amenities : undefined,
       custom_faqs: faqs.filter((f) => f.question.trim() && f.answer.trim()),
       description: description.trim() || undefined,
-      website_url: websiteUrl.trim() || undefined,
+      website_url: normalizeUrl(websiteUrl) || undefined,
     };
 
     if (!programNumber) {
       console.log("Premium listing data (no program number):", JSON.stringify(data, null, 2));
-      alert("Preview only — no program number linked yet.");
+      toast("Preview only — no program number linked yet.");
       return;
     }
 
@@ -130,121 +135,135 @@ export default function PremiumEditorForm({ programNumber, initialData }: Props)
     setSaving(false);
 
     if (result.success) {
-      alert("Listing saved!");
+      // Clean up removed photos from storage
+      const removedPhotos = (initialData?.photos ?? []).filter((url) => !photos.includes(url));
+      for (const url of removedPhotos) {
+        deleteListingImage(url).catch(() => {});
+      }
+      toast("Listing saved!");
+      router.push("/dashboard");
     } else {
       setErrors([result.error ?? "Failed to save. Please try again."]);
     }
   }, [logoUrl, photos, hours, pricing, amenities, faqs, description, websiteUrl, validate, programNumber]);
 
-  if (showPreview) {
-    const previewData: PremiumListingData = {
-      logo_url: logoUrl,
-      photos,
-      hours: Object.values(hours).some((d) => d.open) ? hours : undefined,
-      pricing: pricing.tiers.length > 0 ? pricing : undefined,
-      amenities: amenities.checked.length > 0 || amenities.custom.length > 0 ? amenities : undefined,
-      custom_faqs: faqs.filter((f) => f.question.trim() && f.answer.trim()),
-      description: description.trim() || undefined,
-      website_url: websiteUrl.trim() || undefined,
-    };
-    return (
-      <EditorPreview
-        data={previewData}
-        onBack={() => setShowPreview(false)}
-      />
-    );
-  }
-
   return (
-    <div className="space-y-10">
-      {errors.length > 0 && (
-        <div className="rounded-xl border border-red-200 bg-red-50 p-4">
-          <p className="mb-2 font-semibold text-red-800">Please fix the following:</p>
-          <ul className="list-inside list-disc space-y-1 text-sm text-red-700">
-            {errors.map((e, i) => (
-              <li key={i}>{e}</li>
-            ))}
-          </ul>
+    <div className="min-h-screen" style={{ background: "#F5EDE4" }}>
+      {/* ── Header ── */}
+      <section className="relative overflow-hidden px-6 pt-8 pb-10" style={{ background: "#D5E5E3" }}>
+        <div className="pointer-events-none absolute -top-16 -right-16 h-48 w-48 rounded-full" style={{ background: "#E8A0AC20" }} />
+        <div className="pointer-events-none absolute -bottom-20 -left-20 h-52 w-52 rounded-full" style={{ background: "#DCB34620" }} />
+
+        <div className="relative z-10 mx-auto max-w-3xl">
+          <Link
+            href="/dashboard"
+            className="mb-4 inline-flex items-center gap-1 text-sm font-medium transition-opacity hover:opacity-80"
+            style={{ color: "#4A6B67" }}
+          >
+            ← Return to Dashboard
+          </Link>
+          <h1
+            className="font-serif text-3xl font-bold tracking-tight sm:text-4xl"
+            style={{ color: "#4A6B67" }}
+          >
+            Edit Your Listing
+          </h1>
+          <p className="mt-3 max-w-2xl text-sm leading-relaxed" style={{ color: "#4A6B67bb" }}>
+            All fields are optional. Fill in what you&apos;d like parents to see on
+            your public page.
+          </p>
         </div>
-      )}
+      </section>
 
-      {/* Logo */}
-      <Section icon={<Camera className="h-5 w-5" />} title="Logo">
-        <EditorLogoUpload logoUrl={logoUrl} onChange={setLogoUrl} />
-      </Section>
-
-      {/* Photos */}
-      <Section icon={<Camera className="h-5 w-5" />} title="Photos">
-        <EditorPhotos photos={photos} onChange={setPhotos} />
-      </Section>
-
-      {/* Hours */}
-      <Section icon={<Clock className="h-5 w-5" />} title="Hours of Operation">
-        <EditorHours hours={hours} onChange={setHours} />
-      </Section>
-
-      {/* Pricing */}
-      <Section icon={<DollarSign className="h-5 w-5" />} title="Pricing">
-        <EditorPricing pricing={pricing} onChange={setPricing} />
-      </Section>
-
-      {/* Amenities */}
-      <Section icon={<ListChecks className="h-5 w-5" />} title="Amenities">
-        <EditorAmenities amenities={amenities} onChange={setAmenities} />
-      </Section>
-
-      {/* FAQs */}
-      <Section icon={<MessageSquare className="h-5 w-5" />} title="Custom FAQs">
-        <EditorFaqs faqs={faqs} onChange={setFaqs} />
-      </Section>
-
-      {/* Description */}
-      <Section icon={<FileText className="h-5 w-5" />} title="About / Description">
-        <textarea
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          maxLength={2000}
-          rows={5}
-          className="w-full rounded-lg border p-3 text-sm focus:outline-none focus:ring-2"
-          style={{ borderColor: "#B8C5B2", color: "#4A6B67" }}
-          placeholder="Tell parents what makes your daycare special. What's your philosophy? What should families know about your program?"
-        />
-        <p className="mt-1 text-right text-xs" style={{ color: "#6B8A86" }}>
-          {description.length} / 2,000
-        </p>
-      </Section>
-
-      {/* Website URL */}
-      <Section icon={<Globe className="h-5 w-5" />} title="Website">
-        <input
-          type="url"
-          value={websiteUrl}
-          onChange={(e) => setWebsiteUrl(e.target.value)}
-          className="w-full rounded-lg border p-3 text-sm focus:outline-none focus:ring-2"
-          style={{ borderColor: "#B8C5B2", color: "#4A6B67" }}
-          placeholder="https://your-daycare-website.com"
-        />
-      </Section>
-
-      {/* Actions */}
-      <div className="flex gap-3 border-t pt-6" style={{ borderColor: "#D5E5E3" }}>
-        <button
-          type="button"
-          onClick={handleSave}
-          disabled={saving}
-          className="rounded-xl px-6 py-3 font-semibold text-white transition-colors hover:opacity-90 disabled:opacity-50"
-          style={{ backgroundColor: "#7EA8A4" }}
+      {/* ── Form body ── */}
+      <div className="px-6 py-8">
+        <div
+          className="mx-auto max-w-3xl space-y-6 rounded-3xl border bg-white p-6 shadow-sm sm:p-8"
+          style={{ borderColor: "#B8C5B255" }}
         >
-          {saving ? "Saving…" : "Save Changes"}
-        </button>
-        <button
-          type="button"
-          onClick={() => setShowPreview(true)}
-          className="flex items-center gap-2 rounded-xl border px-6 py-3 text-sm font-semibold transition-colors hover:bg-gray-50"
-          style={{ borderColor: "#B8C5B2", color: "#4A6B67" }}
-        >
-          <Eye className="h-4 w-4" /> Preview
-        </button>
+          {/* Logo */}
+          <Section icon={<Camera className="h-5 w-5" />} title="Logo">
+            <EditorLogoUpload logoUrl={logoUrl} onChange={setLogoUrl} />
+          </Section>
+
+          {/* Photos */}
+          <Section icon={<Camera className="h-5 w-5" />} title="Photos">
+            <EditorPhotos photos={photos} onChange={setPhotos} />
+          </Section>
+
+          {/* Hours */}
+          <Section icon={<Clock className="h-5 w-5" />} title="Hours of Operation">
+            <EditorHours hours={hours} onChange={setHours} />
+          </Section>
+
+          {/* Pricing */}
+          <Section icon={<DollarSign className="h-5 w-5" />} title="Pricing">
+            <EditorPricing pricing={pricing} onChange={setPricing} />
+          </Section>
+
+          {/* Amenities */}
+          <Section icon={<ListChecks className="h-5 w-5" />} title="Amenities">
+            <EditorAmenities amenities={amenities} onChange={setAmenities} />
+          </Section>
+
+          {/* FAQs */}
+          <Section icon={<MessageSquare className="h-5 w-5" />} title="Custom FAQs">
+            <EditorFaqs faqs={faqs} onChange={setFaqs} />
+          </Section>
+
+          {/* Description */}
+          <Section icon={<FileText className="h-5 w-5" />} title="About / Description">
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              maxLength={2000}
+              rows={5}
+              className="w-full rounded-lg border p-3 text-sm focus:outline-none focus:ring-2"
+              style={{ borderColor: "#B8C5B2", color: "#4A6B67" }}
+              placeholder="Tell parents what makes your daycare special. What's your philosophy? What should families know about your program?"
+            />
+            <p className="mt-1 text-right text-xs" style={{ color: "#6B8A86" }}>
+              {description.length} / 2,000
+            </p>
+          </Section>
+
+          {/* Website URL */}
+          <Section icon={<Globe className="h-5 w-5" />} title="Website">
+            <input
+              type="url"
+              value={websiteUrl}
+              onChange={(e) => setWebsiteUrl(e.target.value)}
+              className="w-full rounded-lg border p-3 text-sm focus:outline-none focus:ring-2"
+              style={{ borderColor: "#B8C5B2", color: "#4A6B67" }}
+              placeholder="https://your-daycare-website.com"
+            />
+          </Section>
+
+          {/* Validation errors */}
+          {errors.length > 0 && (
+            <div className="rounded-xl border border-red-200 bg-red-50 p-4">
+              <p className="mb-2 font-semibold text-red-800">Please fix the following:</p>
+              <ul className="list-inside list-disc space-y-1 text-sm text-red-700">
+                {errors.map((e, i) => (
+                  <li key={i}>{e}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {/* Actions */}
+          <div className="flex gap-3 border-t pt-6" style={{ borderColor: "#D5E5E3" }}>
+            <button
+              type="button"
+              onClick={handleSave}
+              disabled={saving}
+              className="rounded-xl px-6 py-3 font-semibold text-white transition-colors hover:opacity-90 disabled:opacity-50"
+              style={{ backgroundColor: "#7EA8A4" }}
+            >
+              {saving ? "Saving…" : "Save Changes"}
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -260,9 +279,17 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <section>
-      <div className="mb-3 flex items-center gap-2">
-        <span style={{ color: "#7EA8A4" }}>{icon}</span>
+    <section
+      className="rounded-2xl border p-5"
+      style={{ borderColor: "#7EA8A430", background: "#7EA8A40a" }}
+    >
+      <div className="mb-4 flex items-center gap-2.5">
+        <div
+          className="flex h-8 w-8 items-center justify-center rounded-lg"
+          style={{ background: "#D5E5E3" }}
+        >
+          <span style={{ color: "#4A6B67" }}>{icon}</span>
+        </div>
         <h2 className="font-serif text-xl font-semibold" style={{ color: "#4A6B67" }}>
           {title}
         </h2>

@@ -109,6 +109,8 @@ function FilterContent({
   setSearchQuery,
   pfccEnabled,
   setPfccEnabled,
+  verifiedEnabled,
+  setVerifiedEnabled,
   selectedRatings,
   toggleRating,
   selectedProgramTypes,
@@ -124,6 +126,8 @@ function FilterContent({
   setSearchQuery: (v: string) => void;
   pfccEnabled: boolean;
   setPfccEnabled: (v: boolean) => void;
+  verifiedEnabled: boolean;
+  setVerifiedEnabled: (v: boolean) => void;
   selectedRatings: string[];
   toggleRating: (v: string) => void;
   selectedProgramTypes: string[];
@@ -138,6 +142,7 @@ function FilterContent({
   const [cityOpen, setCityOpen] = useState(false);
   const hasActiveFilters =
     pfccEnabled ||
+    verifiedEnabled ||
     selectedRatings.length > 0 ||
     selectedProgramTypes.length > 0 ||
     !!searchQuery ||
@@ -241,8 +246,32 @@ function FilterContent({
 
       <div>
         <h2 className="text-sm font-semibold mb-4">Program filters</h2>
-        
-        <div className="flex items-center space-x-2">
+        <div className="space-y-3">
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="verified-filter"
+              checked={verifiedEnabled}
+              onCheckedChange={(checked) => setVerifiedEnabled(checked === true)}
+            />
+            <div className="flex items-center gap-1.5">
+              <label htmlFor="verified-filter" className="cursor-pointer">
+                <VerifiedProviderBadge />
+              </label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <div className="cursor-pointer p-1">
+                    <Info className="h-4 w-4 text-neutral-400 hover:text-neutral-600" />
+                  </div>
+                </PopoverTrigger>
+                <PopoverContent className="max-w-[280px] text-sm" align="start" side="bottom">
+                  <p className="font-medium mb-1">Provider Verified</p>
+                  <p className="text-neutral-600">This provider has claimed their listing and added extra details like photos, hours of operation, pricing, and more. Verified listings give parents a fuller picture of what to expect.</p>
+                </PopoverContent>
+              </Popover>
+            </div>
+          </div>
+        </div>
+        <div className="flex items-center space-x-2 mt-3">
           <Checkbox 
             id="pfcc"
             checked={pfccEnabled}
@@ -390,6 +419,7 @@ export default function CityDashboard({
   const [internalLocationQuery, setInternalLocationQuery] = useState("");
   const [locationSearchClearSignal, setLocationSearchClearSignal] = useState(0);
   const [pfccEnabled, setPfccEnabled] = useState(false);
+  const [verifiedEnabled, setVerifiedEnabled] = useState(false);
   const [selectedRatings, setSelectedRatings] = useState<string[]>([]);
   const [selectedProgramTypes, setSelectedProgramTypes] = useState<string[]>([]);
   const [selectedCity, setSelectedCity] = useState("");
@@ -561,6 +591,7 @@ export default function CityDashboard({
 
   const clearAllFilters = () => {
     setPfccEnabled(false);
+    setVerifiedEnabled(false);
     setSelectedRatings([]);
     setSelectedProgramTypes([]);
     setSelectedCity("");
@@ -592,7 +623,7 @@ export default function CityDashboard({
     return Array.from(citySet).sort((a, b) => prettyCity(a).localeCompare(prettyCity(b)));
   }, [hydratedDaycares]);
 
-  const filteredDaycares = useMemo(() => {
+  const baseFilteredDaycares = useMemo(() => {
     let result = hydratedDaycares;
 
     // 1. Filter by Search Query
@@ -631,10 +662,18 @@ export default function CityDashboard({
 
     return result;
   }, [hydratedDaycares, searchQuery, selectedCity, pfccEnabled, selectedRatings, selectedProgramTypes]);
+
+  const verifiedSet = useMemo(() => new Set(verifiedProgramNumbers), [verifiedProgramNumbers]);
+
+  const filteredDaycares = useMemo(() => {
+    if (!verifiedEnabled) return baseFilteredDaycares;
+    return baseFilteredDaycares.filter((d) => verifiedSet.has(d["PROGRAM NUMBER"] || ""));
+  }, [baseFilteredDaycares, verifiedEnabled, verifiedSet]);
   const hasActiveFilters =
     Boolean(searchQuery) ||
     Boolean(selectedCity) ||
     pfccEnabled ||
+    verifiedEnabled ||
     selectedRatings.length > 0 ||
     selectedProgramTypes.length > 0 ||
     Boolean(mapCenter);
@@ -678,8 +717,6 @@ export default function CityDashboard({
   const displayList = mapViewSortedDaycares.slice(0, 50);
 
   // Map markers based on FILTERED results
-  const verifiedSet = useMemo(() => new Set(verifiedProgramNumbers), [verifiedProgramNumbers]);
-
   const markers = useMemo(() => {
     return filteredDaycares
       .filter((d) => d["LAT"] && d["LNG"])
@@ -736,6 +773,8 @@ export default function CityDashboard({
             setSearchQuery={setSearchQuery}
             pfccEnabled={pfccEnabled}
             setPfccEnabled={setPfccEnabled}
+            verifiedEnabled={verifiedEnabled}
+            setVerifiedEnabled={setVerifiedEnabled}
             selectedRatings={selectedRatings}
             toggleRating={toggleRating}
             selectedProgramTypes={selectedProgramTypes}
@@ -760,7 +799,7 @@ export default function CityDashboard({
                     <span className="flex items-center">
                       <Filter className="mr-2 h-4 w-4" /> Filters
                     </span>
-                    {(pfccEnabled || selectedRatings.length > 0 || selectedProgramTypes.length > 0 || searchQuery || mapCenter || selectedCity) && (
+                    {(pfccEnabled || verifiedEnabled || selectedRatings.length > 0 || selectedProgramTypes.length > 0 || searchQuery || mapCenter || selectedCity) && (
                       <Badge variant="secondary" className="h-5 px-1.5 text-xs">Active</Badge>
                     )}
                   </Button>
@@ -781,6 +820,8 @@ export default function CityDashboard({
                     setSearchQuery={setSearchQuery}
                     pfccEnabled={pfccEnabled}
                     setPfccEnabled={setPfccEnabled}
+                    verifiedEnabled={verifiedEnabled}
+                    setVerifiedEnabled={setVerifiedEnabled}
                     selectedRatings={selectedRatings}
                     toggleRating={toggleRating}
                     selectedProgramTypes={selectedProgramTypes}

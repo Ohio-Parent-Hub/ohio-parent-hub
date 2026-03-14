@@ -68,7 +68,7 @@ export default function EditorPricing({ pricing, onChange }: Props) {
       if (rate === null) {
         delete updated[key];
       } else {
-        updated[key] = { rate, period: period ?? current?.period ?? "weekly" };
+        updated[key] = { rate, period: period ?? current?.period ?? (key === "drop_in" ? "daily" : "weekly") };
       }
       onChange({ ...pricing, additional_rates: updated });
     },
@@ -95,7 +95,7 @@ export default function EditorPricing({ pricing, onChange }: Props) {
                 value={tier.label}
                 onChange={(e) => updateTier(index, { label: e.target.value })}
                 placeholder="Label (e.g. Infant)"
-                className="w-28 rounded border px-2 py-1 text-sm focus:outline-none focus:ring-1"
+                className="w-28 rounded-lg border px-3 py-1.5 text-sm focus:outline-none focus:ring-2"
                 style={{ borderColor: "#D5E5E3", color: "#4A6B67" }}
               />
 
@@ -103,7 +103,7 @@ export default function EditorPricing({ pricing, onChange }: Props) {
               <select
                 value={tier.age_start}
                 onChange={(e) => updateTier(index, { age_start: Number(e.target.value) })}
-                className="rounded border px-2 py-1 text-xs focus:outline-none focus:ring-1"
+                className="rounded-lg border bg-white px-3 py-1.5 text-xs focus:outline-none focus:ring-2"
                 style={{ borderColor: "#D5E5E3", color: "#4A6B67" }}
               >
                 {AGE_OPTIONS.map((a) => (
@@ -118,7 +118,7 @@ export default function EditorPricing({ pricing, onChange }: Props) {
               <select
                 value={tier.age_end}
                 onChange={(e) => updateTier(index, { age_end: Number(e.target.value) })}
-                className="rounded border px-2 py-1 text-xs focus:outline-none focus:ring-1"
+                className="rounded-lg border bg-white px-3 py-1.5 text-xs focus:outline-none focus:ring-2"
                 style={{ borderColor: "#D5E5E3", color: "#4A6B67" }}
               >
                 {AGE_OPTIONS.map((a) => (
@@ -143,7 +143,7 @@ export default function EditorPricing({ pricing, onChange }: Props) {
                     })
                   }
                   placeholder="—"
-                  className="w-16 rounded border px-2 py-1 text-sm focus:outline-none focus:ring-1"
+                  className="w-16 rounded-lg border px-3 py-1.5 text-sm focus:outline-none focus:ring-2"
                   style={{ borderColor: "#D5E5E3", color: "#4A6B67" }}
                 />
               </div>
@@ -161,7 +161,7 @@ export default function EditorPricing({ pricing, onChange }: Props) {
                     })
                   }
                   placeholder="—"
-                  className="w-16 rounded border px-2 py-1 text-sm focus:outline-none focus:ring-1"
+                  className="w-16 rounded-lg border px-3 py-1.5 text-sm focus:outline-none focus:ring-2"
                   style={{ borderColor: "#D5E5E3", color: "#4A6B67" }}
                 />
               </div>
@@ -172,7 +172,7 @@ export default function EditorPricing({ pricing, onChange }: Props) {
                 onChange={(e) =>
                   updateTier(index, { period: e.target.value as PremiumPricingTier["period"] })
                 }
-                className="rounded border px-2 py-1 text-xs focus:outline-none focus:ring-1"
+                className="rounded-lg border bg-white px-3 py-1.5 text-xs focus:outline-none focus:ring-2"
                 style={{ borderColor: "#D5E5E3", color: "#4A6B67" }}
               >
                 {PERIOD_OPTIONS.map((p) => (
@@ -186,7 +186,7 @@ export default function EditorPricing({ pricing, onChange }: Props) {
               <button
                 type="button"
                 onClick={() => removeTier(index)}
-                className="ml-auto rounded-full p-1 text-red-400 hover:text-red-600"
+                className="ml-auto rounded-full p-1.5 text-red-400 transition-colors hover:bg-red-50 hover:text-red-600"
                 aria-label="Remove tier"
               >
                 <X className="h-4 w-4" />
@@ -199,8 +199,8 @@ export default function EditorPricing({ pricing, onChange }: Props) {
           <button
             type="button"
             onClick={addTier}
-            className="mt-2 flex items-center gap-1 text-sm hover:underline"
-            style={{ color: "#7EA8A4" }}
+            className="mt-3 inline-flex items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-medium transition-colors hover:bg-opacity-10"
+            style={{ borderColor: "#7EA8A4", color: "#7EA8A4", backgroundColor: "rgba(126,168,164,0.06)" }}
           >
             <Plus className="h-4 w-4" /> Add age group
           </button>
@@ -279,13 +279,13 @@ function AdditionalRateRow({
         value={rate ?? ""}
         onChange={(e) => onRateChange(e.target.value ? Number(e.target.value) : null)}
         placeholder="—"
-        className="w-20 rounded border px-2 py-1 text-sm focus:outline-none focus:ring-1"
+        className="w-20 rounded-lg border px-3 py-1.5 text-sm focus:outline-none focus:ring-2"
         style={{ borderColor: "#D5E5E3", color: "#4A6B67" }}
       />
       <select
         value={period}
         onChange={(e) => onPeriodChange(e.target.value as PremiumPricingTier["period"])}
-        className="rounded border px-2 py-1 text-xs focus:outline-none focus:ring-1"
+        className="rounded-lg border bg-white px-3 py-1.5 text-xs focus:outline-none focus:ring-2"
         style={{ borderColor: "#D5E5E3", color: "#4A6B67" }}
       >
         <option value="daily">daily</option>

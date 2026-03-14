@@ -155,3 +155,16 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Global pointer cursor for all interactive elements — outside @layer so it can't be overridden by resets */
+button,
+[role="button"],
+a,
+select,
+label[for],
+input[type="checkbox"],
+input[type="radio"],
+input[type="file"],
+summary {
+  cursor: pointer !important;
+}

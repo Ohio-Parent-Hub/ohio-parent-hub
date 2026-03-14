@@ -141,8 +141,8 @@ export async function savePremiumListing(
 
 const BUCKET = "listings";
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
-const MAX_LOGO_SIZE = 200 * 1024; // 200 KB
-const MAX_PHOTO_SIZE = 2 * 1024 * 1024; // 2 MB
+const MAX_LOGO_SIZE = 500 * 1024; // 500 KB (compressed client-side, allow headroom)
+const MAX_PHOTO_SIZE = 3 * 1024 * 1024; // 3 MB (compressed client-side, allow headroom)
 
 /**
  * Upload an image to Supabase Storage.

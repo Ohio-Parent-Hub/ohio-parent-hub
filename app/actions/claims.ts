@@ -45,7 +45,7 @@ export async function submitClaim(
     return {
       status: "no_match",
       message:
-        "No email is on file for this listing. Please contact ohioparenthub@gmail.com for help claiming your listing.",
+        "No email is on file for this listing. Please contact info@ohioparenthub.com for help claiming your listing.",
     };
   }
 
@@ -53,7 +53,7 @@ export async function submitClaim(
     return {
       status: "no_match",
       message:
-        "The email you entered doesn't match what's on file for this listing. Please use the email associated with your childcare license, or contact ohioparenthub@gmail.com for help.",
+        "The email you entered doesn't match what's on file for this listing. Please use the email associated with your childcare license, or contact info@ohioparenthub.com for help.",
     };
   }
 

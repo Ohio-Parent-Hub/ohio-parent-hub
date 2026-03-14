@@ -194,7 +194,7 @@ export default function EditorFaqs({ faqs, onChange }: Props) {
                 value={faq.question}
                 onChange={(e) => updateFaq(index, "question", e.target.value)}
                 maxLength={200}
-                className="w-full rounded border px-3 py-2 text-sm focus:outline-none focus:ring-1"
+                className="w-full rounded-lg border px-3 py-2 text-sm focus:outline-none focus:ring-2"
                 style={{ borderColor: "#D5E5E3", color: "#4A6B67" }}
                 placeholder={QUESTION_PLACEHOLDERS[index % QUESTION_PLACEHOLDERS.length]}
               />
@@ -213,7 +213,7 @@ export default function EditorFaqs({ faqs, onChange }: Props) {
                 onChange={(e) => updateFaq(index, "answer", e.target.value)}
                 maxLength={1000}
                 rows={3}
-                className="w-full rounded border px-3 py-2 text-sm focus:outline-none focus:ring-1"
+                className="w-full rounded-lg border px-3 py-2 text-sm focus:outline-none focus:ring-2"
                 style={{ borderColor: "#D5E5E3", color: "#4A6B67" }}
                 placeholder={ANSWER_PLACEHOLDERS[index % ANSWER_PLACEHOLDERS.length]}
               />
@@ -256,8 +256,8 @@ export default function EditorFaqs({ faqs, onChange }: Props) {
         <button
           type="button"
           onClick={addFaq}
-          className="mt-3 flex items-center gap-1 text-sm hover:underline"
-          style={{ color: "#7EA8A4" }}
+          className="mt-3 inline-flex items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-medium transition-colors hover:bg-opacity-10"
+          style={{ borderColor: "#7EA8A4", color: "#7EA8A4", backgroundColor: "rgba(126,168,164,0.06)" }}
         >
           <Plus className="h-4 w-4" /> Add FAQ
         </button>

@@ -121,6 +121,8 @@ function FilterContent({
   setSearchQuery,
   pfccEnabled,
   setPfccEnabled,
+  verifiedEnabled,
+  setVerifiedEnabled,
   selectedRatings,
   toggleRating,
   selectedProgramTypes,
@@ -138,6 +140,8 @@ function FilterContent({
   setSearchQuery: (v: string) => void;
   pfccEnabled: boolean;
   setPfccEnabled: (v: boolean) => void;
+  verifiedEnabled: boolean;
+  setVerifiedEnabled: (v: boolean) => void;
   selectedRatings: string[];
   toggleRating: (v: string) => void;
   selectedProgramTypes: string[];
@@ -155,6 +159,7 @@ function FilterContent({
   const [countyOpen, setCountyOpen] = useState(false);
   const hasActiveFilters =
     pfccEnabled ||
+    verifiedEnabled ||
     selectedRatings.length > 0 ||
     selectedProgramTypes.length > 0 ||
     !!searchQuery ||
@@ -327,7 +332,32 @@ function FilterContent({
       {/* Program Filters (Same as CityDashboard) */}
       <div>
         <h2 className="text-sm font-semibold mb-4">Program filters</h2>
-        <div className="flex items-center space-x-2">
+        <div className="space-y-3">
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="verified-filter"
+              checked={verifiedEnabled}
+              onCheckedChange={(checked) => setVerifiedEnabled(checked === true)}
+            />
+            <div className="flex items-center gap-1.5">
+              <label htmlFor="verified-filter" className="cursor-pointer">
+                <VerifiedProviderBadge />
+              </label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <div className="cursor-pointer p-1">
+                    <Info className="h-4 w-4 text-neutral-400 hover:text-neutral-600" />
+                  </div>
+                </PopoverTrigger>
+                <PopoverContent className="max-w-[280px] text-sm" align="start" side="bottom">
+                  <p className="font-medium mb-1">Provider Verified</p>
+                  <p className="text-neutral-600">This provider has claimed their listing and added extra details like photos, hours of operation, pricing, and more. Verified listings give parents a fuller picture of what to expect.</p>
+                </PopoverContent>
+              </Popover>
+            </div>
+          </div>
+        </div>
+        <div className="flex items-center space-x-2 mt-3">
           <Checkbox 
             id="pfcc"
             checked={pfccEnabled}
@@ -516,6 +546,7 @@ export default function GlobalDashboard({
   const setLocationQuery = onExternalLocationQueryChange ?? setInternalLocationQuery;
 
   const [pfccEnabled, setPfccEnabled] = useState(false);
+  const [verifiedEnabled, setVerifiedEnabled] = useState(false);
   const [selectedRatings, setSelectedRatings] = useState<string[]>([]);
   const [selectedProgramTypes, setSelectedProgramTypes] = useState<string[]>([]);
   const [selectedCity, setSelectedCity] = useState("");
@@ -708,16 +739,25 @@ export default function GlobalDashboard({
     };
   }, [daycares]);
 
+  const verifiedSet = useMemo(() => new Set(verifiedProgramNumbers), [verifiedProgramNumbers]);
+
   const filteredDaycares = useMemo(() => {
-    return filteredIndices
+    let result = filteredIndices
       .map((index) => daycares[index])
       .filter((daycare): daycare is Daycare => Boolean(daycare));
-  }, [daycares, filteredIndices]);
+
+    if (verifiedEnabled) {
+      result = result.filter((d) => verifiedSet.has(d["PROGRAM NUMBER"] || ""));
+    }
+
+    return result;
+  }, [daycares, filteredIndices, verifiedEnabled, verifiedSet]);
   const hasActiveFilters =
     Boolean(searchQuery) ||
     Boolean(selectedCity) ||
     Boolean(selectedCounty) ||
     pfccEnabled ||
+    verifiedEnabled ||
     selectedRatings.length > 0 ||
     selectedProgramTypes.length > 0 ||
     Boolean(mapCenter);
@@ -759,8 +799,6 @@ export default function GlobalDashboard({
   const displayMapViewCount = isResultsCountPending ? displayResultsCount : mapVisibleDaycares.length;
   const displayList = mapViewSortedDaycares.slice(0, 50);
 
-  const verifiedSet = useMemo(() => new Set(verifiedProgramNumbers), [verifiedProgramNumbers]);
-
   const mapMarkers = useMemo(() => {
     return filteredDaycares
       .filter((d) => d.LAT && d.LNG)
@@ -797,6 +835,7 @@ export default function GlobalDashboard({
 
   const clearAll = useCallback(() => {
     setPfccEnabled(false);
+    setVerifiedEnabled(false);
     setSelectedRatings([]);
     setSelectedProgramTypes([]);
     setSelectedCity("");
@@ -850,6 +889,8 @@ export default function GlobalDashboard({
           setSearchQuery={setSearchQuery}
           pfccEnabled={pfccEnabled}
           setPfccEnabled={setPfccEnabled}
+          verifiedEnabled={verifiedEnabled}
+          setVerifiedEnabled={setVerifiedEnabled}
           selectedRatings={selectedRatings}
           toggleRating={toggleRating}
           selectedProgramTypes={selectedProgramTypes}
@@ -875,7 +916,7 @@ export default function GlobalDashboard({
                 <Button variant="outline" className="flex-1">
                   <Filter className="mr-2 h-4 w-4" />
                   Filters
-                  {(pfccEnabled || selectedRatings.length > 0 || selectedProgramTypes.length > 0 || selectedCity || selectedCounty || searchQuery || mapCenter) && (
+                  {(pfccEnabled || verifiedEnabled || selectedRatings.length > 0 || selectedProgramTypes.length > 0 || selectedCity || selectedCounty || searchQuery || mapCenter) && (
                     <Badge variant="secondary" className="ml-2 px-1.5 py-0 h-5">
                       !
                     </Badge>
@@ -898,6 +939,8 @@ export default function GlobalDashboard({
                   setSearchQuery={setSearchQuery}
                   pfccEnabled={pfccEnabled}
                   setPfccEnabled={setPfccEnabled}
+                  verifiedEnabled={verifiedEnabled}
+                  setVerifiedEnabled={setVerifiedEnabled}
                   selectedRatings={selectedRatings}
                   toggleRating={toggleRating}
                   selectedProgramTypes={selectedProgramTypes}

@@ -31,17 +31,7 @@ export default async function DashboardEditPage() {
     : null;
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-8">
-      <h1
-        className="mb-2 font-serif text-3xl font-bold"
-        style={{ color: "#4A6B67" }}
-      >
-        Edit Your Listing
-      </h1>
-      <p className="mb-8 text-sm" style={{ color: "#6B8A86" }}>
-        All fields are optional. Fill in what you&apos;d like parents to see on
-        your public page.
-      </p>
+    <main>
       <PremiumEditorForm
         programNumber={programNumber}
         initialData={initialData}

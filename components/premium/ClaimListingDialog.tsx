@@ -241,11 +241,11 @@ export default function ClaimListingDialog({
             For instant verification, use the email on file with your childcare
             license. If you need help, contact{" "}
             <a
-              href="mailto:ohioparenthub@gmail.com"
+              href="mailto:info@ohioparenthub.com"
               className="underline"
               style={{ color: teal }}
             >
-              ohioparenthub@gmail.com
+              info@ohioparenthub.com
             </a>
             .
           </p>

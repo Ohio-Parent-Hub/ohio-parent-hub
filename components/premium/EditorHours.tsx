@@ -171,8 +171,8 @@ export default function EditorHours({ hours, onChange }: Props) {
                 <button
                   type="button"
                   onClick={() => addRange(day)}
-                  className="flex items-center gap-1 text-xs hover:underline"
-                  style={{ color: "#7EA8A4" }}
+                  className="inline-flex items-center gap-1 rounded-full border px-3 py-1 text-xs font-medium transition-colors"
+                  style={{ borderColor: "#7EA8A4", color: "#7EA8A4", backgroundColor: "rgba(126,168,164,0.06)" }}
                 >
                   <Plus className="h-3 w-3" /> Split
                 </button>
@@ -183,8 +183,8 @@ export default function EditorHours({ hours, onChange }: Props) {
                 <button
                   type="button"
                   onClick={() => copyToWeekdays(day)}
-                  className="flex items-center gap-1 text-xs hover:underline"
-                  style={{ color: "#7EA8A4" }}
+                  className="inline-flex items-center gap-1 rounded-full border px-3 py-1 text-xs font-medium transition-colors"
+                  style={{ borderColor: "#7EA8A4", color: "#7EA8A4", backgroundColor: "rgba(126,168,164,0.06)" }}
                   title="Copy to all weekdays (Mon–Fri)"
                 >
                   <Copy className="h-3 w-3" /> Copy M–F
@@ -211,7 +211,7 @@ function TimeSelect({
     <select
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="rounded border px-2 py-1 text-xs focus:outline-none focus:ring-1"
+      className="rounded-lg border bg-white px-3 py-1.5 text-xs focus:outline-none focus:ring-2"
       style={{ borderColor: "#B8C5B2", color: value ? "#4A6B67" : "#9CA3AF" }}
     >
       <option value="">{placeholder}</option>

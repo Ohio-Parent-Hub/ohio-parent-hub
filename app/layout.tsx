@@ -3,6 +3,7 @@ import { DM_Serif_Display, Inter } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { ToastProvider } from "@/components/ui/toast";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 
@@ -115,9 +116,11 @@ export default function RootLayout({
           </>
         )}
         <TooltipProvider>
-          <SiteHeader />
-          {children}
-          <SiteFooter />
+          <ToastProvider>
+            <SiteHeader />
+            {children}
+            <SiteFooter />
+          </ToastProvider>
         </TooltipProvider>
       </body>
     </html>

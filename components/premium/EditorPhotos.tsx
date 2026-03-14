@@ -2,7 +2,9 @@
 
 import { useRef, useCallback, useState } from "react";
 import { Upload, X, GripVertical, Loader2 } from "lucide-react";
-import { uploadListingImage, deleteListingImage } from "@/app/actions/premium";
+import { uploadListingImage } from "@/app/actions/premium";
+import { compressImage } from "@/lib/compressImage";
+import { useToast } from "@/components/ui/toast";
 
 type Props = {
   photos: string[];
@@ -14,7 +16,10 @@ const MAX_PHOTOS = 10;
 export default function EditorPhotos({ photos, onChange }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const dragIndexRef = useRef<number | null>(null);
+  const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
   const [uploading, setUploading] = useState(false);
+  const { toast } = useToast();
 
   const addFiles = useCallback(
     async (files: FileList) => {
@@ -23,8 +28,8 @@ export default function EditorPhotos({ photos, onChange }: Props) {
       for (let i = 0; i < Math.min(files.length, remaining); i++) {
         const file = files[i];
         if (!file.type.startsWith("image/")) continue;
-        if (file.size > 2 * 1024 * 1024) {
-          alert(`${file.name} is too large (max 2 MB). Skipping.`);
+        if (file.size > 10 * 1024 * 1024) {
+          toast(`${file.name} is too large (max 10 MB). Skipping.`, "error");
           continue;
         }
         toUpload.push(file);
@@ -33,13 +38,14 @@ export default function EditorPhotos({ photos, onChange }: Props) {
 
       setUploading(true);
       const newPhotos = [...photos];
-      for (const file of toUpload) {
+      for (const raw of toUpload) {
+        const file = await compressImage(raw);
         const fd = new FormData();
         fd.append("file", file);
         fd.append("kind", "photo");
         const result = await uploadListingImage(fd);
         if (result.error) {
-          alert(`Upload failed for ${file.name}: ${result.error}`);
+          toast(`Upload failed for ${file.name}: ${result.error}`, "error");
           continue;
         }
         if (result.url) newPhotos.push(result.url);
@@ -52,8 +58,6 @@ export default function EditorPhotos({ photos, onChange }: Props) {
 
   const removePhoto = useCallback(
     (index: number) => {
-      const url = photos[index];
-      if (url?.includes("/storage/")) deleteListingImage(url);
       onChange(photos.filter((_, i) => i !== index));
     },
     [photos, onChange]
@@ -75,21 +79,62 @@ export default function EditorPhotos({ photos, onChange }: Props) {
       {/* Photo grid */}
       {photos.length > 0 && (
         <div className="mb-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
-          {photos.map((photo, index) => (
-            <div
-              key={`${photo}-${index}`}
-              className="group relative rounded-xl border overflow-hidden"
+          {photos.map((photo, index) => {
+            const showLeftIndicator =
+              dragOverIndex === index &&
+              draggingIndex !== null &&
+              draggingIndex !== index &&
+              draggingIndex !== index - 1;
+
+            const showRightIndicator =
+              dragOverIndex === index + 1 &&
+              draggingIndex !== null &&
+              draggingIndex !== index &&
+              draggingIndex !== index + 1;
+
+            return (
+            <div key={`${photo}-${index}`} className="relative flex">
+              {/* Vertical drop indicator — left */}
+              {showLeftIndicator && (
+                <div className="absolute -left-1.5 top-0 bottom-0 w-0.5 rounded-full" style={{ backgroundColor: "#7EA8A4" }} />
+              )}
+              {/* Vertical drop indicator — right */}
+              {showRightIndicator && (
+                <div className="absolute -right-1.5 top-0 bottom-0 w-0.5 rounded-full" style={{ backgroundColor: "#7EA8A4" }} />
+              )}
+              <div
+              className={`group relative flex-1 rounded-xl border overflow-hidden transition-opacity ${
+                draggingIndex === index ? "opacity-40" : ""
+              }`}
               style={{ borderColor: "#B8C5B2" }}
               draggable
               onDragStart={() => {
                 dragIndexRef.current = index;
+                setDraggingIndex(index);
               }}
-              onDragOver={(e) => e.preventDefault()}
+              onDragOver={(e) => {
+                e.preventDefault();
+                const rect = e.currentTarget.getBoundingClientRect();
+                const midX = rect.left + rect.width / 2;
+                setDragOverIndex(e.clientX < midX ? index : index + 1);
+              }}
+              onDragLeave={() => {
+                if (dragOverIndex === index || dragOverIndex === index + 1) setDragOverIndex(null);
+              }}
               onDrop={() => {
-                if (dragIndexRef.current !== null && dragIndexRef.current !== index) {
-                  movePhoto(dragIndexRef.current, index);
+                if (dragIndexRef.current !== null && dragOverIndex !== null) {
+                  const target = dragOverIndex > dragIndexRef.current ? dragOverIndex - 1 : dragOverIndex;
+                  if (target !== dragIndexRef.current) {
+                    movePhoto(dragIndexRef.current, target);
+                  }
                 }
                 dragIndexRef.current = null;
+                setDraggingIndex(null);
+                setDragOverIndex(null);
+              }}
+              onDragEnd={() => {
+                setDraggingIndex(null);
+                setDragOverIndex(null);
               }}
             >
               <img
@@ -140,7 +185,9 @@ export default function EditorPhotos({ photos, onChange }: Props) {
                 )}
               </div>
             </div>
-          ))}
+            </div>
+            );
+          })}
         </div>
       )}
 
@@ -166,7 +213,7 @@ export default function EditorPhotos({ photos, onChange }: Props) {
       )}
 
       <p className="mt-2 text-xs" style={{ color: "#6B8A86" }}>
-        JPG, PNG, or WebP. Max 2 MB each. Drag to reorder — first photo is the
+        JPG, PNG, or WebP. Max 10 MB each (auto-compressed). Drag to reorder — first photo is the
         cover.
       </p>
 

@@ -116,6 +116,17 @@ export default async function DashboardPage({
   const daycareName = daycare?.["PROGRAM NAME"] ?? "Your Daycare";
   const daycareSlug = daycare ? `/daycare/${buildDaycareSlug(daycare)}` : null;
 
+  const licenseDate = daycare?.["LICENSE/CERTIFICATION/REGISTRATION BEGIN DATE"] ?? null;
+  const licensedSince = licenseDate ? new Date(licenseDate).getFullYear().toString() : null;
+
+  const daycareInfo = {
+    programType: daycare?.["PROGRAM TYPE"] ?? null,
+    sutqRating: daycare?.["SUTQ RATING"] ?? null,
+    city: daycare?.["CITY"] ?? null,
+    county: daycare?.["COUNTY"] ?? null,
+    licensedSince,
+  };
+
   // Fetch Stripe subscription details if active
   let subscriptionDetails: {
     status: string;
@@ -127,27 +138,21 @@ export default async function DashboardPage({
     try {
       const sub = await stripe.subscriptions.retrieve(
         profile.subscription_id,
-        { expand: ["items.data.price", "latest_invoice"] }
+        { expand: ["items.data.price"] }
       );
       const price = sub.items.data[0]?.price;
       const amount = price?.unit_amount ? (price.unit_amount / 100).toFixed(2) : "0.00";
       const interval = price?.recurring?.interval ?? "month";
 
-      // Get next renewal date from latest invoice period_end
-      let renewalDate: string | null = null;
-      const latestInvoice =
-        typeof sub.latest_invoice === "object" && sub.latest_invoice !== null
-          ? sub.latest_invoice
-          : null;
-      if (latestInvoice && "period_end" in latestInvoice && latestInvoice.period_end) {
-        renewalDate = new Date(
-          (latestInvoice.period_end as number) * 1000
-        ).toLocaleDateString("en-US", {
-          month: "long",
-          day: "numeric",
-          year: "numeric",
-        });
-      }
+      // Get next renewal date from subscription item's current_period_end
+      const periodEnd = sub.items.data[0]?.current_period_end;
+      const renewalDate = periodEnd
+        ? new Date(periodEnd * 1000).toLocaleDateString("en-US", {
+            month: "long",
+            day: "numeric",
+            year: "numeric",
+          })
+        : null;
 
       subscriptionDetails = {
         status: sub.status,
@@ -167,6 +172,7 @@ export default async function DashboardPage({
       subscriptionStatus={profile.subscription_status}
       subscriptionDetails={subscriptionDetails}
       hasStripeCustomer={!!profile.stripe_customer_id}
+      daycareInfo={daycareInfo}
     />
   );
 }
