@@ -6,10 +6,10 @@ better claim page, more saley
 ✅ verify badge bigger, change badge to say owner verified
 ✅ verify badge on results list
 ✅ verify badge filter
-bigger claim button on sign in page
+✅ bigger claim button on sign in page
 ✅ claim daycare in the header
-homeage immediate search
-homepage city and state links to tiles
+✅ homeage immediate search + mobile needs button to search
+✅ homepage city and state links to tiles
 ✅ move errors to the bottom of the edit profile
 ✅ profile preview doesn't show full page
 ✅ save from preview screen
@@ -22,11 +22,18 @@ some text on premium profile is hard to read
 ✅ edit listing page doesn't show a finger for active links
 ✅ we add https for them on editior
 ✅ better listings saved, not from chrome
-logo on listings and map
+✅ logo on listings and map
 ✅ change sign in to provider portal
 ✅ need to add 1 and 1.5 year to pricing age options
 ✅ when you type in drop in it changes from daily to weekly
-home homepage hero content up
+✅ home homepage hero content up
+not rated badge details on daycare pages says "may still be licensed"
+updatge legal pages
+map preview card needs work, it's busy AF
+fix mobile map experience, it's clunky and windows 98
+scroll to map on mobile (and desktop?) after executing a search
+make address search also search daycare names
+✅ make main text in homepage hero tiles slightly darker
 
 Dream:
 when deleting an account you are still logged in and shows dashboard

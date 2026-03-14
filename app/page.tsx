@@ -235,9 +235,9 @@ export default function HomePage() {
         <div className="pointer-events-none absolute -bottom-16 -right-16 h-48 w-48 rounded-full" style={{ background: `${gold}15` }} />
         <div className="pointer-events-none absolute top-1/3 right-[10%] h-32 w-32 rounded-full" style={{ background: `${sage}20` }} />
 
-        <div className="relative z-10 mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-5">
+        <div className="relative z-10 mx-auto grid max-w-6xl items-center gap-8 lg:grid-cols-5 lg:gap-12">
           <div className="lg:col-span-3 text-left">
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full px-5 py-2 text-sm font-semibold shadow-sm" style={{ background: "rgba(255,255,255,0.7)", color: teal }}>
+            <div className="mb-4 sm:mb-6 inline-flex items-center gap-2 rounded-full px-5 py-2 text-sm font-semibold shadow-sm" style={{ background: "rgba(255,255,255,0.7)", color: teal }}>
               <Sparkles className="h-4 w-4" style={{ color: gold }} />
               Ohio&apos;s Trusted Parent Resource
             </div>
@@ -248,11 +248,11 @@ export default function HomePage() {
               <span style={{ color: pink }}>in Ohio.</span>
             </h1>
 
-            <p className="mt-8 max-w-2xl text-lg leading-relaxed" style={{ color: `${dark}bb` }}>
+            <p className="mt-5 sm:mt-8 max-w-2xl text-lg leading-relaxed" style={{ color: `${dark}bb` }}>
               Browse <strong style={{ color: gold }}>{daycares.length.toLocaleString()}</strong> licensed programs across <strong style={{ color: gold }}>{cityCounts.size}</strong> Ohio cities to find child care near you.
             </p>
 
-            <div className="mt-10 w-full max-w-2xl">
+            <div className="mt-6 sm:mt-10 w-full max-w-2xl">
               <HomepageSearchInput />
             </div>
           </div>
@@ -260,15 +260,15 @@ export default function HomePage() {
           <div className="lg:col-span-2">
             <div className="grid grid-cols-2 gap-4">
               {[
-                { value: daycares.length.toLocaleString(), label: "Programs", bg: "#FFFFFF", accent: teal, href: "/daycares" },
-                { value: String(cityCounts.size), label: "Cities", bg: lightPink, accent: pink, href: "/cities" },
-                { value: "100%", label: "Licensed", bg: lightGold, accent: gold, href: "/methodology" },
-                { value: "Free", label: "For Parents", bg: "#F8FBFA", accent: dark },
+                { value: daycares.length.toLocaleString(), label: "Programs", bg: "#FFFFFF", accent: teal, darkAccent: "#5E8E8A", href: "/daycares" },
+                { value: String(cityCounts.size), label: "Cities", bg: lightPink, accent: pink, darkAccent: "#C47A86", href: "/cities" },
+                { value: "100%", label: "Licensed", bg: lightGold, accent: gold, darkAccent: "#B8962E", href: "/methodology" },
+                { value: "Free", label: "For Parents", bg: "#F8FBFA", accent: dark, darkAccent: dark },
               ].map((s) => {
                 const content = (
                   <>
                     <SparkleDecor className="mb-2 h-4 w-4" style={{ color: `${s.accent}60` }} />
-                    <span className="font-serif text-3xl font-bold" style={{ color: s.accent }}>{s.value}</span>
+                    <span className="font-serif text-3xl font-bold" style={{ color: s.darkAccent }}>{s.value}</span>
                     <span className="mt-1 text-xs font-semibold uppercase tracking-widest" style={{ color: `${dark}88` }}>{s.label}</span>
                   </>
                 );

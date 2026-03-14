@@ -6,6 +6,8 @@ import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import Link from "next/link";
+import { Shield } from "lucide-react";
 
 const teal = "#7EA8A4";
 const dark = "#4A6B67";
@@ -119,13 +121,27 @@ export default function LoginPage() {
           </Button>
         </form>
 
-        <p
-          className="mt-6 text-center text-sm"
-          style={{ color: `${dark}aa` }}
+        <div
+          className="mt-6 rounded-xl border p-4 text-center"
+          style={{ borderColor: `${teal}40`, background: `${teal}08` }}
         >
-          Want to claim your listing? Visit your daycare&apos;s page and click
-          &ldquo;Claim this listing.&rdquo;
-        </p>
+          <Shield className="mx-auto mb-2 h-6 w-6" style={{ color: teal }} />
+          <p className="text-sm font-semibold" style={{ color: dark }}>
+            Own a daycare in Ohio?
+          </p>
+          <p className="mt-1 text-xs leading-relaxed" style={{ color: `${dark}99` }}>
+            Claim your listing to add photos, hours, pricing, and earn the
+            Provider Verified badge.
+          </p>
+          <Button
+            asChild
+            size="sm"
+            className="mt-3 rounded-full px-6 text-xs font-semibold text-white"
+            style={{ backgroundColor: teal }}
+          >
+            <Link href="/daycares">Find Your Listing</Link>
+          </Button>
+        </div>
       </div>
     </main>
   );

@@ -143,7 +143,7 @@ export default function EditorPhotos({ photos, onChange }: Props) {
                 className="aspect-square w-full object-cover"
               />
               {/* Drag handle */}
-              <div className="absolute left-1 top-1 rounded bg-black/40 p-0.5 text-white opacity-0 transition-opacity group-hover:opacity-100 cursor-grab">
+              <div className="absolute left-1 top-1 rounded bg-black/40 p-0.5 text-white opacity-100 sm:opacity-0 transition-opacity sm:group-hover:opacity-100 cursor-grab">
                 <GripVertical className="h-4 w-4" />
               </div>
               {/* Position badge */}
@@ -156,13 +156,13 @@ export default function EditorPhotos({ photos, onChange }: Props) {
               <button
                 type="button"
                 onClick={() => removePhoto(index)}
-                className="absolute right-1 top-1 rounded-full bg-red-100 p-1 text-red-600 opacity-0 transition-opacity hover:bg-red-200 group-hover:opacity-100"
+                className="absolute right-1 top-1 rounded-full bg-red-100 p-1 text-red-600 opacity-100 sm:opacity-0 transition-opacity hover:bg-red-200 sm:group-hover:opacity-100"
                 aria-label={`Remove photo ${index + 1}`}
               >
                 <X className="h-3.5 w-3.5" />
               </button>
               {/* Reorder arrows for accessibility */}
-              <div className="absolute bottom-1 right-1 flex gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
+              <div className="absolute bottom-1 right-1 flex gap-0.5 opacity-100 sm:opacity-0 transition-opacity sm:group-hover:opacity-100">
                 {index > 0 && (
                   <button
                     type="button"
