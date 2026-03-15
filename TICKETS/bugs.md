@@ -17,7 +17,7 @@ better claim page, more saley
 ✅ back to dashboard button from sub screens
 ✅ move logout to dachboard
 ✅ lists isntead of pills for ammenites
-some text on premium profile is hard to read
+✅ some text on premium profile is hard to read
 ✅ shows wrong renew date on dashboard
 ✅ edit listing page doesn't show a finger for active links
 ✅ we add https for them on editior
@@ -27,7 +27,7 @@ some text on premium profile is hard to read
 ✅ need to add 1 and 1.5 year to pricing age options
 ✅ when you type in drop in it changes from daily to weekly
 ✅ home homepage hero content up
-not rated badge details on daycare pages says "may still be licensed"
+✅ not rated badge details on daycare pages says "may still be licensed"
 updatge legal pages
 map preview card needs work, it's busy AF
 fix mobile map experience, it's clunky and windows 98
