@@ -11,7 +11,7 @@ type Props = {
   onChange: (photos: string[]) => void;
 };
 
-const MAX_PHOTOS = 10;
+const MAX_PHOTOS = 9;
 
 export default function EditorPhotos({ photos, onChange }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);

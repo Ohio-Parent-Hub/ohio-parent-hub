@@ -16,7 +16,7 @@ import PremiumOwnerDescription from "@/components/premium/PremiumOwnerDescriptio
 import ClaimListingDialog from "@/components/premium/ClaimListingDialog";
 import Link from "next/link";
 import TrackedUplinkLink from "@/components/TrackedUplinkLink";
-import { ChevronDown, ExternalLink, Globe, Star } from "lucide-react";
+import { ChevronDown, ClipboardList, ExternalLink, Globe, MapPin, Phone, Star } from "lucide-react";
 import { useState } from "react";
 
 type RelatedDaycareCard = {
@@ -440,11 +440,18 @@ export default function DaycareDetailPageShell({
         </div>
       </section>
 
-      <section className="px-6 py-8">
+      {premiumData?.description && (
+        <PremiumOwnerDescription description={premiumData.description} />
+      )}
+
+      <section className="px-6 pt-4 pb-8">
         <div className="mx-auto max-w-7xl rounded-3xl border p-4 sm:p-6 shadow-sm" style={{ background: "#fff", borderColor: `${sage}55` }}>
           <div className="grid gap-6 lg:grid-cols-3">
-            <section className="rounded-2xl border border-primary/20 bg-card p-6 shadow-sm lg:col-span-2">
-              <h2 className="mb-4 font-serif text-2xl font-bold text-primary">Location</h2>
+            <section className="flex flex-col rounded-2xl border border-primary/20 bg-white p-6 shadow-sm lg:col-span-2">
+              <div className="mb-4 flex items-center gap-2">
+                <MapPin className="h-5 w-5" style={{ color: "#7EA8A4" }} />
+                <h2 className="font-serif text-2xl font-bold" style={{ color: "#4A6B67" }}>Location</h2>
+              </div>
               <div className="space-y-2">
                 <p className="text-foreground">{street}</p>
                 <p className="text-foreground">{city}, OH {zip}</p>
@@ -452,8 +459,12 @@ export default function DaycareDetailPageShell({
               </div>
 
               {hasCoordinates ? (
-                <div className="mt-6 overflow-hidden rounded-xl border border-primary/20">
-                  <StaticMap lat={lat} lng={lng} height="300px" />
+                <div className="mt-6 flex min-h-[300px] flex-1 flex-col overflow-hidden rounded-xl border border-primary/20">
+                  <div className="relative flex-1">
+                    <div className="absolute inset-0">
+                      <StaticMap lat={lat} lng={lng} height="100%" />
+                    </div>
+                  </div>
                   <div className="flex justify-between bg-primary/5 px-4 py-2 text-xs text-muted-foreground">
                     <span>OpenStreetMap</span>
                     <a
@@ -471,8 +482,11 @@ export default function DaycareDetailPageShell({
               )}
             </section>
 
-            <section className="rounded-2xl border border-primary/20 bg-card p-6 shadow-sm">
-              <h2 className="mb-4 font-serif text-2xl font-bold text-primary">Contact</h2>
+            <section className="rounded-2xl border border-primary/20 bg-white p-6 shadow-sm">
+              <div className="mb-4 flex items-center gap-2">
+                <Phone className="h-5 w-5" style={{ color: "#7EA8A4" }} />
+                <h2 className="font-serif text-2xl font-bold" style={{ color: "#4A6B67" }}>Contact</h2>
+              </div>
               <div className="space-y-3">
                 {administrator1 && (
                   <div>
@@ -524,10 +538,37 @@ export default function DaycareDetailPageShell({
                 )}
               </div>
 
+              {premiumData?.hours && (
+                <div className="mt-5 border-t border-primary/10 pt-5">
+                  <PremiumHoursTable hours={premiumData.hours} />
+                </div>
+              )}
+
             </section>
 
-            <section className="rounded-2xl border border-primary/20 bg-card p-6 shadow-sm lg:col-span-3">
-              <h2 className="mb-4 font-serif text-2xl font-bold text-primary">Program Details</h2>
+            {premiumData && premiumData.photos.length > 0 && (
+              <div className="lg:col-span-3">
+                <PremiumPhotoGallery photos={premiumData.photos} daycareName={name} />
+              </div>
+            )}
+
+            {premiumData?.pricing && (
+              <div className="lg:col-span-3">
+                <PremiumPricingTable pricing={premiumData.pricing} />
+              </div>
+            )}
+
+            {premiumData?.amenities && (
+              <div className="lg:col-span-3">
+                <PremiumAmenities amenities={premiumData.amenities} />
+              </div>
+            )}
+
+            <section className="rounded-2xl border border-primary/20 bg-white p-6 shadow-sm lg:col-span-3">
+              <div className="mb-4 flex items-center gap-2">
+                <ClipboardList className="h-5 w-5" style={{ color: "#7EA8A4" }} />
+                <h2 className="font-serif text-2xl font-bold" style={{ color: "#4A6B67" }}>Program Details</h2>
+              </div>
               <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
                   <dt className="text-sm font-medium text-muted-foreground">Program Type</dt>
@@ -550,30 +591,6 @@ export default function DaycareDetailPageShell({
           </div>
         </div>
       </section>
-
-      {premiumData && (
-        <section className="px-6 py-8">
-          <div className="mx-auto max-w-7xl rounded-3xl border p-4 sm:p-6 shadow-sm" style={{ background: "#fff", borderColor: `${sage}55` }}>
-            <h2 className="mb-6 font-serif text-2xl font-bold" style={{ color: dark }}>
-              Direct from Provider
-            </h2>
-
-            {premiumData.photos.length > 0 && (
-              <PremiumPhotoGallery photos={premiumData.photos} daycareName={name} />
-            )}
-
-            {premiumData.hours && <PremiumHoursTable hours={premiumData.hours} />}
-
-            {premiumData.pricing && <PremiumPricingTable pricing={premiumData.pricing} />}
-
-            {premiumData.amenities && <PremiumAmenities amenities={premiumData.amenities} />}
-          </div>
-        </section>
-      )}
-
-      {premiumData?.description && (
-        <PremiumOwnerDescription description={premiumData.description} />
-      )}
 
       {faqSection}
 

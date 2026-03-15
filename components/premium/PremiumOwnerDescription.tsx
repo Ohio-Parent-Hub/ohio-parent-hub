@@ -6,7 +6,7 @@ export default function PremiumOwnerDescription({
   description: string;
 }) {
   return (
-    <section className="px-6 py-8">
+    <section className="px-6 py-4">
       <div className="mx-auto max-w-7xl">
         <div
           className="rounded-2xl border p-6 shadow-sm"

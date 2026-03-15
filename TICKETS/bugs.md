@@ -16,7 +16,7 @@ better claim page, more saley
 ✅ back to dashboard after saving from editor
 ✅ back to dashboard button from sub screens
 ✅ move logout to dachboard
-lists isntead of pills for ammenites
+✅ lists isntead of pills for ammenites
 some text on premium profile is hard to read
 ✅ shows wrong renew date on dashboard
 ✅ edit listing page doesn't show a finger for active links
@@ -34,6 +34,8 @@ fix mobile map experience, it's clunky and windows 98
 scroll to map on mobile (and desktop?) after executing a search
 make address search also search daycare names
 ✅ make main text in homepage hero tiles slightly darker
+custom amenities on mobile editor
+no email says test
 
 Dream:
 when deleting an account you are still logged in and shows dashboard

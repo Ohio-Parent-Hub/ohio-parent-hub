@@ -116,7 +116,7 @@ export default function PremiumAmenities({
     <div className="mb-6">
       <div className="mb-4 flex items-center gap-2">
         <Sparkles className="h-5 w-5" style={{ color: "#7EA8A4" }} />
-        <h3 className="font-serif text-xl font-semibold" style={{ color: "#3D5A56" }}>
+        <h3 className="font-serif text-2xl font-bold" style={{ color: "#4A6B67" }}>
           Amenities & Services
         </h3>
       </div>

@@ -27,8 +27,8 @@ export default function PremiumHoursTable({ hours }: { hours: PremiumHours }) {
   return (
     <div className="mb-6">
       <div className="mb-3 flex items-center gap-2">
-        <Clock className="h-4 w-4" style={{ color: "#7EA8A4" }} />
-        <h3 className="font-serif text-lg font-semibold" style={{ color: "#4A6B67" }}>
+        <Clock className="h-5 w-5" style={{ color: "#7EA8A4" }} />
+        <h3 className="font-serif text-2xl font-bold" style={{ color: "#4A6B67" }}>
           Hours of Operation
         </h3>
       </div>
