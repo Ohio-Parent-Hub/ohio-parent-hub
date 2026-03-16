@@ -794,7 +794,7 @@ export default function CityDashboard({
         {/* Main Content */}
         <div className="flex-1 space-y-6">
           {/* Mobile Header / Controls */}
-          <div className="lg:hidden flex flex-col gap-4">
+          <div id="daycare-mobile-controls" className="lg:hidden flex flex-col gap-4 scroll-mt-24">
             <div className="flex items-center gap-2">
               <Sheet>
                 <SheetTrigger asChild>
@@ -880,7 +880,7 @@ export default function CityDashboard({
           </div>
 
           {/* Map */}
-          <div className="-mx-2 sm:mx-0 sm:rounded-xl sm:border bg-neutral-50 sm:shadow-sm relative z-0" style={{ height: "500px" }}>
+          <div id="daycare-map" className="-mx-2 sm:mx-0 sm:rounded-xl sm:border bg-neutral-50 sm:shadow-sm relative z-0" style={{ height: "500px" }}>
             {restoredStateReady ? (
               <InteractiveMap
                 center={center}

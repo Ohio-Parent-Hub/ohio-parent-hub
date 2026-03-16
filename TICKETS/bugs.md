@@ -31,7 +31,7 @@ better claim page, more saley
 updatge legal pages
 map preview card needs work, it's busy AF
 fix mobile map experience, it's clunky and windows 98
-scroll to map on mobile (and desktop?) after executing a search
+✅ scroll to map on mobile (and desktop?) after executing a search
 make address search also search daycare names
 ✅ make main text in homepage hero tiles slightly darker
 custom amenities on mobile editor

@@ -57,6 +57,12 @@ export default function LocationSearch({
         onLocationFound(lat, lng);
         onSearchSuccess?.(query.trim());
         setQuery("");
+        // Scroll to mobile controls on small screens, map on desktop
+        setTimeout(() => {
+          const mobileControls = document.getElementById("daycare-mobile-controls");
+          const target = mobileControls && mobileControls.offsetParent !== null ? mobileControls : document.getElementById("daycare-map");
+          target?.scrollIntoView({ behavior: "smooth", block: "start" });
+        }, 100);
       } else {
         setError(true);
       }
@@ -86,7 +92,7 @@ export default function LocationSearch({
                 }}
                 onKeyDown={handleKeyDown}
                 placeholder={placeholder}
-                className={`pl-9 pr-32 h-11 rounded-xl border-neutral-300 bg-white shadow-sm ${error ? "border-red-500 focus-visible:ring-red-500" : "focus-visible:ring-primary/40"}`}
+                className={`pl-9 pr-32 h-11 rounded-xl border-neutral-300 bg-white shadow-sm focus:placeholder:text-transparent ${error ? "border-red-500 focus-visible:ring-red-500" : "focus-visible:ring-primary/40"}`}
             />
             <div className="absolute right-1 top-1/2 -translate-y-1/2 flex items-center pr-1">
                 <Button 
