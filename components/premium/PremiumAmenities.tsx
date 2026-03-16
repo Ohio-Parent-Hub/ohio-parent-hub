@@ -18,6 +18,7 @@ const AMENITY_LABELS: Record<string, string> = {
   indoor_play_area: "Indoor Play Area",
   security_cameras: "Security Cameras",
   keypad_entry: "Keypad Entry",
+  handicap_accessible: "Handicap Accessible",
   live_parent_camera: "Live Parent Camera",
   parent_communication_app: "Parent Communication App",
   structured_curriculum: "Structured Curriculum",
@@ -64,6 +65,7 @@ const AMENITY_CATEGORIES: { label: string; icon: LucideIcon; keys: string[] }[] 
       "indoor_play_area",
       "security_cameras",
       "keypad_entry",
+      "handicap_accessible",
     ],
   },
   {

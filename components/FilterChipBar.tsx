@@ -641,6 +641,7 @@ const AMENITY_GROUPS: { group: string; codes: { value: string; label: string }[]
       { value: "indoor_play_area", label: "Indoor Play Area" },
       { value: "security_cameras", label: "Security Cameras" },
       { value: "keypad_entry", label: "Keypad Entry" },
+      { value: "handicap_accessible", label: "Handicap Accessible" },
     ],
   },
   {

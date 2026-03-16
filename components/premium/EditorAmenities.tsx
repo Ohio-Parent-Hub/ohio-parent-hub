@@ -51,6 +51,7 @@ const AMENITY_CATEGORIES: AmenityCategory[] = [
       { key: "indoor_play_area", label: "Indoor play area" },
       { key: "security_cameras", label: "Security cameras" },
       { key: "keypad_entry", label: "Keypad entry" },
+      { key: "handicap_accessible", label: "Handicap accessible" },
     ],
   },
   {
@@ -205,33 +206,42 @@ export default function EditorAmenities({ amenities, onChange }: Props) {
         >
           Additional Details
         </h3>
-        <div className="space-y-2">
+        <div className="space-y-0 sm:space-y-2">
           {amenities.custom.map((c, i) => (
-            <div key={i} className="flex items-center gap-2">
-              <input
-                type="text"
-                value={c.label}
-                onChange={(e) => updateCustom(i, "label", e.target.value)}
-                placeholder="Label (e.g. Languages Spoken)"
-                className="w-44 rounded-lg border px-3 py-1.5 text-sm focus:outline-none focus:ring-2"
-                style={{ borderColor: "#D5E5E3", color: "#4A6B67" }}
-              />
-              <input
-                type="text"
-                value={c.value}
-                onChange={(e) => updateCustom(i, "value", e.target.value)}
-                placeholder="Value (e.g. English, Spanish)"
-                className="flex-1 rounded-lg border px-3 py-1.5 text-sm focus:outline-none focus:ring-2"
-                style={{ borderColor: "#D5E5E3", color: "#4A6B67" }}
-              />
-              <button
-                type="button"
-                onClick={() => removeCustom(i)}
-                className="rounded-full p-1 text-red-400 hover:text-red-600"
-                aria-label="Remove custom amenity"
-              >
-                <X className="h-4 w-4" />
-              </button>
+            <div key={i}>
+              {i > 0 && <hr className="my-3 sm:hidden" style={{ borderColor: "#D5E5E3" }} />}
+              <div className="flex flex-col sm:flex-row sm:items-end gap-1.5 sm:gap-2">
+                <div className="flex flex-col gap-1">
+                  <label className="text-xs font-medium" style={{ color: "#7EA8A4" }}>Label</label>
+                  <input
+                    type="text"
+                    value={c.label}
+                    onChange={(e) => updateCustom(i, "label", e.target.value)}
+                    placeholder="Label (e.g. Languages Spoken)"
+                    className="w-full sm:w-44 rounded-lg border px-3 py-1.5 text-sm focus:outline-none focus:ring-2"
+                    style={{ borderColor: "#D5E5E3", color: "#4A6B67" }}
+                  />
+                </div>
+                <div className="flex flex-col gap-1 sm:flex-1">
+                  <label className="text-xs font-medium" style={{ color: "#7EA8A4" }}>Value</label>
+                  <input
+                    type="text"
+                    value={c.value}
+                    onChange={(e) => updateCustom(i, "value", e.target.value)}
+                    placeholder="Value (e.g. English, Spanish)"
+                    className="w-full rounded-lg border px-3 py-1.5 text-sm focus:outline-none focus:ring-2"
+                    style={{ borderColor: "#D5E5E3", color: "#4A6B67" }}
+                  />
+                </div>
+                <button
+                  type="button"
+                  onClick={() => removeCustom(i)}
+                  className="self-end rounded-full p-1 mb-1 text-red-400 hover:text-red-600"
+                  aria-label="Remove custom amenity"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
             </div>
           ))}
         </div>
