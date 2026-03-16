@@ -456,6 +456,7 @@ function PriceSlider({
   onMaxWeeklyPriceChange,
   pricePeriod,
   onPricePeriodChange,
+  ageBrackets = [],
 }: {
   minWeeklyPrice: number | null;
   onMinWeeklyPriceChange: (v: number | null) => void;
@@ -463,6 +464,7 @@ function PriceSlider({
   onMaxWeeklyPriceChange: (v: number | null) => void;
   pricePeriod: "weekly" | "daily" | "monthly";
   onPricePeriodChange: (v: "weekly" | "daily" | "monthly") => void;
+  ageBrackets?: string[];
 }) {
   // Map null → edge values for sliders
   const minSlider = minWeeklyPrice ?? PRICE_SLIDER_MIN;
@@ -582,6 +584,17 @@ function PriceSlider({
           </div>
         </div>
       </div>
+
+      {/* Age-scope hint */}
+      {ageBrackets.length > 0 ? (
+        <p className="text-[11px] text-[#4A6B67] italic">
+          Pricing for: {ageBrackets.map((b) => AGE_BRACKETS.find((ab) => ab.value === b)?.label ?? b).join(", ")}
+        </p>
+      ) : (
+        <p className="text-[11px] text-neutral-400 italic">
+          Select an age group for more accurate pricing
+        </p>
+      )}
     </div>
   );
 }
@@ -721,6 +734,7 @@ function PriceChip({
   onMaxWeeklyPriceChange,
   pricePeriod,
   onPricePeriodChange,
+  ageBrackets = [],
 }: {
   minWeeklyPrice: number | null;
   onMinWeeklyPriceChange: (v: number | null) => void;
@@ -728,6 +742,7 @@ function PriceChip({
   onMaxWeeklyPriceChange: (v: number | null) => void;
   pricePeriod: "weekly" | "daily" | "monthly";
   onPricePeriodChange: (v: "weekly" | "daily" | "monthly") => void;
+  ageBrackets?: string[];
 }) {
   const [open, setOpen] = useState(false);
   const active = minWeeklyPrice !== null || maxWeeklyPrice !== null;
@@ -764,6 +779,7 @@ function PriceChip({
           onMaxWeeklyPriceChange={onMaxWeeklyPriceChange}
           pricePeriod={pricePeriod}
           onPricePeriodChange={onPricePeriodChange}
+          ageBrackets={ageBrackets}
         />
         {active && (
           <button
@@ -1213,6 +1229,7 @@ function MobileFilterSheet({
               onMaxWeeklyPriceChange={setMaxWeeklyPrice}
               pricePeriod={pricePeriod}
               onPricePeriodChange={setPricePeriod}
+              ageBrackets={ageBrackets}
             />
           </div>
         )}
@@ -1602,6 +1619,7 @@ function FilterChipBar({
             onMaxWeeklyPriceChange={setMaxWeeklyPrice}
             pricePeriod={pricePeriod}
             onPricePeriodChange={setPricePeriod}
+            ageBrackets={ageBrackets}
           />
         )}
         {hasPremiumData && toggleAmenityFilter && clearAmenityFilters && (
@@ -1721,6 +1739,7 @@ function FilterChipBar({
           onMaxWeeklyPriceChange={setMaxWeeklyPrice}
           pricePeriod={pricePeriod}
           onPricePeriodChange={setPricePeriod}
+          ageBrackets={ageBrackets}
         />
       )}
       {hasPremiumData && toggleAmenityFilter && clearAmenityFilters && (

@@ -48,12 +48,22 @@ export type PremiumListingData = {
   website_url?: string;
 };
 
+/** Slim per-tier price range used for age-scoped price filtering. */
+export type PremiumPriceTier = {
+  ageStart: number;
+  ageEnd: number;
+  minWeekly: number;
+  maxWeekly: number;
+};
+
 /** Slim summary used by filter chips — one per published listing. */
 export type PremiumFilterSummary = {
   /** Broadest age range across all pricing tiers [minMonths, maxMonths] */
   ageRange: [number, number] | null;
   /** [min, max] weekly rate (normalized from daily ×5, monthly ÷4.33) */
   priceRange: [number, number] | null;
+  /** Per-tier price ranges for age-scoped filtering */
+  priceTiers: PremiumPriceTier[];
   /** Amenity codes present (includes schedule codes) */
   amenities: string[];
   /** Whether the listing has at least one photo */

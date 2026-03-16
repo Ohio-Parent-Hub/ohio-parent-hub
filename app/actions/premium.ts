@@ -1,7 +1,7 @@
 "use server";
 
 import { createClient, createServiceClient } from "@/lib/supabase/server";
-import type { PremiumListingData, PremiumFilterSummary, PremiumPricingTier } from "@/lib/premiumTypes";
+import type { PremiumListingData, PremiumFilterSummary, PremiumPricingTier, PremiumPriceTier } from "@/lib/premiumTypes";
 
 /**
  * Load a premium listing by program_number.
@@ -105,6 +105,7 @@ export async function loadPremiumFilterSummaries(): Promise<Record<string, Premi
     // Age range from pricing tiers
     let ageRange: [number, number] | null = null;
     let priceRange: [number, number] | null = null;
+    const priceTiers: PremiumPriceTier[] = [];
 
     if (row.pricing?.tiers && Array.isArray(row.pricing.tiers)) {
       const tiers = row.pricing.tiers as PremiumPricingTier[];
@@ -119,12 +120,24 @@ export async function loadPremiumFilterSummaries(): Promise<Record<string, Premi
           if (tier.age_end > maxAge) maxAge = tier.age_end;
         }
         const period = tier.period || "weekly";
+        let tierMin = Infinity;
+        let tierMax = -Infinity;
         for (const rate of [tier.part_time, tier.full_time]) {
           if (typeof rate === "number" && rate > 0) {
             const weekly = toWeekly(rate, period);
             if (weekly < minPrice) minPrice = weekly;
             if (weekly > maxPrice) maxPrice = weekly;
+            if (weekly < tierMin) tierMin = weekly;
+            if (weekly > tierMax) tierMax = weekly;
           }
+        }
+        if (typeof tier.age_start === "number" && typeof tier.age_end === "number" && tierMin !== Infinity) {
+          priceTiers.push({
+            ageStart: tier.age_start,
+            ageEnd: tier.age_end,
+            minWeekly: Math.round(tierMin),
+            maxWeekly: Math.round(tierMax),
+          });
         }
       }
 
@@ -140,7 +153,7 @@ export async function loadPremiumFilterSummaries(): Promise<Record<string, Premi
     // Photos
     const hasPhotos = Array.isArray(row.photos) && row.photos.length > 0;
 
-    summaries[pn] = { ageRange, priceRange, amenities, hasPhotos };
+    summaries[pn] = { ageRange, priceRange, priceTiers, amenities, hasPhotos };
   }
 
   return summaries;

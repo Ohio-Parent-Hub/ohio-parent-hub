@@ -394,11 +394,29 @@ export default function CityDashboard({
             if (!summary.ageRange || summary.ageRange[0] > bMax || summary.ageRange[1] < bMin) return false;
           }
         }
-        if (minWeeklyPrice !== null && summary.priceRange) {
-          if (summary.priceRange[1] < minWeeklyPrice) return false;
-        }
-        if (maxWeeklyPrice !== null && summary.priceRange) {
-          if (summary.priceRange[0] > maxWeeklyPrice) return false;
+        if (minWeeklyPrice !== null || maxWeeklyPrice !== null) {
+          // When age brackets are selected, scope price to tiers overlapping those brackets
+          if (ageBrackets.length > 0 && summary.priceTiers && summary.priceTiers.length > 0) {
+            const bracketRangesForPrice: Record<string, [number, number]> = { infant: [0, 12], toddler: [12, 36], preschool: [36, 60], "school-age": [60, 144] };
+            // Find all tiers that overlap ANY selected bracket
+            const matchingTiers = summary.priceTiers.filter((t) =>
+              ageBrackets.some((b) => {
+                const [bMin, bMax] = bracketRangesForPrice[b] || [0, 0];
+                return t.ageStart < bMax && t.ageEnd > bMin;
+              })
+            );
+            if (matchingTiers.length > 0) {
+              const scopedMin = Math.min(...matchingTiers.map((t) => t.minWeekly));
+              const scopedMax = Math.max(...matchingTiers.map((t) => t.maxWeekly));
+              if (minWeeklyPrice !== null && scopedMax < minWeeklyPrice) return false;
+              if (maxWeeklyPrice !== null && scopedMin > maxWeeklyPrice) return false;
+            }
+            // If no matching tiers, the age filter already handles exclusion
+          } else if (summary.priceRange) {
+            // No age bracket selected — use overall price range
+            if (minWeeklyPrice !== null && summary.priceRange[1] < minWeeklyPrice) return false;
+            if (maxWeeklyPrice !== null && summary.priceRange[0] > maxWeeklyPrice) return false;
+          }
         }
         if (scheduleFilters.length > 0) {
           if (!scheduleFilters.every((code) => summary.amenities.includes(code))) return false;
