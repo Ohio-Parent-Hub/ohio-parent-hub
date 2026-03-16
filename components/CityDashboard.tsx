@@ -2,13 +2,11 @@
 
 import { useState, useMemo, useEffect, useLayoutEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
-import Link from "next/link";
-import { SutqBadge } from "@/components/SutqBadge";
 import InteractiveMap from "@/components/InteractiveMap";
-import VerifiedProviderBadge from "@/components/premium/VerifiedProviderBadge";
 import FilterChipBar from "@/components/FilterChipBar";
 import LocationSearch from "@/components/LocationSearch";
 import { Button } from "@/components/ui/button";
+import { DaycareCard } from "@/components/DaycareCard";
 import { slugify, toTitleCaseIfAllCaps } from "@/lib/utils";
 import { isMetroCitySlug, resolveCanonicalCityName, resolveCanonicalCitySlugFromName } from "@/lib/metroAreas";
 
@@ -451,14 +449,14 @@ export default function CityDashboard({
       ? initialTotalCount
       : filteredDaycares.length;
   const mapVisibleDaycares = useMemo(() => {
-    if (!mapBounds) return [];
-
     const withCoordinates = filteredDaycares.filter((daycare) => {
       if (!daycare["LAT"] || !daycare["LNG"]) return false;
       const lat = Number(daycare["LAT"]);
       const lng = Number(daycare["LNG"]);
       return isFiniteCoordinate(lat) && isFiniteCoordinate(lng);
     });
+
+    if (!mapBounds) return withCoordinates;
 
     return withCoordinates.filter((daycare) => {
       const lat = Number(daycare["LAT"]);
@@ -480,7 +478,7 @@ export default function CityDashboard({
       return distanceA - distanceB;
     });
   }, [mapVisibleDaycares, mapCenter]);
-  const isResultsCountPending = !mapBounds || isHydratingDaycares;
+  const isResultsCountPending = isHydratingDaycares;
   const displayMapViewCount = isResultsCountPending ? displayResultsCount : mapVisibleDaycares.length;
   // Limit rendered list for performance (pagination can come later)
   const displayList = mapViewSortedDaycares.slice(0, 50);
@@ -530,6 +528,8 @@ export default function CityDashboard({
     !skipNextExternalCenterSyncRef.current;
   const center = (externalCenterChangedNow ? externalMapCenter : mapViewCenter) || mapCenter || markerCenter || defaultCenter;
 
+  const [mobileView, setMobileView] = useState<"list" | "map">("list");
+
   return (
     <div>
       <div id="daycare-dashboard" className="space-y-4 scroll-mt-24">
@@ -571,177 +571,105 @@ export default function CityDashboard({
           setHasPhotosFilter={setHasPhotosFilter}
         />
 
-        {/* Results Header */}
-        <div className="flex flex-col gap-4">
-          {!hideHeaderLocationSearch && (
-            <div className="hidden lg:block max-w-md">
-              <LocationSearch
-                onLocationFound={(lat, lng) => {
-                  setMapCenter([lat, lng]);
-                  setMapViewCenter([lat, lng]);
-                  setMapZoom(12);
-                }}
-                onSearchSuccess={(query) => setLocationQuery(query)}
-                clearSignal={locationSearchClearSignal}
-                placeholder="Search by street, city, or ZIP in Ohio"
-              />
+        {/* ──── Desktop header + split-panel (lg+) ──── */}
+        {/* ──── Desktop split-panel (lg+) ──── */}
+        <div className="hidden lg:flex gap-0" style={{ height: "calc(100vh - 160px)" }}>
+          {/* Left: Header + Map */}
+          <div className="w-[55%] flex flex-col">
+            <div className="flex flex-col gap-3 mb-3 shrink-0">
+              {!hideHeaderLocationSearch && (
+                <div className="max-w-md">
+                  <LocationSearch
+                    onLocationFound={(lat, lng) => {
+                      setMapCenter([lat, lng]);
+                      setMapViewCenter([lat, lng]);
+                      setMapZoom(12);
+                    }}
+                    onSearchSuccess={(query) => setLocationQuery(query)}
+                    clearSignal={locationSearchClearSignal}
+                    placeholder="Search by street, city, or ZIP in Ohio"
+                  />
+                </div>
+              )}
+              <div>
+                <h2 className="text-xl font-bold">
+                  {isResultsCountPending ? "Updating results..." : `${displayMapViewCount} Results in Map View`}
+                </h2>
+                <p className="text-xs text-neutral-400 mt-0.5">Only locations with address coordinates appear on the map.</p>
+                {locationQuery && (
+                  <p className="mt-1 text-sm text-neutral-500">
+                    Showing results near <span className="font-medium text-neutral-700">{locationQuery}</span>.
+                    <button type="button" onClick={clearLocationOnly} className="ml-2 underline hover:text-neutral-700">Clear location</button>
+                  </p>
+                )}
+              </div>
             </div>
-          )}
-          <div className="flex items-baseline justify-between">
-            <div>
-              <h2 className="text-xl font-bold">
-                {isResultsCountPending ? "Updating results..." : `${displayMapViewCount} Results in Map View`}
-              </h2>
-              <p className="text-xs text-neutral-400 mt-0.5">Only locations with address coordinates appear on the map.</p>
-              {locationQuery && (
-                <p className="mt-1 text-sm text-neutral-500">
-                  Showing results near <span className="font-medium text-neutral-700">{locationQuery}</span>.
-                  <button
-                    type="button"
-                    onClick={clearLocationOnly}
-                    className="ml-2 underline hover:text-neutral-700"
-                  >
-                    Clear location
-                  </button>
-                </p>
+            <div className="relative z-0 rounded-xl border bg-neutral-50 shadow-sm overflow-hidden flex-1 min-h-0">
+              {restoredStateReady ? (
+                <InteractiveMap
+                  center={center}
+                  zoom={mapZoom ?? (mapCenter ? 12 : 7)}
+                  resetSignal={mapResetSignal}
+                  onZoomChange={(zoomLevel) => setMapZoom(zoomLevel)}
+                  onViewportChange={(viewport) => {
+                    setMapBounds(viewport.bounds);
+                    setMapViewCenter([viewport.center.lat, viewport.center.lng]);
+                  }}
+                  markers={markers}
+                  userLocation={mapCenter}
+                  height="100%"
+                  className="rounded-xl"
+                />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center rounded-xl bg-neutral-100 text-sm text-neutral-400">
+                  Loading map…
+                </div>
               )}
             </div>
           </div>
-          </div>
 
-          {/* Map */}
-          <div id="daycare-map" className="-mx-2 sm:mx-0 sm:rounded-xl sm:border bg-neutral-50 sm:shadow-sm relative z-0" style={{ height: "500px" }}>
-            {restoredStateReady ? (
-              <InteractiveMap
-                center={center}
-                zoom={mapZoom ?? (mapCenter ? 12 : 7)}
-                resetSignal={mapResetSignal}
-                onZoomChange={(zoomLevel) => setMapZoom(zoomLevel)}
-                onViewportChange={(viewport) => {
-                  setMapBounds(viewport.bounds);
-                  setMapViewCenter([viewport.center.lat, viewport.center.lng]);
-                }}
-                markers={markers}
-                userLocation={mapCenter}
-                height="500px"
-                className="sm:rounded-xl"
-              />
-            ) : (
-              <div className="flex h-full w-full items-center justify-center sm:rounded-xl bg-neutral-100 text-sm text-neutral-400">
-                Loading map…
-              </div>
-            )}
-          </div>
-
-          {/* Results List */}
-          <div className="space-y-4">
-            {!isResultsCountPending && mapViewSortedDaycares.length > displayList.length && (
-              <p className="text-sm text-neutral-500">
-                Showing 50 of {mapViewSortedDaycares.length} results. Use filters to narrow your search.
-              </p>
-            )}
+          {/* Right: Results */}
+          <div className="w-[45%] overflow-y-auto border-l px-4 py-4 space-y-4">
+              {!isResultsCountPending && mapViewSortedDaycares.length > displayList.length && (
+                <p className="text-sm text-neutral-500">
+                  Showing 50 of {mapViewSortedDaycares.length} results. Use filters to narrow your search.
+                </p>
+              )}
             {displayList.map((d) => {
               const id = d["PROGRAM NUMBER"] || "";
               const name = d["PROGRAM NAME"] || "";
               const displayName = toTitleCaseIfAllCaps(name);
-              const sutq = d["SUTQ RATING"] || "—";
               const street = d["STREET ADDRESS"] || "";
               const displayStreet = toTitleCaseIfAllCaps(street);
-                const city = resolveCanonicalCityName(d["CITY"] || cityDisplay);
+              const city = resolveCanonicalCityName(d["CITY"] || cityDisplay);
               const displayCity = toTitleCaseIfAllCaps(city);
-              const programType = d["PROGRAM TYPE"] || "—";
-              const displayProgramType = toTitleCaseIfAllCaps(programType);
-              const pfcc = d["PFCC AGREEMENT"] === "Y";
-                const slug = `${id}-${slugify(name)}-${resolveCanonicalCitySlugFromName(city)}`;
+              const displayProgramType = toTitleCaseIfAllCaps(d["PROGRAM TYPE"] || "—");
+              const slug = `${id}-${slugify(name)}-${resolveCanonicalCitySlugFromName(city)}`;
               const detailHref = `${basePath}/daycare/${slug}`;
               const hasPinnedLocation = Boolean(mapCenter);
-              const distanceFromPinned = hasPinnedLocation
+              const distFromPinned = hasPinnedLocation
                 ? distanceMiles(mapCenter as [number, number], [Number(d["LAT"]), Number(d["LNG"])])
                 : null;
               const isVerified = verifiedSet.has(id);
               const hasLogo = Boolean(premiumLogos[id]);
 
               return (
-                <div
+                <DaycareCard
                   key={id}
-                  className={`group flex flex-col sm:flex-row sm:items-center justify-between rounded-lg sm:rounded-xl border p-3 sm:p-4 transition-colors gap-3 sm:gap-4 ${
-                    isVerified
-                      ? "border-l-[3px] hover:border-neutral-300"
-                      : "bg-white border-neutral-200 hover:border-neutral-400"
-                  }`}
-                  style={
-                    isVerified
-                      ? { background: "#F0F6F5", borderColor: "#B8C5B2", borderLeftColor: "#7EA8A4" }
-                      : {}
-                  }
-                >
-                  <div className="flex items-center justify-between sm:hidden">
-                    <SutqBadge rating={sutq} className="scale-90 origin-left" />
-                    {isVerified && <VerifiedProviderBadge />}
-                  </div>
-                  <div className="flex gap-3">
-                    {hasLogo && (
-                      <img
-                        src={premiumLogos[id]}
-                        alt=""
-                        className={`rounded-lg object-cover flex-shrink-0 mt-0.5 ${
-                          isVerified
-                            ? "h-12 w-12 border-2 border-[#7EA8A4]/40"
-                            : "h-10 w-10 border border-neutral-200"
-                        }`}
-                      />
-                    )}
-                    <div>
-                    <h3 className="font-bold text-lg leading-tight mb-1">
-                      <Link href={detailHref} className="hover:underline" onClick={() => storeNavContext(linkContext, returnTo)}>
-                        {displayName}
-                      </Link>
-                      {isVerified && (
-                        <span className="ml-2 hidden sm:inline-block align-middle"><VerifiedProviderBadge /></span>
-                      )}
-                    </h3>
-                    <p className="text-sm text-neutral-500 mb-1">
-                      {displayCity && <span className="font-medium text-black">{displayCity}</span>}
-                      {displayCity && displayStreet && <span className="mx-1">•</span>}
-                      {displayStreet}
-                    </p>
-                    <div className="flex items-center gap-2 text-xs text-neutral-400">
-                      {distanceFromPinned !== null && (
-                        <span className="bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded font-medium">
-                          {distanceFromPinned.toFixed(1)} mi
-                        </span>
-                      )}
-                      <span className="bg-neutral-100 px-2 py-0.5 rounded text-neutral-600">{displayProgramType}</span>
-                      {pfcc && (
-                        <span className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded font-medium">
-                          PFCC
-                        </span>
-                      )}
-                    </div>
-                    </div>
-                  </div>
-
-                  <div className="hidden sm:flex flex-col items-end gap-3 min-w-[120px]">
-                    <SutqBadge rating={sutq} />
-                    <Link href={detailHref} onClick={() => storeNavContext(linkContext, returnTo)}>
-                      <Button variant="outline" size="sm" className="w-full">
-                        View Details
-                      </Button>
-                    </Link>
-                  </div>
-
-                  <div className="sm:hidden">
-                    <Link href={detailHref} onClick={() => storeNavContext(linkContext, returnTo)}>
-                      <Button variant="outline" size="sm" className="w-full">
-                        View Details
-                      </Button>
-                    </Link>
-                  </div>
-                </div>
+                  name={displayName}
+                  city={displayCity}
+                  street={displayStreet}
+                  programType={displayProgramType}
+                  sutqRating={d["SUTQ RATING"] || "—"}
+                  isPfcc={d["PFCC AGREEMENT"] === "Y"}
+                  isVerified={isVerified}
+                  logoUrl={hasLogo ? premiumLogos[id] : undefined}
+                  distanceMiles={distFromPinned}
+                  detailHref={detailHref}
+                  onNavigate={() => storeNavContext(linkContext, returnTo)}
+                />
               );
             })}
-
-
 
             {displayList.length === 0 && (
               <div className="text-center py-12 text-neutral-500 bg-neutral-50 rounded-xl border border-dashed">
@@ -753,6 +681,122 @@ export default function CityDashboard({
               </div>
             )}
           </div>
+        </div>
+
+        {/* ──── Mobile layout (<lg) ──── */}
+        <div className="lg:hidden">
+          {/* Results Header */}
+          <div className="flex flex-col gap-4 mb-4">
+            <div>
+              <h2 className="text-xl font-bold">
+                {isResultsCountPending ? "Updating results..." : `${displayMapViewCount} Results in Map View`}
+              </h2>
+              <p className="text-xs text-neutral-400 mt-0.5">Only locations with address coordinates appear on the map.</p>
+              {locationQuery && (
+                <p className="mt-1 text-sm text-neutral-500">
+                  Showing results near <span className="font-medium text-neutral-700">{locationQuery}</span>.
+                  <button type="button" onClick={clearLocationOnly} className="ml-2 underline hover:text-neutral-700">Clear location</button>
+                </p>
+              )}
+            </div>
+          </div>
+
+          {mobileView === "map" ? (
+            <div className="-mx-2 relative z-0 bg-neutral-50" style={{ height: "calc(100vh - 200px)" }}>
+              {restoredStateReady ? (
+                <InteractiveMap
+                  center={center}
+                  zoom={mapZoom ?? (mapCenter ? 12 : 7)}
+                  resetSignal={mapResetSignal}
+                  onZoomChange={(zoomLevel) => setMapZoom(zoomLevel)}
+                  onViewportChange={(viewport) => {
+                    setMapBounds(viewport.bounds);
+                    setMapViewCenter([viewport.center.lat, viewport.center.lng]);
+                  }}
+                  markers={markers}
+                  userLocation={mapCenter}
+                  height="100%"
+                />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center bg-neutral-100 text-sm text-neutral-400">
+                  Loading map…
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {!isResultsCountPending && mapViewSortedDaycares.length > displayList.length && (
+                <p className="text-sm text-neutral-500">
+                  Showing 50 of {mapViewSortedDaycares.length} results. Use filters to narrow your search.
+                </p>
+              )}
+              {displayList.map((d) => {
+                const id = d["PROGRAM NUMBER"] || "";
+                const name = d["PROGRAM NAME"] || "";
+                const displayName = toTitleCaseIfAllCaps(name);
+                const street = d["STREET ADDRESS"] || "";
+                const displayStreet = toTitleCaseIfAllCaps(street);
+                const city = resolveCanonicalCityName(d["CITY"] || cityDisplay);
+                const displayCity = toTitleCaseIfAllCaps(city);
+                const displayProgramType = toTitleCaseIfAllCaps(d["PROGRAM TYPE"] || "—");
+                const slug = `${id}-${slugify(name)}-${resolveCanonicalCitySlugFromName(city)}`;
+                const detailHref = `${basePath}/daycare/${slug}`;
+                const hasPinnedLocation = Boolean(mapCenter);
+                const distFromPinned = hasPinnedLocation
+                  ? distanceMiles(mapCenter as [number, number], [Number(d["LAT"]), Number(d["LNG"])])
+                  : null;
+                const isVerified = verifiedSet.has(id);
+                const hasLogo = Boolean(premiumLogos[id]);
+
+                return (
+                  <DaycareCard
+                    key={id}
+                    name={displayName}
+                    city={displayCity}
+                    street={displayStreet}
+                    programType={displayProgramType}
+                    sutqRating={d["SUTQ RATING"] || "—"}
+                    isPfcc={d["PFCC AGREEMENT"] === "Y"}
+                    isVerified={isVerified}
+                    logoUrl={hasLogo ? premiumLogos[id] : undefined}
+                    distanceMiles={distFromPinned}
+                    detailHref={detailHref}
+                    onNavigate={() => storeNavContext(linkContext, returnTo)}
+                  />
+                );
+              })}
+
+              {displayList.length === 0 && (
+                <div className="text-center py-12 text-neutral-500 bg-neutral-50 rounded-xl border border-dashed">
+                  <p className="font-medium">No daycares in current map view</p>
+                  <p className="text-sm mt-1">Try zooming out or adjusting your search or filters.</p>
+                  <Button variant="link" onClick={clearAllFilters} className="mt-2">
+                    Clear all filters
+                  </Button>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Floating map/list toggle */}
+          <button
+            type="button"
+            className="fixed bottom-6 right-6 z-40 flex items-center gap-2 rounded-full bg-[#4A6B67] text-white shadow-lg px-5 py-3 text-sm font-medium hover:bg-[#3d5a56] transition-colors"
+            onClick={() => setMobileView(v => v === "list" ? "map" : "list")}
+          >
+            {mobileView === "list" ? (
+              <>
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M12 1.586l-4 4v12.828l4-4V1.586zM3.707 3.293A1 1 0 002 4v10a1 1 0 00.293.707L6 18.414V5.586L3.707 3.293zM17.707 5.293L14 1.586V14.414l3.707 3.707A1 1 0 0019 17.414V7a1 1 0 00-.293-.707z" clipRule="evenodd" /></svg>
+                Map
+              </>
+            ) : (
+              <>
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" /></svg>
+                List
+              </>
+            )}
+          </button>
+        </div>
       </div>
     </div>
   );
