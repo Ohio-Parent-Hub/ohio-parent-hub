@@ -372,61 +372,64 @@ const PRICE_BRACKETS = [
 ] as const;
 
 const SCHEDULE_CODES = [
-  { value: "before_school_care", label: "Before School" },
-  { value: "after_school_care", label: "After School" },
+  { value: "before_school_care", label: "Before-School Care" },
+  { value: "after_school_care", label: "After-School Care" },
   { value: "weekend_hours", label: "Weekend Hours" },
   { value: "evening_care", label: "Evening Care" },
   { value: "drop_in_care", label: "Drop-In Care" },
   { value: "overnight_care", label: "Overnight Care" },
   { value: "summer_care", label: "Summer Care" },
+  { value: "part_time_care", label: "Part-Time Care" },
+  { value: "full_time_care", label: "Full-Time Care" },
+  { value: "transportation_available", label: "Transportation" },
 ] as const;
 
 const AMENITY_GROUPS: { group: string; codes: { value: string; label: string }[] }[] = [
   {
-    group: "Essentials",
+    group: "Daily Essentials",
     codes: [
-      { value: "outdoor_play_area", label: "Outdoor Play Area" },
-      { value: "indoor_gym", label: "Indoor Gym" },
-      { value: "nap_rooms", label: "Nap Rooms" },
-      { value: "transportation", label: "Transportation" },
+      { value: "diapers_provided", label: "Diapers Provided" },
+      { value: "wipes_provided", label: "Wipes Provided" },
+      { value: "crib_sheets_provided", label: "Crib Sheets" },
+      { value: "car_seat_storage", label: "Car Seat Storage" },
     ],
   },
   {
-    group: "Meals",
+    group: "Meals & Feeding",
     codes: [
-      { value: "breakfast_served", label: "Breakfast" },
-      { value: "lunch_served", label: "Lunch" },
-      { value: "snacks_served", label: "Snacks" },
+      { value: "breakfast", label: "Breakfast" },
+      { value: "lunch", label: "Lunch" },
+      { value: "morning_snack", label: "Morning Snack" },
+      { value: "afternoon_snack", label: "Afternoon Snack" },
+      { value: "baby_food_provided", label: "Baby Food" },
+      { value: "formula_provided", label: "Formula" },
     ],
   },
   {
-    group: "Facilities",
+    group: "Facilities & Safety",
     codes: [
+      { value: "outdoor_playground", label: "Outdoor Playground" },
+      { value: "fenced_playground", label: "Fenced Playground" },
+      { value: "indoor_play_area", label: "Indoor Play Area" },
       { value: "security_cameras", label: "Security Cameras" },
-      { value: "parent_viewing", label: "Parent Viewing" },
-      { value: "handicap_accessible", label: "Handicap Accessible" },
+      { value: "keypad_entry", label: "Keypad Entry" },
     ],
   },
   {
     group: "Communication",
     codes: [
-      { value: "daily_reports", label: "Daily Reports" },
-      { value: "parent_app", label: "Parent App" },
-      { value: "live_streaming", label: "Live Streaming" },
+      { value: "parent_communication_app", label: "Parent App" },
+      { value: "live_parent_camera", label: "Live Parent Camera" },
     ],
   },
   {
-    group: "Programs",
+    group: "Programs & Learning",
     codes: [
-      { value: "stem_curriculum", label: "STEM" },
-      { value: "arts_music", label: "Arts & Music" },
-      { value: "language_immersion", label: "Language Immersion" },
-      { value: "special_needs_support", label: "Special Needs" },
-      { value: "potty_training", label: "Potty Training" },
-      { value: "tutoring", label: "Tutoring" },
+      { value: "structured_curriculum", label: "Structured Curriculum" },
+      { value: "stem_activities", label: "STEM Activities" },
+      { value: "arts_and_crafts", label: "Arts & Crafts" },
+      { value: "music_and_movement", label: "Music & Movement" },
       { value: "field_trips", label: "Field Trips" },
-      { value: "swimming", label: "Swimming" },
-      { value: "gardening", label: "Gardening" },
     ],
   },
 ];
