@@ -18,9 +18,10 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import { Check, ChevronsUpDown, X, Search, SlidersHorizontal } from "lucide-react";
+import { Check, ChevronsUpDown, X, Search, SlidersHorizontal, Camera } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { FILTER_DEFINITIONS } from "@/data/filterDefinitions";
+import type { PremiumFilterSummary } from "@/lib/premiumTypes";
 
 const RATINGS = ["3", "2", "1"];
 const PROGRAM_TYPES = [
@@ -353,6 +354,427 @@ function MoreFiltersChip({
   );
 }
 
+// ── Premium Filter Constants ────────────────────────────────────────────
+
+const AGE_BRACKETS = [
+  { value: "infant", label: "Infant", desc: "0–12 mo" },
+  { value: "toddler", label: "Toddler", desc: "1–3 yr" },
+  { value: "preschool", label: "Preschool", desc: "3–5 yr" },
+  { value: "school-age", label: "School Age", desc: "5–12 yr" },
+] as const;
+
+const PRICE_BRACKETS = [
+  { value: 150, label: "Under $150/wk" },
+  { value: 200, label: "Under $200/wk" },
+  { value: 250, label: "Under $250/wk" },
+  { value: 300, label: "Under $300/wk" },
+  { value: 400, label: "Under $400/wk" },
+] as const;
+
+const SCHEDULE_CODES = [
+  { value: "before_school_care", label: "Before School" },
+  { value: "after_school_care", label: "After School" },
+  { value: "weekend_hours", label: "Weekend Hours" },
+  { value: "evening_care", label: "Evening Care" },
+  { value: "drop_in_care", label: "Drop-In Care" },
+  { value: "overnight_care", label: "Overnight Care" },
+  { value: "summer_care", label: "Summer Care" },
+] as const;
+
+const AMENITY_GROUPS: { group: string; codes: { value: string; label: string }[] }[] = [
+  {
+    group: "Essentials",
+    codes: [
+      { value: "outdoor_play_area", label: "Outdoor Play Area" },
+      { value: "indoor_gym", label: "Indoor Gym" },
+      { value: "nap_rooms", label: "Nap Rooms" },
+      { value: "transportation", label: "Transportation" },
+    ],
+  },
+  {
+    group: "Meals",
+    codes: [
+      { value: "breakfast_served", label: "Breakfast" },
+      { value: "lunch_served", label: "Lunch" },
+      { value: "snacks_served", label: "Snacks" },
+    ],
+  },
+  {
+    group: "Facilities",
+    codes: [
+      { value: "security_cameras", label: "Security Cameras" },
+      { value: "parent_viewing", label: "Parent Viewing" },
+      { value: "handicap_accessible", label: "Handicap Accessible" },
+    ],
+  },
+  {
+    group: "Communication",
+    codes: [
+      { value: "daily_reports", label: "Daily Reports" },
+      { value: "parent_app", label: "Parent App" },
+      { value: "live_streaming", label: "Live Streaming" },
+    ],
+  },
+  {
+    group: "Programs",
+    codes: [
+      { value: "stem_curriculum", label: "STEM" },
+      { value: "arts_music", label: "Arts & Music" },
+      { value: "language_immersion", label: "Language Immersion" },
+      { value: "special_needs_support", label: "Special Needs" },
+      { value: "potty_training", label: "Potty Training" },
+      { value: "tutoring", label: "Tutoring" },
+      { value: "field_trips", label: "Field Trips" },
+      { value: "swimming", label: "Swimming" },
+      { value: "gardening", label: "Gardening" },
+    ],
+  },
+];
+
+// ── Age Group Chip ──────────────────────────────────────────────────────
+
+function AgeGroupChip({
+  selected,
+  onSelect,
+}: {
+  selected: string | null;
+  onSelect: (v: string | null) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const active = !!selected;
+  const activeLabel = AGE_BRACKETS.find((b) => b.value === selected);
+  const displayLabel = active ? `Age: ${activeLabel?.label}` : "Age Group";
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <button
+          type="button"
+          className={`inline-flex items-center gap-1 rounded-full border px-3 py-1.5 text-sm font-medium whitespace-nowrap transition-colors ${
+            active
+              ? "border-violet-300 bg-violet-50 text-violet-800"
+              : "border-neutral-200 bg-white text-neutral-700 hover:border-neutral-400"
+          }`}
+        >
+          {displayLabel}
+          <ChevronsUpDown className="h-3 w-3 opacity-50" />
+        </button>
+      </PopoverTrigger>
+      <PopoverContent className="w-auto min-w-[180px] p-3" align="start" side="bottom">
+        <div className="space-y-1.5">
+          {AGE_BRACKETS.map((b) => (
+            <button
+              key={b.value}
+              type="button"
+              onClick={() => { onSelect(selected === b.value ? null : b.value); setOpen(false); }}
+              className={`w-full flex items-center justify-between rounded-md px-2.5 py-1.5 text-sm transition-colors ${
+                selected === b.value
+                  ? "bg-violet-100 text-violet-800 font-medium"
+                  : "hover:bg-neutral-100 text-neutral-700"
+              }`}
+            >
+              <span>{b.label}</span>
+              <span className="text-xs text-neutral-400 ml-3">{b.desc}</span>
+            </button>
+          ))}
+          {active && (
+            <button
+              type="button"
+              onClick={() => { onSelect(null); setOpen(false); }}
+              className="mt-1 w-full text-xs text-neutral-500 hover:text-neutral-800 underline text-left"
+            >
+              Clear
+            </button>
+          )}
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+}
+
+// ── Price Chip ───────────────────────────────────────────────────────────
+
+function PriceChip({
+  maxWeeklyPrice,
+  onMaxWeeklyPriceChange,
+  pricePeriod,
+  onPricePeriodChange,
+}: {
+  maxWeeklyPrice: number | null;
+  onMaxWeeklyPriceChange: (v: number | null) => void;
+  pricePeriod: "weekly" | "daily" | "monthly";
+  onPricePeriodChange: (v: "weekly" | "daily" | "monthly") => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const active = maxWeeklyPrice !== null;
+
+  function displayPrice(weeklyAmount: number): string {
+    if (pricePeriod === "daily") return `$${Math.round(weeklyAmount / 5)}/day`;
+    if (pricePeriod === "monthly") return `$${Math.round(weeklyAmount * 4.33)}/mo`;
+    return `$${weeklyAmount}/wk`;
+  }
+
+  const displayLabel = active ? `Under ${displayPrice(maxWeeklyPrice)}` : "Price";
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <button
+          type="button"
+          className={`inline-flex items-center gap-1 rounded-full border px-3 py-1.5 text-sm font-medium whitespace-nowrap transition-colors ${
+            active
+              ? "border-emerald-300 bg-emerald-50 text-emerald-800"
+              : "border-neutral-200 bg-white text-neutral-700 hover:border-neutral-400"
+          }`}
+        >
+          {displayLabel}
+          <ChevronsUpDown className="h-3 w-3 opacity-50" />
+        </button>
+      </PopoverTrigger>
+      <PopoverContent className="w-auto min-w-[200px] p-3" align="start" side="bottom">
+        <div className="space-y-3">
+          {/* Period toggle */}
+          <div className="flex rounded-full border border-neutral-200 overflow-hidden text-xs">
+            {(["daily", "weekly", "monthly"] as const).map((p) => (
+              <button
+                key={p}
+                type="button"
+                onClick={() => onPricePeriodChange(p)}
+                className={`flex-1 px-2 py-1 capitalize transition-colors ${
+                  pricePeriod === p
+                    ? "bg-emerald-600 text-white font-medium"
+                    : "hover:bg-neutral-100 text-neutral-600"
+                }`}
+              >
+                {p}
+              </button>
+            ))}
+          </div>
+          {/* Bracket buttons */}
+          <div className="space-y-1">
+            {PRICE_BRACKETS.map((b) => {
+              const periodLabel =
+                pricePeriod === "daily"
+                  ? `Under $${Math.round(b.value / 5)}/day`
+                  : pricePeriod === "monthly"
+                  ? `Under $${Math.round(b.value * 4.33)}/mo`
+                  : b.label;
+              return (
+                <button
+                  key={b.value}
+                  type="button"
+                  onClick={() => { onMaxWeeklyPriceChange(maxWeeklyPrice === b.value ? null : b.value); setOpen(false); }}
+                  className={`w-full text-left rounded-md px-2.5 py-1.5 text-sm transition-colors ${
+                    maxWeeklyPrice === b.value
+                      ? "bg-emerald-100 text-emerald-800 font-medium"
+                      : "hover:bg-neutral-100 text-neutral-700"
+                  }`}
+                >
+                  {periodLabel}
+                </button>
+              );
+            })}
+          </div>
+          {active && (
+            <button
+              type="button"
+              onClick={() => { onMaxWeeklyPriceChange(null); setOpen(false); }}
+              className="mt-1 w-full text-xs text-neutral-500 hover:text-neutral-800 underline text-left"
+            >
+              Clear
+            </button>
+          )}
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+}
+
+// ── Schedule Chip ────────────────────────────────────────────────────────
+
+function ScheduleChip({
+  selected,
+  onToggle,
+  onClear,
+}: {
+  selected: string[];
+  onToggle: (code: string) => void;
+  onClear: () => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const active = selected.length > 0;
+  const displayLabel = active ? `Schedule (${selected.length})` : "Schedule";
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <button
+          type="button"
+          className={`inline-flex items-center gap-1 rounded-full border px-3 py-1.5 text-sm font-medium whitespace-nowrap transition-colors ${
+            active
+              ? "border-orange-300 bg-orange-50 text-orange-800"
+              : "border-neutral-200 bg-white text-neutral-700 hover:border-neutral-400"
+          }`}
+        >
+          {displayLabel}
+          <ChevronsUpDown className="h-3 w-3 opacity-50" />
+        </button>
+      </PopoverTrigger>
+      <PopoverContent className="w-auto min-w-[200px] p-3" align="start" side="bottom">
+        <div className="space-y-2">
+          {SCHEDULE_CODES.map((opt) => (
+            <div key={opt.value} className="flex items-center gap-2">
+              <Checkbox
+                id={`chip-schedule-${opt.value}`}
+                checked={selected.includes(opt.value)}
+                onCheckedChange={() => onToggle(opt.value)}
+              />
+              <Label
+                htmlFor={`chip-schedule-${opt.value}`}
+                className="text-sm font-normal cursor-pointer leading-tight"
+              >
+                {opt.label}
+              </Label>
+            </div>
+          ))}
+          {active && (
+            <button
+              type="button"
+              onClick={onClear}
+              className="mt-1 w-full text-xs text-neutral-500 hover:text-neutral-800 underline text-left"
+            >
+              Clear
+            </button>
+          )}
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+}
+
+// ── Amenities Chip ───────────────────────────────────────────────────────
+
+function AmenitiesChip({
+  selected,
+  onToggle,
+  onClear,
+}: {
+  selected: string[];
+  onToggle: (code: string) => void;
+  onClear: () => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set(["Essentials"]));
+  const active = selected.length > 0;
+  const displayLabel = active ? `Amenities (${selected.length})` : "Amenities";
+
+  const toggleGroup = (group: string) => {
+    setExpandedGroups((prev) => {
+      const next = new Set(prev);
+      if (next.has(group)) next.delete(group);
+      else next.add(group);
+      return next;
+    });
+  };
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <button
+          type="button"
+          className={`inline-flex items-center gap-1 rounded-full border px-3 py-1.5 text-sm font-medium whitespace-nowrap transition-colors ${
+            active
+              ? "border-pink-300 bg-pink-50 text-pink-800"
+              : "border-neutral-200 bg-white text-neutral-700 hover:border-neutral-400"
+          }`}
+        >
+          {displayLabel}
+          <ChevronsUpDown className="h-3 w-3 opacity-50" />
+        </button>
+      </PopoverTrigger>
+      <PopoverContent className="w-auto min-w-[220px] max-h-[320px] overflow-y-auto p-3" align="start" side="bottom">
+        <div className="space-y-2">
+          {AMENITY_GROUPS.map((g) => {
+            const isExpanded = expandedGroups.has(g.group);
+            const groupSelectedCount = g.codes.filter((c) => selected.includes(c.value)).length;
+            return (
+              <div key={g.group}>
+                <button
+                  type="button"
+                  onClick={() => toggleGroup(g.group)}
+                  className="flex items-center justify-between w-full text-xs font-semibold text-neutral-500 uppercase tracking-wider py-1"
+                >
+                  <span>
+                    {g.group}
+                    {groupSelectedCount > 0 && (
+                      <span className="ml-1 text-pink-600">({groupSelectedCount})</span>
+                    )}
+                  </span>
+                  <ChevronsUpDown className="h-3 w-3 opacity-40" />
+                </button>
+                {isExpanded && (
+                  <div className="space-y-1.5 pl-0.5 pb-1">
+                    {g.codes.map((opt) => (
+                      <div key={opt.value} className="flex items-center gap-2">
+                        <Checkbox
+                          id={`chip-amenity-${opt.value}`}
+                          checked={selected.includes(opt.value)}
+                          onCheckedChange={() => onToggle(opt.value)}
+                        />
+                        <Label
+                          htmlFor={`chip-amenity-${opt.value}`}
+                          className="text-sm font-normal cursor-pointer leading-tight"
+                        >
+                          {opt.label}
+                        </Label>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+          {active && (
+            <button
+              type="button"
+              onClick={onClear}
+              className="mt-1 w-full text-xs text-neutral-500 hover:text-neutral-800 underline text-left"
+            >
+              Clear
+            </button>
+          )}
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+}
+
+// ── Has Photos Chip ─────────────────────────────────────────────────────
+
+function HasPhotosChip({
+  active,
+  onToggle,
+}: {
+  active: boolean;
+  onToggle: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onToggle}
+      className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm font-medium whitespace-nowrap transition-colors ${
+        active
+          ? "border-sky-300 bg-sky-50 text-sky-800"
+          : "border-neutral-200 bg-white text-neutral-700 hover:border-neutral-400"
+      }`}
+    >
+      <Camera className="h-3.5 w-3.5" />
+      <span>Has Photos</span>
+      {active && <X className="h-3 w-3 ml-0.5" />}
+    </button>
+  );
+}
+
 // ── Main FilterChipBar ──────────────────────────────────────────────────
 
 export interface FilterChipBarProps {
@@ -375,6 +797,22 @@ export interface FilterChipBarProps {
   enableCityFilter?: boolean;
   mapCenter: [number, number] | null;
   onClearAll: () => void;
+  // Premium filter props
+  premiumSummaries?: Record<string, PremiumFilterSummary>;
+  ageBracket?: string | null;
+  setAgeBracket?: (v: string | null) => void;
+  maxWeeklyPrice?: number | null;
+  setMaxWeeklyPrice?: (v: number | null) => void;
+  pricePeriod?: "weekly" | "daily" | "monthly";
+  setPricePeriod?: (v: "weekly" | "daily" | "monthly") => void;
+  scheduleFilters?: string[];
+  toggleScheduleFilter?: (v: string) => void;
+  clearScheduleFilters?: () => void;
+  amenityFilters?: string[];
+  toggleAmenityFilter?: (v: string) => void;
+  clearAmenityFilters?: () => void;
+  hasPhotosFilter?: boolean;
+  setHasPhotosFilter?: (v: boolean) => void;
 }
 
 function FilterChipBar({
@@ -397,7 +835,23 @@ function FilterChipBar({
   enableCityFilter = true,
   mapCenter,
   onClearAll,
+  premiumSummaries,
+  ageBracket,
+  setAgeBracket,
+  maxWeeklyPrice,
+  setMaxWeeklyPrice,
+  pricePeriod = "weekly",
+  setPricePeriod,
+  scheduleFilters = [],
+  toggleScheduleFilter,
+  clearScheduleFilters,
+  amenityFilters = [],
+  toggleAmenityFilter,
+  clearAmenityFilters,
+  hasPhotosFilter = false,
+  setHasPhotosFilter,
 }: FilterChipBarProps) {
+  const hasPremiumData = premiumSummaries && Object.keys(premiumSummaries).length > 0;
   const hasActiveFilters =
     pfccEnabled ||
     verifiedEnabled ||
@@ -406,7 +860,12 @@ function FilterChipBar({
     !!searchQuery ||
     !!mapCenter ||
     !!selectedCity ||
-    !!selectedCounty;
+    !!selectedCounty ||
+    !!ageBracket ||
+    maxWeeklyPrice !== null && maxWeeklyPrice !== undefined ||
+    scheduleFilters.length > 0 ||
+    amenityFilters.length > 0 ||
+    hasPhotosFilter;
 
   const sutqOptions = [
     ...RATINGS.map((r) => ({
@@ -471,6 +930,39 @@ function FilterChipBar({
         options={programTypeOptions}
         activeClassName="border-slate-400 bg-slate-100 text-slate-800"
       />
+
+      {/* ── Premium Filter Chips (only render when premium data exists) ── */}
+      {hasPremiumData && setAgeBracket && (
+        <AgeGroupChip selected={ageBracket ?? null} onSelect={setAgeBracket} />
+      )}
+      {hasPremiumData && setMaxWeeklyPrice && setPricePeriod && (
+        <PriceChip
+          maxWeeklyPrice={maxWeeklyPrice ?? null}
+          onMaxWeeklyPriceChange={setMaxWeeklyPrice}
+          pricePeriod={pricePeriod}
+          onPricePeriodChange={setPricePeriod}
+        />
+      )}
+      {hasPremiumData && toggleScheduleFilter && clearScheduleFilters && (
+        <ScheduleChip
+          selected={scheduleFilters}
+          onToggle={toggleScheduleFilter}
+          onClear={clearScheduleFilters}
+        />
+      )}
+      {hasPremiumData && toggleAmenityFilter && clearAmenityFilters && (
+        <AmenitiesChip
+          selected={amenityFilters}
+          onToggle={toggleAmenityFilter}
+          onClear={clearAmenityFilters}
+        />
+      )}
+      {hasPremiumData && setHasPhotosFilter && (
+        <HasPhotosChip
+          active={hasPhotosFilter}
+          onToggle={() => setHasPhotosFilter(!hasPhotosFilter)}
+        />
+      )}
 
       {/* More Filters (City, County, Clear All) */}
       <MoreFiltersChip

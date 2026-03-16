@@ -31,6 +31,7 @@ interface DraftCityDaycaresPageClientProps {
   initialDaycares: DaycareRow[];
   verifiedProgramNumbers?: string[];
   premiumLogos?: Record<string, string>;
+  premiumSummaries?: Record<string, import("@/lib/premiumTypes").PremiumFilterSummary>;
   basePath?: string;
   homeHref?: string;
   citiesHref?: string;
@@ -68,6 +69,7 @@ export default function DraftCityDaycaresPageClient({
   initialDaycares,
   verifiedProgramNumbers = [],
   premiumLogos = {},
+  premiumSummaries = {},
   basePath = "/draft",
   homeHref = "/draft",
   citiesHref = "/draft/cities",
@@ -299,6 +301,7 @@ export default function DraftCityDaycaresPageClient({
             initialTotalCount={cityCount}
             verifiedProgramNumbers={verifiedProgramNumbers}
             premiumLogos={premiumLogos}
+            premiumSummaries={premiumSummaries}
             basePath={basePath}
             externalMapCenter={mapCenter}
             onExternalMapCenterChange={setMapCenter}

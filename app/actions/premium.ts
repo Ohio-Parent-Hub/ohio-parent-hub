@@ -1,7 +1,7 @@
 "use server";
 
 import { createClient, createServiceClient } from "@/lib/supabase/server";
-import type { PremiumListingData } from "@/lib/premiumTypes";
+import type { PremiumListingData, PremiumFilterSummary, PremiumPricingTier } from "@/lib/premiumTypes";
 
 /**
  * Load a premium listing by program_number.
@@ -74,6 +74,76 @@ export async function loadPremiumLogos(): Promise<Record<string, string>> {
     if (row.logo_url) logos[row.program_number] = row.logo_url;
   }
   return logos;
+}
+
+/** Normalize a pricing tier rate to weekly. */
+function toWeekly(rate: number, period: string): number {
+  if (period === "daily") return rate * 5;
+  if (period === "monthly") return rate / 4.33;
+  return rate; // already weekly
+}
+
+/**
+ * Load slim filter summaries for all published premium listings.
+ * Used by FilterChipBar premium chips (age, price, schedule, amenities, photos).
+ */
+export async function loadPremiumFilterSummaries(): Promise<Record<string, PremiumFilterSummary>> {
+  const supabase = createServiceClient();
+
+  const { data, error } = await supabase
+    .from("premium_listings")
+    .select("program_number, pricing, amenities, photos")
+    .eq("published", true);
+
+  if (error || !data) return {};
+
+  const summaries: Record<string, PremiumFilterSummary> = {};
+
+  for (const row of data) {
+    const pn: string = row.program_number;
+
+    // Age range from pricing tiers
+    let ageRange: [number, number] | null = null;
+    let priceRange: [number, number] | null = null;
+
+    if (row.pricing?.tiers && Array.isArray(row.pricing.tiers)) {
+      const tiers = row.pricing.tiers as PremiumPricingTier[];
+      let minAge = Infinity;
+      let maxAge = -Infinity;
+      let minPrice = Infinity;
+      let maxPrice = -Infinity;
+
+      for (const tier of tiers) {
+        if (typeof tier.age_start === "number" && typeof tier.age_end === "number") {
+          if (tier.age_start < minAge) minAge = tier.age_start;
+          if (tier.age_end > maxAge) maxAge = tier.age_end;
+        }
+        const period = tier.period || "weekly";
+        for (const rate of [tier.part_time, tier.full_time]) {
+          if (typeof rate === "number" && rate > 0) {
+            const weekly = toWeekly(rate, period);
+            if (weekly < minPrice) minPrice = weekly;
+            if (weekly > maxPrice) maxPrice = weekly;
+          }
+        }
+      }
+
+      if (minAge !== Infinity && maxAge !== -Infinity) ageRange = [minAge, maxAge];
+      if (minPrice !== Infinity && maxPrice !== -Infinity) priceRange = [Math.round(minPrice), Math.round(maxPrice)];
+    }
+
+    // Amenity codes
+    const amenities: string[] = row.amenities?.checked && Array.isArray(row.amenities.checked)
+      ? (row.amenities.checked as string[])
+      : [];
+
+    // Photos
+    const hasPhotos = Array.isArray(row.photos) && row.photos.length > 0;
+
+    summaries[pn] = { ageRange, priceRange, amenities, hasPhotos };
+  }
+
+  return summaries;
 }
 
 /**

@@ -46,6 +46,7 @@ interface CityDashboardProps {
   basePath?: string;
   verifiedProgramNumbers?: string[];
   premiumLogos?: Record<string, string>;
+  premiumSummaries?: Record<string, import("@/lib/premiumTypes").PremiumFilterSummary>;
   externalMapCenter?: [number, number] | null;
   onExternalMapCenterChange?: (coords: [number, number] | null) => void;
   externalMapZoom?: number | null;
@@ -79,6 +80,7 @@ export default function CityDashboard({
   basePath = "",
   verifiedProgramNumbers = [],
   premiumLogos = {},
+  premiumSummaries = {},
   externalMapCenter,
   onExternalMapCenterChange,
   externalMapZoom,
@@ -109,6 +111,14 @@ export default function CityDashboard({
   const [hydratedDaycares, setHydratedDaycares] = useState<Daycare[]>(daycares);
   const [isHydratingDaycares, setIsHydratingDaycares] = useState(Boolean(citySlug || countySlug));
   const [restoredStateReady, setRestoredStateReady] = useState(false);
+
+  // Premium filter state
+  const [ageBracket, setAgeBracket] = useState<string | null>(null);
+  const [maxWeeklyPrice, setMaxWeeklyPrice] = useState<number | null>(null);
+  const [pricePeriod, setPricePeriod] = useState<"weekly" | "daily" | "monthly">("weekly");
+  const [scheduleFilters, setScheduleFilters] = useState<string[]>([]);
+  const [amenityFilters, setAmenityFilters] = useState<string[]>([]);
+  const [hasPhotosFilter, setHasPhotosFilter] = useState(false);
 
   useEffect(() => {
     setHydratedDaycares(daycares);
@@ -272,6 +282,18 @@ export default function CityDashboard({
     );
   };
 
+  const toggleScheduleFilter = (code: string) => {
+    setScheduleFilters((prev) =>
+      prev.includes(code) ? prev.filter((c) => c !== code) : [...prev, code]
+    );
+  };
+
+  const toggleAmenityFilter = (code: string) => {
+    setAmenityFilters((prev) =>
+      prev.includes(code) ? prev.filter((c) => c !== code) : [...prev, code]
+    );
+  };
+
   const clearAllFilters = () => {
     setPfccEnabled(false);
     setVerifiedEnabled(false);
@@ -286,6 +308,13 @@ export default function CityDashboard({
     setLocationQuery("");
     setLocationSearchClearSignal((value) => value + 1);
     setMapResetSignal((prev) => prev + 1); // force map view back to city center
+    // Premium filters
+    setAgeBracket(null);
+    setMaxWeeklyPrice(null);
+    setPricePeriod("weekly");
+    setScheduleFilters([]);
+    setAmenityFilters([]);
+    setHasPhotosFilter(false);
     onClearAllFilters?.();
   };
 
@@ -349,9 +378,42 @@ export default function CityDashboard({
   const verifiedSet = useMemo(() => new Set(verifiedProgramNumbers), [verifiedProgramNumbers]);
 
   const filteredDaycares = useMemo(() => {
-    if (!verifiedEnabled) return baseFilteredDaycares;
-    return baseFilteredDaycares.filter((d) => verifiedSet.has(d["PROGRAM NUMBER"] || ""));
-  }, [baseFilteredDaycares, verifiedEnabled, verifiedSet]);
+    let result = baseFilteredDaycares;
+
+    if (verifiedEnabled) {
+      result = result.filter((d) => verifiedSet.has(d["PROGRAM NUMBER"] || ""));
+    }
+
+    // Premium filters — hide non-verified providers when any premium filter is active
+    const anyPremiumFilter = !!ageBracket || maxWeeklyPrice !== null || scheduleFilters.length > 0 || amenityFilters.length > 0 || hasPhotosFilter;
+    if (anyPremiumFilter) {
+      result = result.filter((d) => {
+        const pn = d["PROGRAM NUMBER"] || "";
+        const summary = premiumSummaries[pn];
+        if (!summary) return false;
+
+        if (ageBracket) {
+          const brackets: Record<string, [number, number]> = { infant: [0, 12], toddler: [12, 36], preschool: [36, 60], "school-age": [60, 144] };
+          const [bMin, bMax] = brackets[ageBracket] || [0, 0];
+          if (!summary.ageRange || summary.ageRange[0] > bMax || summary.ageRange[1] < bMin) return false;
+        }
+        if (maxWeeklyPrice !== null && summary.priceRange) {
+          if (summary.priceRange[0] > maxWeeklyPrice) return false;
+        }
+        if (scheduleFilters.length > 0) {
+          if (!scheduleFilters.every((code) => summary.amenities.includes(code))) return false;
+        }
+        if (amenityFilters.length > 0) {
+          if (!amenityFilters.every((code) => summary.amenities.includes(code))) return false;
+        }
+        if (hasPhotosFilter && !summary.hasPhotos) return false;
+
+        return true;
+      });
+    }
+
+    return result;
+  }, [baseFilteredDaycares, verifiedEnabled, verifiedSet, ageBracket, maxWeeklyPrice, scheduleFilters, amenityFilters, hasPhotosFilter, premiumSummaries]);
   const hasActiveFilters =
     Boolean(searchQuery) ||
     Boolean(selectedCity) ||
@@ -359,7 +421,12 @@ export default function CityDashboard({
     verifiedEnabled ||
     selectedRatings.length > 0 ||
     selectedProgramTypes.length > 0 ||
-    Boolean(mapCenter);
+    Boolean(mapCenter) ||
+    !!ageBracket ||
+    maxWeeklyPrice !== null ||
+    scheduleFilters.length > 0 ||
+    amenityFilters.length > 0 ||
+    hasPhotosFilter;
   const displayResultsCount =
     isHydratingDaycares && !hasActiveFilters && typeof initialTotalCount === "number"
       ? initialTotalCount
@@ -465,6 +532,21 @@ export default function CityDashboard({
           enableCityFilter={enableCityFilter}
           mapCenter={mapCenter}
           onClearAll={clearAllFilters}
+          premiumSummaries={premiumSummaries}
+          ageBracket={ageBracket}
+          setAgeBracket={setAgeBracket}
+          maxWeeklyPrice={maxWeeklyPrice}
+          setMaxWeeklyPrice={setMaxWeeklyPrice}
+          pricePeriod={pricePeriod}
+          setPricePeriod={setPricePeriod}
+          scheduleFilters={scheduleFilters}
+          toggleScheduleFilter={toggleScheduleFilter}
+          clearScheduleFilters={() => setScheduleFilters([])}
+          amenityFilters={amenityFilters}
+          toggleAmenityFilter={toggleAmenityFilter}
+          clearAmenityFilters={() => setAmenityFilters([])}
+          hasPhotosFilter={hasPhotosFilter}
+          setHasPhotosFilter={setHasPhotosFilter}
         />
 
         {/* Results Header */}

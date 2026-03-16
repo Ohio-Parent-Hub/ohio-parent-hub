@@ -39,9 +39,11 @@ make address search also search daycare names
 ✅ make main text in homepage hero tiles slightly darker
 custom amenities on mobile editor
 no email says test
+are premium fields part of SSR SEO?
 
 Dream:
 when deleting an account you are still logged in and shows dashboard
 confirmation email with share linkes, get a month free if shared, but have to alert us
 share your page button on dashboard (prommote button)
 provider verified. FAQ explained
+full map audit for BE functionality. things like only map results being shown in result causing daycares without lat/long to never get displayed

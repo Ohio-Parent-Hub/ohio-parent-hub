@@ -76,6 +76,7 @@ interface GlobalDashboardProps {
   initialTotalCount?: number;
   verifiedProgramNumbers?: string[];
   premiumLogos?: Record<string, string>;
+  premiumSummaries?: Record<string, import("@/lib/premiumTypes").PremiumFilterSummary>;
   basePath?: string;
   externalMapCenter?: [number, number] | null;
   onExternalMapCenterChange?: (coords: [number, number] | null) => void;
@@ -93,6 +94,7 @@ export default function GlobalDashboard({
   initialTotalCount,
   verifiedProgramNumbers = [],
   premiumLogos = {},
+  premiumSummaries = {},
   basePath = "",
   externalMapCenter,
   onExternalMapCenterChange,
@@ -165,6 +167,14 @@ export default function GlobalDashboard({
   const [selectedCity, setSelectedCity] = useState("");
   const [selectedCounty, setSelectedCounty] = useState("");
   const [restoredStateReady, setRestoredStateReady] = useState(false);
+
+  // Premium filter state
+  const [ageBracket, setAgeBracket] = useState<string | null>(null);
+  const [maxWeeklyPrice, setMaxWeeklyPrice] = useState<number | null>(null);
+  const [pricePeriod, setPricePeriod] = useState<"weekly" | "daily" | "monthly">("weekly");
+  const [scheduleFilters, setScheduleFilters] = useState<string[]>([]);
+  const [amenityFilters, setAmenityFilters] = useState<string[]>([]);
+  const [hasPhotosFilter, setHasPhotosFilter] = useState(false);
 
   useEffect(() => {
     try {
@@ -363,8 +373,36 @@ export default function GlobalDashboard({
       result = result.filter((d) => verifiedSet.has(d["PROGRAM NUMBER"] || ""));
     }
 
+    // Premium filters — hide non-verified providers when any premium filter is active
+    const anyPremiumFilter = !!ageBracket || maxWeeklyPrice !== null || scheduleFilters.length > 0 || amenityFilters.length > 0 || hasPhotosFilter;
+    if (anyPremiumFilter) {
+      result = result.filter((d) => {
+        const pn = d["PROGRAM NUMBER"] || "";
+        const summary = premiumSummaries[pn];
+        if (!summary) return false; // no premium data → hide
+
+        if (ageBracket) {
+          const brackets: Record<string, [number, number]> = { infant: [0, 12], toddler: [12, 36], preschool: [36, 60], "school-age": [60, 144] };
+          const [bMin, bMax] = brackets[ageBracket] || [0, 0];
+          if (!summary.ageRange || summary.ageRange[0] > bMax || summary.ageRange[1] < bMin) return false;
+        }
+        if (maxWeeklyPrice !== null && summary.priceRange) {
+          if (summary.priceRange[0] > maxWeeklyPrice) return false;
+        }
+        if (scheduleFilters.length > 0) {
+          if (!scheduleFilters.every((code) => summary.amenities.includes(code))) return false;
+        }
+        if (amenityFilters.length > 0) {
+          if (!amenityFilters.every((code) => summary.amenities.includes(code))) return false;
+        }
+        if (hasPhotosFilter && !summary.hasPhotos) return false;
+
+        return true;
+      });
+    }
+
     return result;
-  }, [daycares, filteredIndices, verifiedEnabled, verifiedSet]);
+  }, [daycares, filteredIndices, verifiedEnabled, verifiedSet, ageBracket, maxWeeklyPrice, scheduleFilters, amenityFilters, hasPhotosFilter, premiumSummaries]);
   const hasActiveFilters =
     Boolean(searchQuery) ||
     Boolean(selectedCity) ||
@@ -373,7 +411,12 @@ export default function GlobalDashboard({
     verifiedEnabled ||
     selectedRatings.length > 0 ||
     selectedProgramTypes.length > 0 ||
-    Boolean(mapCenter);
+    Boolean(mapCenter) ||
+    !!ageBracket ||
+    maxWeeklyPrice !== null ||
+    scheduleFilters.length > 0 ||
+    amenityFilters.length > 0 ||
+    hasPhotosFilter;
   const displayResultsCount =
     isHydratingDaycares && !hasActiveFilters && typeof initialTotalCount === "number"
       ? initialTotalCount
@@ -462,6 +505,13 @@ export default function GlobalDashboard({
     setLocationQuery("");
     setLocationSearchClearSignal((value) => value + 1);
     setMapResetSignal((prev) => prev + 1); // force Leaflet map view back to Ohio center
+    // Premium filters
+    setAgeBracket(null);
+    setMaxWeeklyPrice(null);
+    setPricePeriod("weekly");
+    setScheduleFilters([]);
+    setAmenityFilters([]);
+    setHasPhotosFilter(false);
     onClearAllFilters?.();
   }, [onClearAllFilters, setLocationQuery, setMapCenter, setMapViewCenter, setMapZoom]);
 
@@ -482,6 +532,18 @@ export default function GlobalDashboard({
   const toggleProgramType = useCallback((t: string) => {
     setSelectedProgramTypes(prev => 
       prev.includes(t) ? prev.filter(x => x !== t) : [...prev, t]
+    );
+  }, []);
+
+  const toggleScheduleFilter = useCallback((code: string) => {
+    setScheduleFilters(prev =>
+      prev.includes(code) ? prev.filter(x => x !== code) : [...prev, code]
+    );
+  }, []);
+
+  const toggleAmenityFilter = useCallback((code: string) => {
+    setAmenityFilters(prev =>
+      prev.includes(code) ? prev.filter(x => x !== code) : [...prev, code]
     );
   }, []);
 
@@ -515,6 +577,21 @@ export default function GlobalDashboard({
         counties={counties}
         mapCenter={mapCenter}
         onClearAll={clearAll}
+        premiumSummaries={premiumSummaries}
+        ageBracket={ageBracket}
+        setAgeBracket={setAgeBracket}
+        maxWeeklyPrice={maxWeeklyPrice}
+        setMaxWeeklyPrice={setMaxWeeklyPrice}
+        pricePeriod={pricePeriod}
+        setPricePeriod={setPricePeriod}
+        scheduleFilters={scheduleFilters}
+        toggleScheduleFilter={toggleScheduleFilter}
+        clearScheduleFilters={() => setScheduleFilters([])}
+        amenityFilters={amenityFilters}
+        toggleAmenityFilter={toggleAmenityFilter}
+        clearAmenityFilters={() => setAmenityFilters([])}
+        hasPhotosFilter={hasPhotosFilter}
+        setHasPhotosFilter={setHasPhotosFilter}
       />
 
       {/* Results Header */}
