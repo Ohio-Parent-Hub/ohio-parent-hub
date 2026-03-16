@@ -573,7 +573,6 @@ export default function GlobalDashboard({
     );
   }
 
-  const [mobileView, setMobileView] = useState<"list" | "map">("list");
 
   return (
     <div id="daycare-dashboard" className="space-y-4 scroll-mt-24">
@@ -747,98 +746,79 @@ export default function GlobalDashboard({
           </div>
         </div>
 
-        {mobileView === "map" ? (
-          <div className="-mx-2 relative z-0 bg-neutral-50" style={{ height: "calc(100vh - 200px)" }}>
-            {restoredStateReady ? (
-              <InteractiveMap 
-                center={center}
-                zoom={mapZoom ?? (mapCenter ? 12 : 7)}
-                resetSignal={mapResetSignal}
-                onZoomChange={(zoomLevel) => setMapZoom(zoomLevel)}
-                onViewportChange={(viewport) => {
-                  setMapBounds(viewport.bounds);
-                  setMapViewCenter([viewport.center.lat, viewport.center.lng]);
-                }}
-                markers={mapMarkers}
-                userLocation={mapCenter}
-                height="100%"
-              />
-            ) : (
-              <div className="flex h-full w-full items-center justify-center bg-neutral-100 text-sm text-neutral-400">
-                Loading map…
-              </div>
-            )}
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {!isResultsCountPending && mapViewSortedDaycares.length > displayList.length && (
-              <p className="text-sm text-neutral-500">
-                Showing 50 of {mapViewSortedDaycares.length} results. Use filters to narrow your search.
-              </p>
-            )}
-            {displayList.map((d) => {
-              const name = d["PROGRAM NAME"] || "";
-              const city = d.CITY || "";
-              const displayName = toTitleCaseIfAllCaps(name);
-              const displayCity = toTitleCaseIfAllCaps(city);
-              const displayStreet = toTitleCaseIfAllCaps(d["STREET ADDRESS"] || "");
-              const displayProgramType = toTitleCaseIfAllCaps(d["PROGRAM TYPE"] || "");
-              const detailHref = canonicalDaycarePath(d, basePath);
-              const hasPinnedLocation = Boolean(mapCenter);
-              const distFromPinned = hasPinnedLocation
-                ? distanceMiles(mapCenter as [number, number], [Number(d["LAT"]), Number(d["LNG"])])
-                : null;
-              const isVerified = verifiedSet.has(d["PROGRAM NUMBER"] || "");
-              const hasLogo = Boolean(premiumLogos[d["PROGRAM NUMBER"] || ""]);
-
-              return (
-                <DaycareCard
-                  key={d["PROGRAM NUMBER"]}
-                  name={displayName}
-                  city={displayCity}
-                  street={displayStreet}
-                  programType={displayProgramType}
-                  sutqRating={d["SUTQ RATING"] || "—"}
-                  isPfcc={d["PFCC"] === "Y"}
-                  isVerified={isVerified}
-                  logoUrl={hasLogo ? premiumLogos[d["PROGRAM NUMBER"] || ""] : undefined}
-                  distanceMiles={distFromPinned}
-                  detailHref={detailHref}
-                  onNavigate={() => storeNavContext("state", returnTo)}
-                />
-              );
-            })}
-
-            {displayList.length === 0 && (
-              <div className="text-center py-12 text-neutral-500 bg-neutral-50 rounded-xl border border-dashed">
-                <p className="font-medium">No daycares in current map view</p>
-                <p className="text-sm mt-1">Try zooming out or adjusting your filters.</p>
-                <Button variant="link" onClick={clearAll} className="mt-2">
-                  Clear all filters
-                </Button>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Floating map/list toggle */}
-        <button
-          type="button"
-          className="fixed bottom-6 right-6 z-40 flex items-center gap-2 rounded-full bg-[#4A6B67] text-white shadow-lg px-5 py-3 text-sm font-medium hover:bg-[#3d5a56] transition-colors"
-          onClick={() => setMobileView(v => v === "list" ? "map" : "list")}
-        >
-          {mobileView === "list" ? (
-            <>
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M12 1.586l-4 4v12.828l4-4V1.586zM3.707 3.293A1 1 0 002 4v10a1 1 0 00.293.707L6 18.414V5.586L3.707 3.293zM17.707 5.293L14 1.586V14.414l3.707 3.707A1 1 0 0019 17.414V7a1 1 0 00-.293-.707z" clipRule="evenodd" /></svg>
-              Map
-            </>
+        {/* Map */}
+        <div className="-mx-2 relative z-0 bg-neutral-50 aspect-square">
+          {restoredStateReady ? (
+            <InteractiveMap 
+              center={center}
+              zoom={mapZoom ?? (mapCenter ? 12 : 7)}
+              resetSignal={mapResetSignal}
+              onZoomChange={(zoomLevel) => setMapZoom(zoomLevel)}
+              onViewportChange={(viewport) => {
+                setMapBounds(viewport.bounds);
+                setMapViewCenter([viewport.center.lat, viewport.center.lng]);
+              }}
+              markers={mapMarkers}
+              userLocation={mapCenter}
+              height="100%"
+            />
           ) : (
-            <>
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" /></svg>
-              List
-            </>
+            <div className="flex h-full w-full items-center justify-center bg-neutral-100 text-sm text-neutral-400">
+              Loading map…
+            </div>
           )}
-        </button>
+        </div>
+
+        {/* Results */}
+        <div className="space-y-4 mt-4">
+          {!isResultsCountPending && mapViewSortedDaycares.length > displayList.length && (
+            <p className="text-sm text-neutral-500">
+              Showing 50 of {mapViewSortedDaycares.length} results. Use filters to narrow your search.
+            </p>
+          )}
+          {displayList.map((d) => {
+            const name = d["PROGRAM NAME"] || "";
+            const city = d.CITY || "";
+            const displayName = toTitleCaseIfAllCaps(name);
+            const displayCity = toTitleCaseIfAllCaps(city);
+            const displayStreet = toTitleCaseIfAllCaps(d["STREET ADDRESS"] || "");
+            const displayProgramType = toTitleCaseIfAllCaps(d["PROGRAM TYPE"] || "");
+            const detailHref = canonicalDaycarePath(d, basePath);
+            const hasPinnedLocation = Boolean(mapCenter);
+            const distFromPinned = hasPinnedLocation
+              ? distanceMiles(mapCenter as [number, number], [Number(d["LAT"]), Number(d["LNG"])])
+              : null;
+            const isVerified = verifiedSet.has(d["PROGRAM NUMBER"] || "");
+            const hasLogo = Boolean(premiumLogos[d["PROGRAM NUMBER"] || ""]);
+
+            return (
+              <DaycareCard
+                key={d["PROGRAM NUMBER"]}
+                name={displayName}
+                city={displayCity}
+                street={displayStreet}
+                programType={displayProgramType}
+                sutqRating={d["SUTQ RATING"] || "—"}
+                isPfcc={d["PFCC"] === "Y"}
+                isVerified={isVerified}
+                logoUrl={hasLogo ? premiumLogos[d["PROGRAM NUMBER"] || ""] : undefined}
+                distanceMiles={distFromPinned}
+                detailHref={detailHref}
+                onNavigate={() => storeNavContext("state", returnTo)}
+              />
+            );
+          })}
+
+          {displayList.length === 0 && (
+            <div className="text-center py-12 text-neutral-500 bg-neutral-50 rounded-xl border border-dashed">
+              <p className="font-medium">No daycares in current map view</p>
+              <p className="text-sm mt-1">Try zooming out or adjusting your filters.</p>
+              <Button variant="link" onClick={clearAll} className="mt-2">
+                Clear all filters
+              </Button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
