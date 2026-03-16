@@ -60,7 +60,9 @@ export default function LocationSearch({
         // Scroll to mobile controls on small screens, map on desktop
         setTimeout(() => {
           const mobileControls = document.getElementById("daycare-mobile-controls");
-          const target = mobileControls && mobileControls.offsetParent !== null ? mobileControls : document.getElementById("daycare-map");
+          const target = mobileControls && mobileControls.offsetParent !== null
+            ? mobileControls
+            : document.getElementById("daycare-dashboard");
           target?.scrollIntoView({ behavior: "smooth", block: "start" });
         }, 100);
       } else {

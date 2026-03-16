@@ -350,7 +350,7 @@ function FilterContent({
                   </div>
                 </PopoverTrigger>
                 <PopoverContent className="max-w-[280px] text-sm" align="start" side="bottom">
-                  <p className="font-medium mb-1">Provider Verified</p>
+                  <p className="font-medium mb-1">Owner Verified</p>
                   <p className="text-neutral-600">This provider has claimed their listing and added extra details like photos, hours of operation, pricing, and more. Verified listings give parents a fuller picture of what to expect.</p>
                 </PopoverContent>
               </Popover>
@@ -885,7 +885,7 @@ export default function GlobalDashboard({
   }
 
   return (
-    <div className="flex flex-col lg:flex-row gap-8">
+    <div id="daycare-dashboard" className="flex flex-col lg:flex-row gap-8 scroll-mt-24">
       {/* Desktop Sidebar */}
       <aside className="hidden lg:block w-80 flex-shrink-0 space-y-8">
         <h2 className="font-serif text-2xl font-bold tracking-tight text-primary">Daycares in Ohio</h2>
@@ -1049,30 +1049,46 @@ export default function GlobalDashboard({
             const distanceFromPinned = hasPinnedLocation
               ? distanceMiles(mapCenter as [number, number], [Number(d["LAT"]), Number(d["LNG"])])
               : null;
+            const isVerified = verifiedSet.has(d["PROGRAM NUMBER"] || "");
+            const hasLogo = Boolean(premiumLogos[d["PROGRAM NUMBER"] || ""]);
 
             return (
               <div 
                 key={d["PROGRAM NUMBER"]} 
-                className="group flex flex-col sm:flex-row sm:items-center justify-between rounded-lg sm:rounded-xl border p-3 sm:p-4 bg-white hover:border-black transition-colors gap-3 sm:gap-4"
+                className={`group flex flex-col sm:flex-row sm:items-center justify-between rounded-lg sm:rounded-xl border p-3 sm:p-4 transition-colors gap-3 sm:gap-4 ${
+                  isVerified
+                    ? "border-l-[3px] hover:border-neutral-300"
+                    : "bg-white border-neutral-200 hover:border-neutral-400"
+                }`}
+                style={
+                  isVerified
+                    ? { background: "#F0F6F5", borderColor: "#B8C5B2", borderLeftColor: "#7EA8A4" }
+                    : {}
+                }
               >
+                <div className="flex items-center justify-between sm:hidden">
+                  <SutqBadge rating={d["SUTQ RATING"]} className="scale-90 origin-left" />
+                  {isVerified && <VerifiedProviderBadge />}
+                </div>
                 <div className="flex gap-3">
-                  {premiumLogos[d["PROGRAM NUMBER"] || ""] && (
+                  {hasLogo && (
                     <img
                       src={premiumLogos[d["PROGRAM NUMBER"] || ""]}
                       alt=""
-                      className="h-10 w-10 rounded-lg object-cover border border-neutral-200 flex-shrink-0 mt-0.5"
+                      className={`rounded-lg object-cover flex-shrink-0 mt-0.5 ${
+                        isVerified
+                          ? "h-12 w-12 border-2 border-[#7EA8A4]/40"
+                          : "h-10 w-10 border border-neutral-200"
+                      }`}
                     />
                   )}
                   <div>
-                    <div className="flex items-start justify-between sm:hidden mb-2">
-                      <SutqBadge rating={d["SUTQ RATING"]} className="scale-90 origin-left" />
-                    </div>
                   <h3 className="font-bold text-lg leading-tight mb-1">
                     <Link href={detailHref} className="hover:underline" onClick={() => storeNavContext("state", returnTo)}>
                       {displayName}
                     </Link>
-                    {verifiedSet.has(d["PROGRAM NUMBER"] || "") && (
-                      <span className="ml-2 inline-block align-middle"><VerifiedProviderBadge /></span>
+                    {isVerified && (
+                      <span className="ml-2 hidden sm:inline-block align-middle"><VerifiedProviderBadge /></span>
                     )}
                   </h3>
                   <p className="text-sm text-neutral-500 mb-1">

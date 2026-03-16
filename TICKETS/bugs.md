@@ -29,8 +29,11 @@ better claim page, more saley
 ✅ home homepage hero content up
 ✅ not rated badge details on daycare pages says "may still be licensed"
 updatge legal pages
-map preview card needs work, it's busy AF
-fix mobile map experience, it's clunky and windows 98
+✅ map preview card needs work, it's busy AF
+fix mobile map experience, it's clunky and windows 98. horizontal scroll filters? main filter button full screen
+add pfcc to daycare detail pages somewhere
+city and county scrolls too far when clicking a letter
+
 ✅ scroll to map on mobile (and desktop?) after executing a search
 make address search also search daycare names
 ✅ make main text in homepage hero tiles slightly darker

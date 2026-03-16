@@ -28,35 +28,17 @@ export default function VerifiedProviderBadge({ className = "" }: { className?: 
       <button
         ref={triggerRef}
         type="button"
-        className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium tracking-wide text-white shadow-sm transition-shadow hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
-        style={{ backgroundColor: "#4A6B67" }}
-        aria-label="Provider Verified — this listing includes photos, hours, pricing, and more"
+        className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wider transition-shadow hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+        style={{ backgroundColor: "#7EA8A420", color: "#4A6B67" }}
+        aria-label="Owner Verified — this listing includes photos, hours, pricing, and more"
         onMouseEnter={() => setShowTooltip(true)}
         onMouseLeave={() => setShowTooltip(false)}
         onClick={() => setShowTooltip((prev) => !prev)}
       >
-        {/* Shield with checkmark — gold accent */}
-        <svg
-          width="16"
-          height="16"
-          viewBox="0 0 20 20"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          aria-hidden="true"
-        >
-          <path
-            d="M10 1L3 4.5V9.5C3 14.15 5.96 18.49 10 19.5C14.04 18.49 17 14.15 17 9.5V4.5L10 1Z"
-            fill="#DCB346"
-          />
-          <path
-            d="M7 10.5L9 12.5L13 8"
-            stroke="white"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
+        <svg viewBox="0 0 16 16" fill="currentColor" className="h-3 w-3" aria-hidden="true">
+          <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0Zm3.78 4.97a.75.75 0 0 0-1.06 0L7 8.69 5.28 6.97a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.06 0l4.25-4.25a.75.75 0 0 0 0-1.06Z"/>
         </svg>
-        Provider Verified
+        Owner Verified
       </button>
       {showTooltip && (
         <div

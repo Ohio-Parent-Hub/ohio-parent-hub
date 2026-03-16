@@ -272,16 +272,19 @@ function ClusteredMarkersLayer({ markers }: { markers: NonNullable<MapProps["mar
 
       const addressLine2 = [safeCity, safeZip].filter(Boolean).join(", ");
 
-      const metadataBadges = [
+      // Top row: SUTQ badge + Owner Verified (mirroring search result cards)
+      const topRowBadges = [
+        `<span style="display:inline-block;background:${ratingColor};color:#fff;padding:1px 6px;border-radius:999px;font-size:10px;font-weight:600;line-height:1.4;white-space:nowrap;">${escapeHtml(ratingLabel)}</span>`,
         markerData.verified
-          ? `<span style="display:inline-flex;align-items:center;gap:4px;background:#4A6B67;color:#fff;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:500;letter-spacing:0.025em;line-height:1.4;"><svg width="12" height="12" viewBox="0 0 20 20" fill="none"><path d="M10 1L3 4.5V9.5C3 14.15 5.96 18.49 10 19.5C14.04 18.49 17 14.15 17 9.5V4.5L10 1Z" fill="#DCB346"/><path d="M7 10.5L9 12.5L13 8" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Provider Verified</span>`
+          ? `<span style="display:inline-flex;align-items:center;gap:2px;background:#7EA8A420;color:#4A6B67;padding:1px 6px;border-radius:999px;font-size:10px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;line-height:1.4;white-space:nowrap;"><svg width="10" height="10" viewBox="0 0 16 16" fill="#4A6B67"><path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0Zm3.78 4.97a.75.75 0 0 0-1.06 0L7 8.69 5.28 6.97a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.06 0l4.25-4.25a.75.75 0 0 0 0-1.06Z"/></svg>Owner Verified</span>`
           : "",
-        `<span style="display:inline-block;background:${ratingColor};color:#fff;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:600;line-height:1.4;">${escapeHtml(ratingLabel)}</span>`,
+      ]
+        .filter(Boolean)
+        .join(" ");
+
+      const metaBadges = [
         safeProgramType
           ? `<span style="display:inline-block;background:#EEF2F7;color:#334155;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:600;line-height:1.4;">${safeProgramType}</span>`
-          : "",
-        markerData.pfcc
-          ? `<span style="display:inline-block;background:#DBEAFE;color:#1D4ED8;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700;line-height:1.4;">PFCC</span>`
           : "",
       ]
         .filter(Boolean)
@@ -295,12 +298,12 @@ function ClusteredMarkersLayer({ markers }: { markers: NonNullable<MapProps["mar
         .join("");
 
       const logoBlock = safeLogoUrl
-        ? `<div style="margin-bottom:8px;display:flex;align-items:center;gap:8px;"><img src="${safeLogoUrl}" alt="" style="width:36px;height:36px;border-radius:8px;object-fit:cover;border:1px solid #e5e7eb;" /><div style="font-size:14px;font-weight:700;color:#111827;line-height:1.35;">${safeTitle}</div></div>`
-        : `<div style="font-size:14px;font-weight:700;color:#111827;line-height:1.35;">${safeTitle}</div>`;
+        ? `<div style="margin-bottom:4px;display:flex;align-items:center;gap:8px;"><img src="${safeLogoUrl}" alt="" style="width:36px;height:36px;border-radius:8px;object-fit:cover;border:1px solid #e5e7eb;" /><div style="font-size:14px;font-weight:700;color:#111827;line-height:1.35;">${safeTitle}</div></div>`
+        : `<div style="font-size:14px;font-weight:700;color:#111827;line-height:1.35;margin-bottom:2px;">${safeTitle}</div>`;
 
       const popupHtml = safeUrl
-        ? `<div style="font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;max-width:260px;">${logoBlock}<div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:4px;">${metadataBadges}</div>${addressBlock}<div style="margin-top:8px;"><a href="${safeUrl}" style="color:#2563EB;text-decoration:none;font-size:12px;font-weight:600;">View Details</a></div></div>`
-        : `<div style="font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;max-width:260px;">${logoBlock}<div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:4px;">${metadataBadges}</div>${addressBlock}</div>`;
+        ? `<div style="font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;max-width:260px;"><div style="display:flex;flex-wrap:nowrap;gap:4px;margin-bottom:6px;">${topRowBadges}</div>${logoBlock}${metaBadges ? `<div style="margin-top:4px;display:flex;flex-wrap:wrap;gap:4px;">${metaBadges}</div>` : ""}${addressBlock}<div style="margin-top:8px;"><a href="${safeUrl}" style="color:#2563EB;text-decoration:none;font-size:12px;font-weight:600;">View Details</a></div></div>`
+        : `<div style="font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;max-width:260px;"><div style="display:flex;flex-wrap:nowrap;gap:4px;margin-bottom:6px;">${topRowBadges}</div>${logoBlock}${metaBadges ? `<div style="margin-top:4px;display:flex;flex-wrap:wrap;gap:4px;">${metaBadges}</div>` : ""}${addressBlock}</div>`;
 
       marker.bindPopup(popupHtml);
       return marker;

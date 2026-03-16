@@ -29,7 +29,7 @@ export default function HomepageSearchInput() {
       if (data && data.length > 0) {
         const lat = parseFloat(data[0].lat);
         const lng = parseFloat(data[0].lon);
-        router.push(`/daycares?lat=${lat}&lng=${lng}&q=${encodeURIComponent(q)}#daycare-mobile-controls`);
+        router.push(`/daycares?lat=${lat}&lng=${lng}&q=${encodeURIComponent(q)}#daycare-dashboard`);
       } else {
         setError(true);
       }
