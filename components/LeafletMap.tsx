@@ -7,6 +7,8 @@ import "leaflet.markercluster";
 import "leaflet/dist/leaflet.css";
 import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
+import "leaflet-gesture-handling";
+import "leaflet-gesture-handling/dist/leaflet-gesture-handling.css";
 
 // Only run client-side to prevent SSR window errors
 if (typeof window !== "undefined") {
@@ -351,7 +353,8 @@ export default function LeafletMap({
         dragging: true, 
         touchZoom: true, 
         doubleClickZoom: true, 
-        zoomControl: true 
+        zoomControl: true,
+        gestureHandling: true,
       }
     : { 
         scrollWheelZoom: false, 

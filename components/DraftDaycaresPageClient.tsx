@@ -245,8 +245,8 @@ export default function DraftDaycaresPageClient({
         </div>
       </section>
 
-      <section className="px-6 py-8">
-        <div className="mx-auto max-w-7xl rounded-3xl border p-4 sm:p-6 shadow-sm" style={{ background: "#fff", borderColor: `${sage}55` }}>
+      <section className="px-0 sm:px-6 py-4 sm:py-8">
+        <div className="mx-auto max-w-7xl sm:rounded-3xl sm:border px-2 py-3 sm:p-6 sm:shadow-sm" style={{ background: "#fff", borderColor: `${sage}55` }}>
           <GlobalDashboard
             initialDaycares={initialDaycares}
             initialTotalCount={daycareCount}

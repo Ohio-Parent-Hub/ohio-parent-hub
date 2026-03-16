@@ -52,7 +52,7 @@ export default function HomepageSearchInput() {
           onKeyDown={(e) => { if (e.key === "Enter") handleSubmit(); }}
           enterKeyHint="search"
           placeholder="Find a Daycare"
-          className="h-12 w-full cursor-text rounded-full border-0 pl-11 pr-12 text-sm font-bold text-white shadow-lg outline-none placeholder:text-white/90 focus:ring-2 focus:ring-white/40 sm:h-14 sm:pl-12 sm:pr-14 sm:text-lg"
+          className="h-12 w-full cursor-text rounded-full border-0 pl-11 pr-12 text-base font-bold text-white shadow-lg outline-none placeholder:text-white/90 focus:ring-2 focus:ring-white/40 sm:h-14 sm:pl-12 sm:pr-14 sm:text-lg"
           style={{ background: focused ? "#5e8e8a" : teal, color: "#fff" }}
         />
         <div className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2">

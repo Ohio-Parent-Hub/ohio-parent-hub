@@ -880,7 +880,7 @@ export default function CityDashboard({
           </div>
 
           {/* Map */}
-          <div className="rounded-xl border bg-neutral-50 shadow-sm relative z-0" style={{ height: "500px" }}>
+          <div className="-mx-2 sm:mx-0 sm:rounded-xl sm:border bg-neutral-50 sm:shadow-sm relative z-0" style={{ height: "500px" }}>
             {restoredStateReady ? (
               <InteractiveMap
                 center={center}
@@ -894,10 +894,10 @@ export default function CityDashboard({
                 markers={markers}
                 userLocation={mapCenter}
                 height="500px"
-                className="rounded-xl"
+                className="sm:rounded-xl"
               />
             ) : (
-              <div className="flex h-full w-full items-center justify-center rounded-xl bg-neutral-100 text-sm text-neutral-400">
+              <div className="flex h-full w-full items-center justify-center sm:rounded-xl bg-neutral-100 text-sm text-neutral-400">
                 Loading map…
               </div>
             )}
@@ -932,7 +932,7 @@ export default function CityDashboard({
               return (
                 <div
                   key={id}
-                  className="group flex flex-col sm:flex-row sm:items-center justify-between rounded-xl border p-4 bg-white hover:border-black transition-colors gap-4"
+                  className="group flex flex-col sm:flex-row sm:items-center justify-between rounded-lg sm:rounded-xl border p-3 sm:p-4 bg-white hover:border-black transition-colors gap-3 sm:gap-4"
                 >
                   <div className="flex gap-3">
                     {premiumLogos[id] && (

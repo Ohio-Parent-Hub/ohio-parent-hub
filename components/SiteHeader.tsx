@@ -51,7 +51,7 @@ export default function SiteHeader() {
   return (
     <nav
       className={`z-40 backdrop-blur-xl transition-shadow ${isSticky ? "sticky top-0 shadow-sm" : "relative"}`}
-      style={{ background: `${cream}ee` }}
+      style={{ background: "rgba(255,255,255,0.93)" }}
     >
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="flex h-20 items-center justify-between">
@@ -67,13 +67,14 @@ export default function SiteHeader() {
                   <Menu className="h-4 w-4" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-[300px] sm:w-[340px] px-0">
-                <SheetHeader className="px-6 pb-4 text-left">
-                  <SheetTitle style={{ color: dark }}>Menu</SheetTitle>
-                  <p className="text-sm" style={{ color: `${dark}aa` }}>
-                    Quick navigation
-                  </p>
+              <SheetContent side="right" className="w-[300px] sm:w-[340px] px-0 bg-white">
+                <SheetHeader className="px-6 pb-4 text-left sr-only">
+                  <SheetTitle>Menu</SheetTitle>
                 </SheetHeader>
+                <div className="flex items-center gap-3 px-6 pb-4 pt-2">
+                  <Image src="/icon.png" alt="Ohio Parent Hub" width={36} height={36} />
+                  <span className="font-serif text-lg font-bold" style={{ color: teal }}>Ohio Parent Hub</span>
+                </div>
                 <div className="border-t border-border/40 px-5 pt-5">
                   <div className="space-y-3">
                     <SheetClose asChild>

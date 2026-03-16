@@ -8,7 +8,7 @@ const dark = "#4A6B67";
 
 export default function SiteFooter() {
   return (
-    <footer style={{ background: cream }}>
+    <footer style={{ background: "#fff" }}>
       <div
         className="border-y px-6 py-3"
         style={{

@@ -35,7 +35,7 @@ function FilterInput({ value, onChange, placeholder, className }: FilterInputPro
     <input
       value={localValue}
       onChange={(e) => setLocalValue(e.target.value)}
-      className={`w-full rounded-xl border px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-black/10 ${className}`}
+      className={`w-full rounded-xl border px-4 py-3 text-base sm:text-sm outline-none focus:ring-2 focus:ring-black/10 ${className}`}
       placeholder={placeholder}
     />
   );
