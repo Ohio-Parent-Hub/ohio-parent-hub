@@ -113,7 +113,8 @@ export default function CityDashboard({
   const [restoredStateReady, setRestoredStateReady] = useState(false);
 
   // Premium filter state
-  const [ageBracket, setAgeBracket] = useState<string | null>(null);
+  const [ageBrackets, setAgeBrackets] = useState<string[]>([]);
+  const [minWeeklyPrice, setMinWeeklyPrice] = useState<number | null>(null);
   const [maxWeeklyPrice, setMaxWeeklyPrice] = useState<number | null>(null);
   const [pricePeriod, setPricePeriod] = useState<"weekly" | "daily" | "monthly">("weekly");
   const [scheduleFilters, setScheduleFilters] = useState<string[]>([]);
@@ -301,15 +302,9 @@ export default function CityDashboard({
     setSelectedProgramTypes([]);
     setSelectedCity("");
     setSearchQuery("");
-    setMapCenter(null);
-    setMapViewCenter(null);
-    setMapZoom(null);
-    setMapBounds(null); // let Leaflet re-report bounds after map snaps back
-    setLocationQuery("");
-    setLocationSearchClearSignal((value) => value + 1);
-    setMapResetSignal((prev) => prev + 1); // force map view back to city center
     // Premium filters
-    setAgeBracket(null);
+    setAgeBrackets([]);
+    setMinWeeklyPrice(null);
     setMaxWeeklyPrice(null);
     setPricePeriod("weekly");
     setScheduleFilters([]);
@@ -385,17 +380,22 @@ export default function CityDashboard({
     }
 
     // Premium filters — hide non-verified providers when any premium filter is active
-    const anyPremiumFilter = !!ageBracket || maxWeeklyPrice !== null || scheduleFilters.length > 0 || amenityFilters.length > 0 || hasPhotosFilter;
+    const anyPremiumFilter = ageBrackets.length > 0 || minWeeklyPrice !== null || maxWeeklyPrice !== null || scheduleFilters.length > 0 || amenityFilters.length > 0 || hasPhotosFilter;
     if (anyPremiumFilter) {
       result = result.filter((d) => {
         const pn = d["PROGRAM NUMBER"] || "";
         const summary = premiumSummaries[pn];
         if (!summary) return false;
 
-        if (ageBracket) {
-          const brackets: Record<string, [number, number]> = { infant: [0, 12], toddler: [12, 36], preschool: [36, 60], "school-age": [60, 144] };
-          const [bMin, bMax] = brackets[ageBracket] || [0, 0];
-          if (!summary.ageRange || summary.ageRange[0] > bMax || summary.ageRange[1] < bMin) return false;
+        if (ageBrackets.length > 0) {
+          const bracketRanges: Record<string, [number, number]> = { infant: [0, 12], toddler: [12, 36], preschool: [36, 60], "school-age": [60, 144] };
+          for (const bracket of ageBrackets) {
+            const [bMin, bMax] = bracketRanges[bracket] || [0, 0];
+            if (!summary.ageRange || summary.ageRange[0] > bMax || summary.ageRange[1] < bMin) return false;
+          }
+        }
+        if (minWeeklyPrice !== null && summary.priceRange) {
+          if (summary.priceRange[1] < minWeeklyPrice) return false;
         }
         if (maxWeeklyPrice !== null && summary.priceRange) {
           if (summary.priceRange[0] > maxWeeklyPrice) return false;
@@ -413,7 +413,7 @@ export default function CityDashboard({
     }
 
     return result;
-  }, [baseFilteredDaycares, verifiedEnabled, verifiedSet, ageBracket, maxWeeklyPrice, scheduleFilters, amenityFilters, hasPhotosFilter, premiumSummaries]);
+  }, [baseFilteredDaycares, verifiedEnabled, verifiedSet, ageBrackets, minWeeklyPrice, maxWeeklyPrice, scheduleFilters, amenityFilters, hasPhotosFilter, premiumSummaries]);
   const hasActiveFilters =
     Boolean(searchQuery) ||
     Boolean(selectedCity) ||
@@ -422,7 +422,8 @@ export default function CityDashboard({
     selectedRatings.length > 0 ||
     selectedProgramTypes.length > 0 ||
     Boolean(mapCenter) ||
-    !!ageBracket ||
+    ageBrackets.length > 0 ||
+    minWeeklyPrice !== null ||
     maxWeeklyPrice !== null ||
     scheduleFilters.length > 0 ||
     amenityFilters.length > 0 ||
@@ -533,8 +534,11 @@ export default function CityDashboard({
           mapCenter={mapCenter}
           onClearAll={clearAllFilters}
           premiumSummaries={premiumSummaries}
-          ageBracket={ageBracket}
-          setAgeBracket={setAgeBracket}
+          ageBrackets={ageBrackets}
+          toggleAgeBracket={(v) => setAgeBrackets(prev => prev.includes(v) ? prev.filter(x => x !== v) : [...prev, v])}
+          clearAgeBrackets={() => setAgeBrackets([])}
+          minWeeklyPrice={minWeeklyPrice}
+          setMinWeeklyPrice={setMinWeeklyPrice}
           maxWeeklyPrice={maxWeeklyPrice}
           setMaxWeeklyPrice={setMaxWeeklyPrice}
           pricePeriod={pricePeriod}
