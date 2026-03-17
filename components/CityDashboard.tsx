@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect, useLayoutEffect, useRef } from "react";
+import { useState, useMemo, useEffect, useLayoutEffect, useRef, useCallback } from "react";
 import { usePathname } from "next/navigation";
 import InteractiveMap from "@/components/InteractiveMap";
 import FilterChipBar from "@/components/FilterChipBar";
@@ -95,6 +95,16 @@ export default function CityDashboard({
 
   const [searchQuery, setSearchQuery] = useState("");
   const [mapBounds, setMapBounds] = useState<{ north: number; south: number; east: number; west: number } | null>(null);
+
+  // Ignore viewport changes from hidden Leaflet maps (CSS display:none reports degenerate bounds)
+  const handleViewportChange = useCallback((viewport: { bounds: { north: number; south: number; east: number; west: number }; center: { lat: number; lng: number } }) => {
+    const { bounds } = viewport;
+    const latSpan = Math.abs(bounds.north - bounds.south);
+    const lngSpan = Math.abs(bounds.east - bounds.west);
+    if (latSpan < 0.0001 || lngSpan < 0.0001) return;
+    setMapBounds(bounds);
+    setMapViewCenter([viewport.center.lat, viewport.center.lng]);
+  }, []);
   const [mapResetSignal, setMapResetSignal] = useState(0);
   const [internalMapCenter, setInternalMapCenter] = useState<[number, number] | null>(null);
   const [internalMapViewCenter, setInternalMapViewCenter] = useState<[number, number] | null>(null);
@@ -610,10 +620,7 @@ export default function CityDashboard({
                   zoom={mapZoom ?? (mapCenter ? 12 : 7)}
                   resetSignal={mapResetSignal}
                   onZoomChange={(zoomLevel) => setMapZoom(zoomLevel)}
-                  onViewportChange={(viewport) => {
-                    setMapBounds(viewport.bounds);
-                    setMapViewCenter([viewport.center.lat, viewport.center.lng]);
-                  }}
+                  onViewportChange={handleViewportChange}
                   markers={markers}
                   userLocation={mapCenter}
                   height="100%"
@@ -708,10 +715,7 @@ export default function CityDashboard({
                 zoom={mapZoom ?? (mapCenter ? 12 : 7)}
                 resetSignal={mapResetSignal}
                 onZoomChange={(zoomLevel) => setMapZoom(zoomLevel)}
-                onViewportChange={(viewport) => {
-                  setMapBounds(viewport.bounds);
-                  setMapViewCenter([viewport.center.lat, viewport.center.lng]);
-                }}
+                onViewportChange={handleViewportChange}
                 markers={markers}
                 userLocation={mapCenter}
                 height="100%"
