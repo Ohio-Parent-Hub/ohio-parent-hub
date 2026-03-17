@@ -256,6 +256,13 @@ export default function ClaimListingDialog({
             </p>
           )}
 
+          <p className="text-center text-xs" style={{ color: `${dark}80` }}>
+            By creating an account, you agree to our{" "}
+            <a href="/terms" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: teal }}>Terms of Service</a>{" "}
+            and{" "}
+            <a href="/privacy" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: teal }}>Privacy Policy</a>.
+          </p>
+
           <Button
             type="submit"
             disabled={loading}

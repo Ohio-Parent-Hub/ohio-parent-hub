@@ -26,6 +26,7 @@ export default function SiteFooter() {
           <Link href="/contact" className="transition-opacity hover:opacity-75">Contact</Link>
           <Link href="/faq" className="transition-opacity hover:opacity-75">FAQ</Link>
           <Link href="/privacy" className="transition-opacity hover:opacity-75">Privacy</Link>
+          <Link href="/terms" className="transition-opacity hover:opacity-75">Terms</Link>
           <Link href="/methodology" className="transition-opacity hover:opacity-75">Methodology</Link>
           <Link href="/for-providers" className="transition-opacity hover:opacity-75">For Providers</Link>
         </nav>

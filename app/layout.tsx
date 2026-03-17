@@ -6,6 +6,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { ToastProvider } from "@/components/ui/toast";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
+import CookieConsent from "@/components/CookieConsent";
+import AnalyticsLoader from "@/components/AnalyticsLoader";
 
 const dmSerif = DM_Serif_Display({
   weight: ["400"],
@@ -97,24 +99,7 @@ export default function RootLayout({
         <Script id="site-jsonld" type="application/ld+json" strategy="afterInteractive">
           {JSON.stringify([organizationSchema, websiteSchema])}
         </Script>
-        {gaMeasurementId && (
-          <>
-            <Script
-              src={`https://www.googletagmanager.com/gtag/js?id=${gaMeasurementId}`}
-              strategy="afterInteractive"
-            />
-            <Script id="ga4-init" strategy="afterInteractive">
-              {`
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                gtag('js', new Date());
-                gtag('config', '${gaMeasurementId}', {
-                  send_page_view: true
-                });
-              `}
-            </Script>
-          </>
-        )}
+        {gaMeasurementId && <AnalyticsLoader gaId={gaMeasurementId} />}
         <TooltipProvider>
           <ToastProvider>
             <SiteHeader />
@@ -122,6 +107,7 @@ export default function RootLayout({
             <SiteFooter />
           </ToastProvider>
         </TooltipProvider>
+        <CookieConsent />
       </body>
     </html>
   );

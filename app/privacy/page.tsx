@@ -14,7 +14,7 @@ function SparkleDecor({ className, style }: { className?: string; style?: CSSPro
 export const metadata: Metadata = {
   title: "Privacy Policy | Ohio Parent Hub",
   description:
-    "Review how Ohio Parent Hub handles usage analytics, listing data, map and geocoding services, and contact communications.",
+    "Review how Ohio Parent Hub handles your data, including accounts, premium listing subscriptions, analytics, and contact communications.",
   alternates: {
     canonical: "/privacy",
   },
@@ -29,7 +29,7 @@ const dark = "#4A6B67";
 const lightTeal = "#D5E5E3";
 const lightPink = "#FADED4";
 const lightGold = "#F5E9BE";
-const updatedAt = "February 26, 2026";
+const updatedAt = "March 16, 2026";
 
 export default function PrivacyPage() {
   return (
@@ -78,8 +78,8 @@ export default function PrivacyPage() {
 
             <div className="grid grid-cols-3 gap-3 lg:col-span-2">
               {[
-                { value: "Minimal", label: "Collection", bg: "#FFFFFF", accent: teal },
-                { value: "No Accounts", label: "Login Data", bg: lightPink, accent: pink },
+                { value: "Transparent", label: "Collection", bg: "#FFFFFF", accent: teal },
+                { value: "Secure", label: "Accounts", bg: lightPink, accent: pink },
                 { value: "State-Sourced", label: "Listings", bg: lightGold, accent: gold },
               ].map((stat) => (
                 <div
@@ -108,7 +108,10 @@ export default function PrivacyPage() {
             </h2>
             <ul className="mt-3 space-y-2 text-sm leading-relaxed" style={{ color: `${dark}bb` }}>
               <li>• Listing and location data displayed on this site comes from public/state-published records.</li>
-              <li>• Google Analytics receives standard usage signals such as pages viewed and interaction events.</li>
+              <li>• <strong>Account data:</strong> When you create an account to claim a listing, we collect your email address and an encrypted password through Supabase Authentication.</li>
+              <li>• <strong>Payment data:</strong> Subscription payments are processed by Stripe. We do not store credit card numbers. Stripe may collect billing details per their <a href="https://stripe.com/privacy" target="_blank" rel="noopener noreferrer" className="underline hover:no-underline" style={{ color: teal }}>privacy policy</a>.</li>
+              <li>• <strong>Provider-uploaded content:</strong> Premium listing holders may upload photos, logos, descriptions, hours, pricing, amenities, and FAQs. This content is stored in Supabase Storage and our database.</li>
+              <li>• <strong>Analytics:</strong> If you consent, Google Analytics receives standard usage signals such as pages viewed and interaction events.</li>
               <li>• We store filter/search UI state in your browser session storage to preserve your browsing state while you navigate.</li>
               <li>• If you use location search, your query is sent to our geocoding endpoint and then forwarded to OpenStreetMap Nominatim to resolve coordinates.</li>
               <li>• If you email us, we receive the information you include in your message.</li>
@@ -121,6 +124,9 @@ export default function PrivacyPage() {
             </h2>
             <ul className="mt-3 space-y-2 text-sm leading-relaxed" style={{ color: `${dark}bb` }}>
               <li>• Provide daycare search, filtering, and map browsing features.</li>
+              <li>• Authenticate providers and manage premium listing subscriptions.</li>
+              <li>• Display provider-uploaded content on their claimed listings.</li>
+              <li>• Process subscription payments through Stripe.</li>
               <li>• Improve usability and understand broad site traffic trends.</li>
               <li>• Review listing concerns and fix display-level issues.</li>
               <li>• Refresh data when source records are updated.</li>
@@ -135,9 +141,11 @@ export default function PrivacyPage() {
               Ohio Parent Hub uses third-party services for analytics and map/location functionality:
             </p>
             <ul className="mt-2 space-y-2 text-sm leading-relaxed" style={{ color: `${dark}bb` }}>
-              <li>• Google Analytics (when configured) for traffic and interaction measurement.</li>
-              <li>• CARTO and OpenStreetMap tile services for interactive maps.</li>
-              <li>• OpenStreetMap Nominatim for address/location geocoding requests.</li>
+              <li>• <strong>Google Analytics</strong> (with consent) for traffic and interaction measurement.</li>
+              <li>• <strong>Supabase</strong> for authentication and data storage.</li>
+              <li>• <strong>Stripe</strong> for payment processing and subscription management.</li>
+              <li>• <strong>CARTO and OpenStreetMap</strong> tile services for interactive maps.</li>
+              <li>• <strong>OpenStreetMap Nominatim</strong> for address/location geocoding requests.</li>
             </ul>
             <p className="mt-2 text-sm leading-relaxed" style={{ color: `${dark}aa` }}>
               These providers may process technical request data (for example IP address, user agent,
@@ -154,8 +162,19 @@ export default function PrivacyPage() {
               your browser and is generally cleared when the tab/session ends.
             </p>
             <p className="mt-2 text-sm leading-relaxed" style={{ color: `${dark}bb` }}>
-              Analytics cookies or similar technologies may be set by Google Analytics.
-              You can manage cookies through your browser settings.
+              <strong>Strictly necessary cookies:</strong> Supabase sets authentication cookies
+              (prefixed <code className="rounded bg-gray-100 px-1">sb-</code>) to manage login sessions.
+              These are essential for account functionality and do not require consent.
+            </p>
+            <p className="mt-2 text-sm leading-relaxed" style={{ color: `${dark}bb` }}>
+              <strong>Analytics cookies:</strong> Google Analytics sets cookies
+              (such as <code className="rounded bg-gray-100 px-1">_ga</code>) only if you accept analytics
+              cookies via the consent banner. You can change your preference at any time by clearing
+              your browser cookies; the consent banner will reappear.
+            </p>
+            <p className="mt-2 text-sm leading-relaxed" style={{ color: `${dark}bb` }}>
+              <strong>Cookie consent preference:</strong> We store your cookie consent choice in
+              browser localStorage so we can respect it across visits.
             </p>
           </section>
 
@@ -175,20 +194,41 @@ export default function PrivacyPage() {
 
           <section>
             <h2 className="text-xl font-semibold" style={{ color: dark }}>
-              6) User privacy
+              6) Accounts and your data
             </h2>
             <p className="mt-3 text-sm leading-relaxed" style={{ color: `${dark}bb` }}>
-              Ohio Parent Hub does not provide account registration or user profiles.
+              Childcare providers may create an account to claim and manage their listing.
+              Account data includes your email address and an encrypted password stored securely
+              in Supabase. We do not sell or share personal information with third parties for
+              marketing purposes.
             </p>
             <p className="mt-2 text-sm leading-relaxed" style={{ color: `${dark}bb` }}>
-              We do not provide site forms that request sensitive personal details. If you contact us
-              by email, you control what information you include.
+              If you cancel your subscription, your premium listing content is deactivated.
+              To request deletion of your account and associated data, contact us through our{" "}
+              <Link href="/contact" className="underline hover:no-underline" style={{ color: teal }}>Contact page</Link>.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-semibold" style={{ color: dark }}>
+              7) Provider-uploaded content
+            </h2>
+            <p className="mt-3 text-sm leading-relaxed" style={{ color: `${dark}bb` }}>
+              Premium listing holders can upload photos, logos, and other content. By uploading,
+              providers confirm they have the right to use that content. Uploaded files are stored
+              in Supabase Storage and displayed publicly on the listing page.
+            </p>
+            <p className="mt-2 text-sm leading-relaxed" style={{ color: `${dark}bb` }}>
+              Providers can remove their uploaded content at any time through their dashboard.
+              See our{" "}
+              <Link href="/terms" className="underline hover:no-underline" style={{ color: teal }}>Terms of Service</Link>{" "}
+              for full details on content responsibilities.
             </p>
           </section>
 
           <section className="border-t pt-6" style={{ borderColor: `${sage}66` }}>
             <h2 className="text-xl font-semibold" style={{ color: dark }}>
-              7) Contact and updates
+              8) Contact and updates
             </h2>
             <p className="mt-3 text-sm leading-relaxed" style={{ color: `${dark}bb` }}>
               Questions about this policy can be sent through our{" "}
