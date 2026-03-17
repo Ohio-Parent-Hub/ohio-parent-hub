@@ -25,8 +25,6 @@ export default function SiteFooter() {
           <Link href="/about" className="transition-opacity hover:opacity-75">About</Link>
           <Link href="/contact" className="transition-opacity hover:opacity-75">Contact</Link>
           <Link href="/faq" className="transition-opacity hover:opacity-75">FAQ</Link>
-          <Link href="/privacy" className="transition-opacity hover:opacity-75">Privacy</Link>
-          <Link href="/terms" className="transition-opacity hover:opacity-75">Terms</Link>
           <Link href="/methodology" className="transition-opacity hover:opacity-75">Methodology</Link>
           <Link href="/for-providers" className="transition-opacity hover:opacity-75">For Providers</Link>
         </nav>
@@ -40,6 +38,8 @@ export default function SiteFooter() {
           <div className="flex flex-wrap justify-center gap-6 text-sm font-medium" style={{ color: `${dark}88` }}>
             <Link href="/daycares">Find Daycares</Link>
             <Link href="/cities">Cities</Link>
+            <Link href="/privacy">Privacy</Link>
+            <Link href="/terms">Terms</Link>
           </div>
 
           <div className="flex items-center gap-1 text-sm" style={{ color: `${dark}50` }}>
