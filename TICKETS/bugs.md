@@ -1,5 +1,5 @@
 ✅ forgot password
-better claim page, more saley
+✅ better claim page, more saley
 ✅ change gmail to domain email
 ✅ picture size, vercel has wsop or whatever
 ✅ drag pictures
@@ -32,7 +32,6 @@ updatge legal pages (cookie banner?)
 ✅ map preview card needs work, it's busy AF
 ✅ fix mobile map experience, it's clunky and windows 98. horizontal scroll filters? main filter button full screen
 ✅ add handicap accessible to amenities
-make address search also search daycare names
 ✅ scroll to map on mobile (and desktop?) after executing a search
 ✅ make main text in homepage hero tiles slightly darker
 ✅ custom amenities on mobile editor
@@ -47,6 +46,6 @@ move "select and age range" to under the title of the price filter
 Dream:
 when deleting an account you are still logged in and shows dashboard
 confirmation email with share linkes, get a month free if shared, but have to alert us
-share your page button on dashboard (prommote button)
+✅ share your page button on dashboard (prommote button)
 provider verified. FAQ explained
 full map audit for BE functionality. things like only map results being shown in result causing daycares without lat/long to never get displayed

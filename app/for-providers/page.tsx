@@ -6,7 +6,7 @@ import Link from "next/link";
 import {
   Search, ShieldCheck, Camera, Clock, DollarSign, ListChecks,
   Heart, Globe, MessageCircle, Star, Sparkles, ArrowRight, Phone, MapPin,
-  Image as ImageIcon, FileText, Filter, Megaphone, Lightbulb, CheckCircle2, Rocket,
+  Image as ImageIcon, FileText, Filter, Megaphone, Lightbulb, CheckCircle2, Rocket, Code,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import VerifiedProviderBadge from "@/components/premium/VerifiedProviderBadge";
@@ -649,7 +649,7 @@ export default function ForProvidersPage() {
             </div>
             <div className="rounded-xl border px-5 py-4 mb-6" style={{ borderColor: `${sage}33`, background: lightTeal }}>
               <div className="text-xs font-medium mb-1" style={{ color: `${dark}66` }}>Share this link anywhere:</div>
-              <div className="text-lg font-mono font-semibold" style={{ color: teal }}>
+              <div className="text-sm sm:text-lg font-mono font-semibold break-all" style={{ color: teal }}>
                 ohioparenthub.com/daycare/your-daycare-name
               </div>
             </div>
@@ -679,6 +679,21 @@ export default function ForProvidersPage() {
             <div className="mt-6 rounded-xl p-4" style={{ background: `${teal}08` }}>
               <p className="text-sm font-medium" style={{ color: dark }}>
                 Already have a website? We&apos;ll link to it directly from your listing so parents can visit with one click.
+              </p>
+            </div>
+          </div>
+
+          {/* Badge backlink promo */}
+          <div className="mt-6 flex items-center gap-4 rounded-2xl border bg-white p-5 shadow-sm" style={{ borderColor: `${gold}40` }}>
+            <div className="hidden sm:block flex-shrink-0 rounded-lg p-2" style={{ background: `${gold}12` }}>
+              <Code className="h-5 w-5" style={{ color: gold }} />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-semibold" style={{ color: dark }}>
+                Already have a website? Add our badge and get a free month.
+              </p>
+              <p className="mt-0.5 text-xs" style={{ color: `${dark}88` }}>
+                Premium members can grab an embeddable badge from their dashboard. Add it to your site, let us know, and your next month is on us.
               </p>
             </div>
           </div>
@@ -782,7 +797,7 @@ export default function ForProvidersPage() {
             {[
               { icon: <Lightbulb className="h-5 w-5" style={{ color: gold }} />, title: "Feature Input", desc: "Tell us what tools would help your business. Your feedback directly influences our roadmap." },
               { icon: <Sparkles className="h-5 w-5" style={{ color: teal }} />, title: "Feature Updates", desc: "Get access to new features as we build them — more customization options, enhanced listing tools, and more." },
-              { icon: <Megaphone className="h-5 w-5" style={{ color: pink }} />, title: "\"Proud Member\" Badge", desc: "Coming soon: a shareable badge you can display on your website and social media." },
+              { icon: <Megaphone className="h-5 w-5" style={{ color: pink }} />, title: "Hiring Portal", desc: "Mark your program as hiring and post open positions so qualified candidates can find you." },
             ].map((item) => (
               <div key={item.title} className="flex gap-3 rounded-xl bg-white p-4 shadow-sm" style={{ borderColor: `${sage}55` }}>
                 <div className="mt-0.5 flex-shrink-0">{item.icon}</div>

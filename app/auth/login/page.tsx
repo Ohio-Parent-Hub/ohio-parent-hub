@@ -139,7 +139,7 @@ export default function LoginPage() {
             className="mt-3 rounded-full px-6 text-xs font-semibold text-white"
             style={{ backgroundColor: teal }}
           >
-            <Link href="/daycares">Find Your Listing</Link>
+            <Link href="/for-providers">Find Your Listing</Link>
           </Button>
         </div>
       </div>

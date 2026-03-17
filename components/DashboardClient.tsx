@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -20,7 +20,20 @@ import {
   Clock,
   XCircle,
   LogOut,
+  Share2,
+  Megaphone,
+  Copy,
+  Check,
+  Globe,
+  Code2,
+  ExternalLink,
 } from "lucide-react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { createClient } from "@/lib/supabase/client";
 import { Star } from "lucide-react";
 
@@ -78,6 +91,13 @@ export default function DashboardClient({
   const router = useRouter();
   const [billingLoading, setBillingLoading] = useState(false);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [linkCopied, setLinkCopied] = useState(false);
+  const [embedCopied, setEmbedCopied] = useState(false);
+  const [hasNativeShare, setHasNativeShare] = useState(false);
+
+  useEffect(() => {
+    setHasNativeShare(typeof navigator !== "undefined" && !!navigator.share);
+  }, []);
 
   // Change password state
   const [newPassword, setNewPassword] = useState("");
@@ -265,6 +285,17 @@ export default function DashboardClient({
                   your listing active.
                 </p>
               )}
+              {hasStripeCustomer && (
+                <button
+                  onClick={handleManageBilling}
+                  disabled={billingLoading}
+                  className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium transition-colors hover:underline"
+                  style={{ color: teal }}
+                >
+                  <CreditCard className="h-4 w-4" />
+                  {billingLoading ? "Loading…" : "Manage Billing"}
+                </button>
+              )}
             </div>
           ) : (
             <div>
@@ -336,32 +367,20 @@ export default function DashboardClient({
             </Link>
           )}
 
-          {hasStripeCustomer && isActive && (
-            <button
-              onClick={handleManageBilling}
-              disabled={billingLoading}
-              className="flex items-center gap-3 rounded-2xl bg-white p-4 text-left shadow-sm transition-shadow hover:shadow-md"
-            >
-              <div
-                className="flex h-10 w-10 items-center justify-center rounded-xl"
-                style={{ backgroundColor: `${gold}20` }}
-              >
-                <CreditCard className="h-5 w-5" style={{ color: gold }} />
-              </div>
-              <div>
-                <p
-                  className="text-sm font-semibold"
-                  style={{ color: dark }}
-                >
-                  {billingLoading ? "Loading…" : "Manage Billing"}
-                </p>
-                <p className="text-xs" style={{ color: `${dark}80` }}>
-                  Update payment method
-                </p>
-              </div>
-            </button>
-          )}
         </div>
+
+        {/* ── Promote Your Listing ── */}
+        {isActive && daycareSlug && (
+          <PromoteSection
+            daycareName={daycareName}
+            daycareSlug={daycareSlug}
+            linkCopied={linkCopied}
+            setLinkCopied={setLinkCopied}
+            embedCopied={embedCopied}
+            setEmbedCopied={setEmbedCopied}
+            hasNativeShare={hasNativeShare}
+          />
+        )}
 
         {/* Change Password */}
         <div className="rounded-2xl bg-white p-6 shadow-sm">
@@ -553,4 +572,304 @@ function StatusBadge({ status }: { status: string }) {
         </span>
       );
   }
+}
+
+/* ─────────────────────────────────────────────
+   Promote Your Listing Section
+   ───────────────────────────────────────────── */
+
+const SITE_URL = "https://ohioparenthub.com";
+
+function PromoteSection({
+  daycareName,
+  daycareSlug,
+  linkCopied,
+  setLinkCopied,
+  embedCopied,
+  setEmbedCopied,
+  hasNativeShare,
+}: {
+  daycareName: string;
+  daycareSlug: string;
+  linkCopied: boolean;
+  setLinkCopied: (v: boolean) => void;
+  embedCopied: boolean;
+  setEmbedCopied: (v: boolean) => void;
+  hasNativeShare: boolean;
+}) {
+  const listingUrl = `${SITE_URL}${daycareSlug}`;
+  const badgeUrl = `${SITE_URL}/badge.png`;
+  const shareText = `Check out ${daycareName} on Ohio Parent Hub — licensed, rated, and trusted by Ohio parents.`;
+
+  const embedSnippet = `<a href="${listingUrl}" target="_blank" rel="noopener">\n  <img src="${badgeUrl}" alt="Find ${daycareName} on Ohio Parent Hub" width="220" height="48" />\n</a>`;
+
+  async function copyLink() {
+    await navigator.clipboard.writeText(listingUrl);
+    setLinkCopied(true);
+    setTimeout(() => setLinkCopied(false), 2000);
+  }
+
+  async function copyEmbed() {
+    await navigator.clipboard.writeText(embedSnippet);
+    setEmbedCopied(true);
+    setTimeout(() => setEmbedCopied(false), 2000);
+  }
+
+  function shareFacebook() {
+    const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(listingUrl)}`;
+    window.open(url, "_blank", "noopener");
+  }
+
+  function shareX() {
+    const url = `https://twitter.com/intent/tweet?url=${encodeURIComponent(listingUrl)}&text=${encodeURIComponent(shareText)}`;
+    window.open(url, "_blank", "noopener");
+  }
+
+  async function shareNative() {
+    try {
+      await navigator.share({ title: daycareName, text: shareText, url: listingUrl });
+    } catch {
+      // User cancelled
+    }
+  }
+
+  return (
+    <div className="rounded-2xl bg-white p-6 shadow-sm">
+      <h2
+        className="mb-1 flex items-center gap-2 font-serif text-lg font-semibold"
+        style={{ color: dark }}
+      >
+        <Megaphone className="h-5 w-5" style={{ color: teal }} />
+        Promote Your Listing
+      </h2>
+      <p className="mb-5 text-sm" style={{ color: `${dark}88` }}>
+        Share your listing with parents and get discovered on social media.
+      </p>
+
+      {/* ── Listing URL ── */}
+      <div className="mb-5 rounded-xl border p-4" style={{ borderColor: `${teal}30` }}>
+        <div className="mb-1.5 text-xs font-medium" style={{ color: `${dark}66` }}>
+          Your listing URL
+        </div>
+        <div className="flex items-center gap-2">
+          <div
+            className="flex-1 truncate rounded-lg border px-3 py-2 text-sm font-mono"
+            style={{ borderColor: `${teal}20`, color: teal, background: `${teal}08` }}
+          >
+            {listingUrl.replace("https://", "")}
+          </div>
+          <button
+            onClick={copyLink}
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border transition-colors"
+            style={{
+              borderColor: linkCopied ? "#22c55e" : `${teal}30`,
+              color: linkCopied ? "#22c55e" : teal,
+              background: linkCopied ? "#f0fdf4" : "transparent",
+            }}
+            title="Copy link"
+          >
+            {linkCopied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+          </button>
+        </div>
+      </div>
+
+      {/* ── Share Buttons ── */}
+      <div className="mb-6">
+        <div className="mb-2 text-xs font-medium" style={{ color: `${dark}66` }}>
+          Share on social media
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <button
+            onClick={shareFacebook}
+            className="inline-flex items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-medium transition-colors hover:bg-blue-50"
+            style={{ borderColor: "#1877F220", color: "#1877F2" }}
+          >
+            <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            Facebook
+          </button>
+          <button
+            onClick={shareX}
+            className="inline-flex items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-medium transition-colors hover:bg-gray-50"
+            style={{ borderColor: `${dark}20`, color: dark }}
+          >
+            <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            X
+          </button>
+          {hasNativeShare && (
+            <button
+              onClick={shareNative}
+              className="inline-flex items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-medium transition-colors hover:bg-gray-50"
+              style={{ borderColor: `${teal}20`, color: dark }}
+            >
+              <Share2 className="h-4 w-4" />
+              Share
+            </button>
+          )}
+          <button
+            onClick={copyLink}
+            className="inline-flex items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-medium transition-colors hover:bg-gray-50"
+            style={{
+              borderColor: linkCopied ? "#22c55e40" : `${teal}20`,
+              color: linkCopied ? "#22c55e" : dark,
+              background: linkCopied ? "#f0fdf4" : "transparent",
+            }}
+          >
+            {linkCopied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+            {linkCopied ? "Copied!" : "Copy Link"}
+          </button>
+        </div>
+      </div>
+
+      {/* ── Backlink Badge / Embed ── */}
+      <div className="rounded-xl border p-4" style={{ borderColor: `${teal}30` }}>
+        <div className="mb-3 flex items-center gap-2">
+          <Code2 className="h-4 w-4" style={{ color: teal }} />
+          <span className="text-sm font-semibold" style={{ color: dark }}>
+            Add a badge to your website
+          </span>
+        </div>
+
+        {/* Free month incentive */}
+        <div className="mb-4 rounded-xl border-2 p-4" style={{ borderColor: gold, background: `${gold}10` }}>
+          <p className="mb-3 font-serif text-base font-bold" style={{ color: dark }}>
+            Earn a Free Month of Premium
+          </p>
+          <ol className="space-y-2">
+            <li className="flex items-start gap-2.5">
+              <span
+                className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white"
+                style={{ background: teal }}
+              >
+                1
+              </span>
+              <span className="text-sm" style={{ color: `${dark}cc` }}>
+                Copy the code below and add the badge to your website
+              </span>
+            </li>
+            <li className="flex items-start gap-2.5">
+              <span
+                className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white"
+                style={{ background: teal }}
+              >
+                2
+              </span>
+              <span className="text-sm" style={{ color: `${dark}cc` }}>
+                <a
+                  href={`mailto:hello@ohioparenthub.com?subject=Badge added — ${daycareName}&body=I added the Ohio Parent Hub badge to my website. My website URL is: `}
+                  className="font-semibold underline"
+                  style={{ color: teal }}
+                >
+                  Email us
+                </a>{" "}
+                with the link to your site
+              </span>
+            </li>
+            <li className="flex items-start gap-2.5">
+              <span
+                className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white"
+                style={{ background: gold }}
+              >
+                3
+              </span>
+              <span className="text-sm font-medium" style={{ color: dark }}>
+                Get your next month free — on us
+              </span>
+            </li>
+          </ol>
+        </div>
+
+        {/* Badge preview */}
+        <div className="mb-4">
+          <div className="mb-1.5 text-xs font-medium" style={{ color: `${dark}66` }}>
+            Preview
+          </div>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/badge.png"
+            alt="Ohio Parent Hub Badge"
+            width={220}
+            height={48}
+            className="rounded"
+          />
+        </div>
+
+        {/* Code snippet */}
+        <div className="mb-3">
+          <div className="mb-1.5 flex items-center justify-between">
+            <span className="text-xs font-medium" style={{ color: `${dark}66` }}>
+              HTML code
+            </span>
+            <button
+              onClick={copyEmbed}
+              className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium transition-colors"
+              style={{
+                color: embedCopied ? "#22c55e" : teal,
+                background: embedCopied ? "#f0fdf4" : `${teal}10`,
+              }}
+            >
+              {embedCopied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+              {embedCopied ? "Copied!" : "Copy"}
+            </button>
+          </div>
+          <pre
+            className="overflow-x-auto rounded-lg border p-3 text-xs leading-relaxed"
+            style={{ borderColor: `${teal}20`, color: `${dark}cc`, background: `${dark}06` }}
+          >
+            {embedSnippet}
+          </pre>
+        </div>
+
+        {/* Platform instructions */}
+        <Accordion type="single" collapsible className="w-full">
+          <AccordionItem value="instructions" className="border-0">
+            <AccordionTrigger
+              className="py-2 text-sm font-medium hover:no-underline"
+              style={{ color: dark }}
+            >
+              <div className="flex items-center gap-1.5">
+                <ExternalLink className="h-3.5 w-3.5" style={{ color: teal }} />
+                How to add this to your website
+              </div>
+            </AccordionTrigger>
+            <AccordionContent className="pb-0">
+              <div className="space-y-4 text-xs" style={{ color: `${dark}bb` }}>
+                <div>
+                  <p className="mb-1 font-semibold" style={{ color: dark }}>Wix</p>
+                  <ol className="list-decimal space-y-0.5 pl-4">
+                    <li>Open your site in the Wix Editor</li>
+                    <li>Click <strong>Add Elements (+)</strong> → <strong>Embed Code</strong> → <strong>Custom HTML</strong></li>
+                    <li>Paste the code above and position the block in your footer</li>
+                    <li>Click <strong>Publish</strong></li>
+                  </ol>
+                </div>
+                <div>
+                  <p className="mb-1 font-semibold" style={{ color: dark }}>Squarespace</p>
+                  <ol className="list-decimal space-y-0.5 pl-4">
+                    <li>Go to <strong>Edit</strong> → scroll to your footer</li>
+                    <li>Click <strong>Add Block</strong> → <strong>Code</strong></li>
+                    <li>Paste the code above and save</li>
+                  </ol>
+                </div>
+                <div>
+                  <p className="mb-1 font-semibold" style={{ color: dark }}>WordPress</p>
+                  <ol className="list-decimal space-y-0.5 pl-4">
+                    <li>Go to <strong>Appearance</strong> → <strong>Widgets</strong></li>
+                    <li>Add a <strong>Custom HTML</strong> widget to your Footer area</li>
+                    <li>Paste the code above and click <strong>Save</strong></li>
+                  </ol>
+                </div>
+                <div>
+                  <p className="mb-1 font-semibold" style={{ color: dark }}>Other / Not sure?</p>
+                  <p>
+                    Copy the code above and send it to your web designer or the person who manages
+                    your website. Ask them to add it to your site&apos;s footer.
+                  </p>
+                </div>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+      </div>
+    </div>
+  );
 }
