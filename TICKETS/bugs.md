@@ -28,18 +28,21 @@ better claim page, more saley
 ✅ when you type in drop in it changes from daily to weekly
 ✅ home homepage hero content up
 ✅ not rated badge details on daycare pages says "may still be licensed"
-updatge legal pages
+updatge legal pages (cookie banner?)
 ✅ map preview card needs work, it's busy AF
-fix mobile map experience, it's clunky and windows 98. horizontal scroll filters? main filter button full screen
-add pfcc to daycare detail pages somewhere
-city and county scrolls too far when clicking a letter
-
-✅ scroll to map on mobile (and desktop?) after executing a search
+✅ fix mobile map experience, it's clunky and windows 98. horizontal scroll filters? main filter button full screen
+✅ add handicap accessible to amenities
 make address search also search daycare names
+✅ scroll to map on mobile (and desktop?) after executing a search
 ✅ make main text in homepage hero tiles slightly darker
-custom amenities on mobile editor
+✅ custom amenities on mobile editor
 no email says test
 are premium fields part of SSR SEO?
+add pfcc to daycare detail pages somewhere
+city and county scrolls too far when clicking a letter
+click on card to highlight pin on map?
+back to results back to same scroll location as after searching
+move "select and age range" to under the title of the price filter
 
 Dream:
 when deleting an account you are still logged in and shows dashboard

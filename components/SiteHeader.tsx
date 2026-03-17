@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { ChevronRight, House, MapPin, Menu, Search, User } from "lucide-react";
+import { ChevronRight, House, MapPin, Menu, Search, Sparkles, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -142,6 +142,20 @@ export default function SiteHeader() {
                       </Link>
                     </SheetClose>
 
+                    <SheetClose asChild>
+                      <Link
+                        href="/for-providers"
+                        className="flex h-11 w-full items-center justify-between rounded-xl border px-4 text-sm font-medium transition-colors hover:bg-primary/10"
+                        style={{ borderColor: `${teal}40`, color: dark }}
+                      >
+                        <span className="flex items-center gap-2">
+                          <Sparkles className="h-4 w-4" style={{ color: teal }} />
+                          For Providers
+                        </span>
+                        <ChevronRight className="h-4 w-4" style={{ color: `${dark}88` }} />
+                      </Link>
+                    </SheetClose>
+
                     {user ? (
                       <SheetClose asChild>
                         <Link
@@ -177,6 +191,7 @@ export default function SiteHeader() {
             <Link href="/cities" className="text-sm font-medium" style={{ color: dark }}>Browse Cities</Link>
             <Link href="/counties" className="text-sm font-medium" style={{ color: dark }}>Browse Counties</Link>
             <Link href="/faq" className="text-sm font-medium" style={{ color: dark }}>FAQ</Link>
+            <Link href="/for-providers" className="text-sm font-medium" style={{ color: dark }}>For Providers</Link>
             <Button size="sm" className="rounded-full px-5 font-bold" style={{ background: pink, color: "#fff" }} asChild>
               <Link href="/daycares"><Search className="mr-1.5 h-3.5 w-3.5" />Find a Daycare</Link>
             </Button>
