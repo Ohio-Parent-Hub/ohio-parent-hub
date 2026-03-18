@@ -14,6 +14,7 @@ import { Label } from "@/components/ui/label";
 import { submitClaim, checkClaimStatus } from "@/app/actions/claims";
 import { createClient } from "@/lib/supabase/client";
 import { Shield, Mail } from "lucide-react";
+import VerifiedProviderBadge from "@/components/premium/VerifiedProviderBadge";
 
 const teal = "#7EA8A4";
 const dark = "#4A6B67";
@@ -36,7 +37,7 @@ export default function ClaimListingDialog({
     });
   }, [programNumber]);
 
-  if (hidden) return null;
+  if (hidden) return <VerifiedProviderBadge />;
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");

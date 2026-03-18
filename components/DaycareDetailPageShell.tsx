@@ -254,10 +254,8 @@ export default function DaycareDetailPageShell({
                   daycareName={name}
                 />
               )}
-              {premiumData ? (
+              {(premiumData || isClaimed) && (
                 <VerifiedProviderBadge />
-              ) : (
-                null
               )}
             </div>
             {premiumData?.logo_url ? (
