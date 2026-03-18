@@ -186,33 +186,8 @@ export default function PremiumEditorForm({ programNumber, initialData }: Props)
             <EditorLogoUpload logoUrl={logoUrl} onChange={setLogoUrl} />
           </Section>
 
-          {/* Photos */}
-          <Section icon={<Camera className="h-5 w-5" />} title="Photos">
-            <EditorPhotos photos={photos} onChange={setPhotos} />
-          </Section>
-
-          {/* Hours */}
-          <Section icon={<Clock className="h-5 w-5" />} title="Hours of Operation">
-            <EditorHours hours={hours} onChange={setHours} />
-          </Section>
-
-          {/* Pricing */}
-          <Section icon={<DollarSign className="h-5 w-5" />} title="Pricing">
-            <EditorPricing pricing={pricing} onChange={setPricing} />
-          </Section>
-
-          {/* Amenities */}
-          <Section icon={<ListChecks className="h-5 w-5" />} title="Amenities">
-            <EditorAmenities amenities={amenities} onChange={setAmenities} />
-          </Section>
-
-          {/* FAQs */}
-          <Section icon={<MessageSquare className="h-5 w-5" />} title="Custom FAQs">
-            <EditorFaqs faqs={faqs} onChange={setFaqs} />
-          </Section>
-
           {/* Description */}
-          <Section icon={<FileText className="h-5 w-5" />} title="About / Description">
+          <Section icon={<FileText className="h-5 w-5" />} title="From the Owner">
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
@@ -237,6 +212,31 @@ export default function PremiumEditorForm({ programNumber, initialData }: Props)
               style={{ borderColor: "#B8C5B2", color: "#4A6B67" }}
               placeholder="https://your-daycare-website.com"
             />
+          </Section>
+
+          {/* Hours */}
+          <Section icon={<Clock className="h-5 w-5" />} title="Hours of Operation">
+            <EditorHours hours={hours} onChange={setHours} />
+          </Section>
+
+          {/* Photos */}
+          <Section icon={<Camera className="h-5 w-5" />} title="Photos">
+            <EditorPhotos photos={photos} onChange={setPhotos} />
+          </Section>
+
+          {/* Pricing */}
+          <Section icon={<DollarSign className="h-5 w-5" />} title="Pricing">
+            <EditorPricing pricing={pricing} onChange={setPricing} />
+          </Section>
+
+          {/* Amenities */}
+          <Section icon={<ListChecks className="h-5 w-5" />} title="Amenities">
+            <EditorAmenities amenities={amenities} onChange={setAmenities} />
+          </Section>
+
+          {/* FAQs */}
+          <Section icon={<MessageSquare className="h-5 w-5" />} title="Custom FAQs">
+            <EditorFaqs faqs={faqs} onChange={setFaqs} />
           </Section>
 
           {/* Validation errors */}
