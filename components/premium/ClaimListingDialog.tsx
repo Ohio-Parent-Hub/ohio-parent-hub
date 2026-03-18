@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -11,7 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { submitClaim } from "@/app/actions/claims";
+import { submitClaim, checkClaimStatus } from "@/app/actions/claims";
 import { createClient } from "@/lib/supabase/client";
 import { Shield, Mail } from "lucide-react";
 
@@ -28,6 +28,15 @@ export default function ClaimListingDialog({
   daycareName,
 }: ClaimListingDialogProps) {
   const [open, setOpen] = useState(false);
+  const [hidden, setHidden] = useState(false);
+
+  useEffect(() => {
+    checkClaimStatus(programNumber).then((claimed) => {
+      if (claimed) setHidden(true);
+    });
+  }, [programNumber]);
+
+  if (hidden) return null;
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
