@@ -343,9 +343,9 @@ export default function CityDashboard({
 
     // 1. Filter by Search Query
     if (searchQuery) {
-      const lowerQuery = searchQuery.toLowerCase();
+      const lowerQuery = searchQuery.replace(/[\u2018\u2019\u201A\u201B\u0060\u00B4]/g, "'").toLowerCase();
       result = result.filter((d) => {
-        const name = (d["PROGRAM NAME"] || "").toLowerCase();
+        const name = (d["PROGRAM NAME"] || "").replace(/[\u2018\u2019\u201A\u201B\u0060\u00B4]/g, "'").toLowerCase();
         return name.includes(lowerQuery);
       });
     }

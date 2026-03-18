@@ -25,6 +25,10 @@ type FilterMessage = {
 
 type WorkerMessage = InitMessage | FilterMessage;
 
+function normalizeApostrophes(s: string): string {
+  return s.replace(/[\u2018\u2019\u201A\u201B\u0060\u00B4]/g, "'");
+}
+
 let rows: WorkerRow[] = [];
 
 function runFilter({
@@ -46,7 +50,7 @@ function runFilter({
   for (let index = 0; index < rows.length; index += 1) {
     const row = rows[index];
 
-    if (hasQuery && !row.name.includes(searchQuery)) continue;
+    if (hasQuery && !normalizeApostrophes(row.name).includes(normalizeApostrophes(searchQuery))) continue;
     if (hasCity && row.city !== selectedCity) continue;
     if (hasCounty && row.county !== selectedCounty) continue;
     if (pfccEnabled && !row.pfcc) continue;

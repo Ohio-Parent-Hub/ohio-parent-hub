@@ -22,6 +22,11 @@ function toTitleCase(s: string): string {
     .replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
+/** Normalize curly/smart quotes and backticks to straight apostrophes */
+function normalizeApostrophes(s: string): string {
+  return s.replace(/[\u2018\u2019\u201A\u201B\u0060\u00B4]/g, "'");
+}
+
 export async function GET(request: NextRequest) {
   const q = request.nextUrl.searchParams.get("q")?.trim() || "";
   if (q.length < 2) {
@@ -29,11 +34,11 @@ export async function GET(request: NextRequest) {
   }
 
   const daycares = loadDaycares();
-  const lower = q.toLowerCase();
+  const lower = normalizeApostrophes(q).toLowerCase();
 
   const matches = daycares
     .filter((d) => {
-      const name = (d["PROGRAM NAME"] || "").toLowerCase();
+      const name = normalizeApostrophes(d["PROGRAM NAME"] || "").toLowerCase();
       return name.includes(lower);
     })
     .map((d) => {
