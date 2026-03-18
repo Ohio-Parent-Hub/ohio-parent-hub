@@ -38,20 +38,34 @@ export async function loadPremiumListing(
 }
 
 /**
- * Load the set of program numbers that have published premium listings.
+ * Load the set of program numbers that have verified provider accounts.
+ * Includes both published premium listings AND claimed profiles.
  * Used for showing verified badges in list/map views.
  */
 export async function loadVerifiedProgramNumbers(): Promise<Set<string>> {
   const supabase = createServiceClient();
 
-  const { data, error } = await supabase
-    .from("premium_listings")
-    .select("program_number")
-    .eq("published", true);
+  const [premiumResult, profileResult] = await Promise.all([
+    supabase
+      .from("premium_listings")
+      .select("program_number")
+      .eq("published", true),
+    supabase
+      .from("profiles")
+      .select("program_number")
+      .eq("verified", true),
+  ]);
 
-  if (error || !data) return new Set();
+  const numbers = new Set<string>();
 
-  return new Set(data.map((row: { program_number: string }) => row.program_number));
+  if (premiumResult.data) {
+    for (const row of premiumResult.data) numbers.add(row.program_number);
+  }
+  if (profileResult.data) {
+    for (const row of profileResult.data) numbers.add(row.program_number);
+  }
+
+  return numbers;
 }
 
 /**
