@@ -16,9 +16,10 @@ export async function validatePromoCode(
 
   try {
     const promoCodes = await stripe.promotionCodes.list({
-      code,
+      code: code.toUpperCase(),
       active: true,
       limit: 1,
+      expand: ["data.promotion.coupon"],
     });
 
     const promo = promoCodes.data[0];
