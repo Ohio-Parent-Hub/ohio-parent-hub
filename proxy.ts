@@ -33,6 +33,18 @@ export async function proxy(request: NextRequest) {
 
   let response = NextResponse.next({ request });
 
+  // Capture ?promo= URL param into cookie for promo code flow
+  const promoCode = request.nextUrl.searchParams.get("promo");
+  if (promoCode && /^[a-zA-Z0-9_-]+$/.test(promoCode)) {
+    response.cookies.set("promo_code", promoCode, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 30 * 24 * 60 * 60, // 30 days
+      path: "/",
+    });
+  }
+
   // Noindex draft/preview routes in dev
   if (pathname.startsWith("/draft") || pathname.startsWith("/design-preview")) {
     response.headers.set("X-Robots-Tag", "noindex, nofollow, noarchive");
