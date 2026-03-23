@@ -30,14 +30,6 @@ export default function ClaimListingDialog({
 }: ClaimListingDialogProps) {
   const [open, setOpen] = useState(false);
   const [hidden, setHidden] = useState(false);
-
-  useEffect(() => {
-    checkClaimStatus(programNumber).then((claimed) => {
-      if (claimed) setHidden(true);
-    });
-  }, [programNumber]);
-
-  if (hidden) return <VerifiedProviderBadge />;
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -46,6 +38,14 @@ export default function ClaimListingDialog({
   const [sent, setSent] = useState(false);
   const [resending, setResending] = useState(false);
   const [resent, setResent] = useState(false);
+
+  useEffect(() => {
+    checkClaimStatus(programNumber).then((claimed) => {
+      if (claimed) setHidden(true);
+    });
+  }, [programNumber]);
+
+  if (hidden) return <VerifiedProviderBadge />;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
