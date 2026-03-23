@@ -227,7 +227,7 @@ export default function DaycareDetailPageShell({
   );
 
   return (
-    <main className="min-h-screen" style={{ background: cream, color: dark }}>
+    <main className="min-h-screen overflow-x-hidden" style={{ background: cream, color: dark }}>
       {schema && (
         <script
           type="application/ld+json"
@@ -555,10 +555,10 @@ export default function DaycareDetailPageShell({
                       href={premiumData.website_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-primary hover:underline"
+                      className="inline-flex items-center gap-1 text-primary hover:underline min-w-0"
                     >
-                      <Globe className="h-3.5 w-3.5" />
-                      {premiumData.website_url.replace(/^https?:\/\//, "")}
+                      <Globe className="h-3.5 w-3.5 flex-shrink-0" />
+                      <span className="truncate">{premiumData.website_url.replace(/^https?:\/\//, "")}</span>
                     </a>
                   </div>
                 )}
