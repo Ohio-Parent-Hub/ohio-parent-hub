@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { stripe } from "@/lib/stripe";
+import { validatePromoCode } from "@/lib/promoValidation";
 import daycares from "@/data/daycares.json";
 import { slugify } from "@/lib/utils";
 import { resolveCanonicalCitySlugFromName } from "@/lib/metroAreas";
@@ -98,11 +99,25 @@ export default async function DashboardPage({
     }
 
     const origin = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+
+    // Read promo code from user metadata (set at signup)
+    const promoCode = user.user_metadata?.promo_code;
+    const promoValidation = promoCode
+      ? await validatePromoCode(promoCode)
+      : null;
+
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       mode: "subscription",
       line_items: [{ price: process.env.STRIPE_PRICE_ID!, quantity: 1 }],
-      allow_promotion_codes: true,
+      ...(promoValidation
+        ? {
+            discounts: [{ promotion_code: promoValidation.promoCodeId }],
+            ...(promoValidation.isFreeForever && {
+              payment_method_collection: "if_required" as const,
+            }),
+          }
+        : { allow_promotion_codes: true }),
       success_url: `${origin}/dashboard?upgraded=true`,
       cancel_url: `${origin}/dashboard`,
       metadata: { program_number: profile.program_number },
@@ -132,17 +147,32 @@ export default async function DashboardPage({
     status: string;
     priceFormatted: string;
     currentPeriodEnd: string | null;
+    freeForever: boolean;
+    freeUntil: string | null;
   } | null = null;
 
   if (profile.subscription_id) {
     try {
       const sub = await stripe.subscriptions.retrieve(
         profile.subscription_id,
-        { expand: ["items.data.price"] }
+        { expand: ["items.data.price", "discounts.source.coupon"] }
       );
       const price = sub.items.data[0]?.price;
       const amount = price?.unit_amount ? (price.unit_amount / 100).toFixed(2) : "0.00";
       const interval = price?.recurring?.interval ?? "month";
+
+      // Check if subscription has a 100% off discount
+      const discount = sub.discounts?.[0];
+      const coupon =
+        discount && typeof discount === "object"
+          ? discount.source?.coupon
+          : null;
+      const isFull100Off = !!(coupon && typeof coupon === "object" && coupon.percent_off === 100);
+      const freeForever = !!(isFull100Off && typeof coupon === "object" && coupon.duration === "forever");
+      const freeUntil =
+        isFull100Off && !freeForever && discount && typeof discount === "object" && discount.end
+          ? new Date(discount.end * 1000).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })
+          : null;
 
       // Get next renewal date from subscription item's current_period_end
       const periodEnd = sub.items.data[0]?.current_period_end;
@@ -158,6 +188,8 @@ export default async function DashboardPage({
         status: sub.status,
         priceFormatted: `$${amount}/${interval}`,
         currentPeriodEnd: renewalDate,
+        freeForever,
+        freeUntil,
       };
     } catch {
       // Subscription may have been deleted on Stripe's side

@@ -1,5 +1,6 @@
 "use server";
 
+import { cookies } from "next/headers";
 import { createServiceClient } from "@/lib/supabase/server";
 import daycares from "@/data/daycares.json";
 
@@ -62,11 +63,18 @@ export async function submitClaim(
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
+  // Read promo code from cookie (set by middleware when ?promo= is in URL)
+  const cookieStore = await cookies();
+  const promoCode = cookieStore.get("promo_code")?.value;
+
   const { error } = await supabase.auth.signUp({
     email: trimmedEmail,
     password,
     options: {
-      data: { program_number: programNumber },
+      data: {
+        program_number: programNumber,
+        ...(promoCode && { promo_code: promoCode }),
+      },
       emailRedirectTo: `${siteUrl}/auth/callback`,
     },
   });

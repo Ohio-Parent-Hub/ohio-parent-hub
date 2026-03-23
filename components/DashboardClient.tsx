@@ -60,6 +60,8 @@ type DashboardClientProps = {
     status: string;
     priceFormatted: string;
     currentPeriodEnd: string | null;
+    freeForever: boolean;
+    freeUntil: string | null;
   } | null;
   hasStripeCustomer: boolean;
   daycareInfo: DaycareInfo;
@@ -267,14 +269,32 @@ export default function DashboardClient({
                 <span className="text-sm" style={{ color: `${dark}aa` }}>
                   Premium Listing
                 </span>
-                <span
-                  className="text-lg font-semibold"
-                  style={{ color: dark }}
-                >
-                  {subscriptionDetails.priceFormatted}
-                </span>
+                <div className="flex flex-col items-end">
+                  <span
+                    className={`text-lg font-semibold${subscriptionDetails.freeForever || subscriptionDetails.freeUntil ? " line-through" : ""}`}
+                    style={{ color: subscriptionDetails.freeForever || subscriptionDetails.freeUntil ? `${dark}66` : dark }}
+                  >
+                    {subscriptionDetails.priceFormatted}
+                  </span>
+                  {subscriptionDetails.freeForever && (
+                    <span
+                      className="mt-1 rounded-full px-2.5 py-0.5 text-xs font-semibold"
+                      style={{ backgroundColor: lightGold, color: "#92700C" }}
+                    >
+                      Free Forever
+                    </span>
+                  )}
+                  {subscriptionDetails.freeUntil && (
+                    <span
+                      className="mt-1 rounded-full px-2.5 py-0.5 text-xs font-semibold"
+                      style={{ backgroundColor: lightGold, color: "#92700C" }}
+                    >
+                      Free until {subscriptionDetails.freeUntil}
+                    </span>
+                  )}
+                </div>
               </div>
-              {subscriptionDetails.currentPeriodEnd && (
+              {subscriptionDetails.currentPeriodEnd && !subscriptionDetails.freeForever && !subscriptionDetails.freeUntil && (
                 <p className="text-xs" style={{ color: `${dark}80` }}>
                   Renews on {subscriptionDetails.currentPeriodEnd}
                 </p>
