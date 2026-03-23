@@ -5,6 +5,11 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+/** Returns true for internal test daycare records that should be hidden from all public surfaces. */
+export function isTestDaycare(row: Record<string, string>): boolean {
+  return row["_test"] === "true";
+}
+
 export function slugify(s: string) {
   return (s || "")
     .toLowerCase()

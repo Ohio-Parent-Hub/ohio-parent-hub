@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import CountyBrowseClient from "@/components/CountyBrowseClient";
 import { slugify, toTitleCaseIfAllCaps } from "@/lib/utils";
+import { isTestDaycare } from "@/lib/utils";
 
 function SparkleDecor({ className, style }: { className?: string; style?: CSSProperties }) {
   return (
@@ -74,7 +75,7 @@ interface CountyData {
 }
 
 export default function CountiesPage() {
-  const daycares = loadDaycares();
+  const daycares = loadDaycares().filter(d => !isTestDaycare(d));
 
   const countyMap = new Map<string, number>();
   daycares.forEach((d) => {

@@ -2,6 +2,7 @@ import type { MetadataRoute } from 'next'
 import fs from 'node:fs'
 import path from 'node:path'
 import { slugify } from '@/lib/utils'
+import { isTestDaycare } from '@/lib/utils'
 import { getMetroCitySlugs, resolveCanonicalCitySlugFromName } from '@/lib/metroAreas'
 
 type DaycareRow = Record<string, string>
@@ -30,7 +31,7 @@ function getStableLastModified() {
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://ohioparenthub.com'
-  const daycares = loadDaycares()
+  const daycares = loadDaycares().filter(d => !isTestDaycare(d));
   const lastModified = getStableLastModified()
   
   const citySlugSet = new Set(

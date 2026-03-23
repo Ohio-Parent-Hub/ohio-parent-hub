@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import path from "path";
 import fs from "fs";
 import { slugify } from "@/lib/utils";
+import { isTestDaycare } from "@/lib/utils";
 import { resolveCanonicalCitySlugFromName } from "@/lib/metroAreas";
 
 type DaycareRow = Record<string, string>;
@@ -12,7 +13,7 @@ function loadDaycares(): DaycareRow[] {
   if (cachedData) return cachedData;
   const filePath = path.join(process.cwd(), "data", "daycares.json");
   const raw = fs.readFileSync(filePath, "utf8");
-  cachedData = JSON.parse(raw);
+  cachedData = JSON.parse(raw).filter((d: DaycareRow) => !isTestDaycare(d));
   return cachedData!;
 }
 

@@ -7,6 +7,7 @@ import { notFound, permanentRedirect } from "next/navigation";
 import DraftCityDaycaresPageClient from "@/components/DraftCityDaycaresPageClient";
 import { loadVerifiedProgramNumbers, loadPremiumLogos, loadPremiumFilterSummaries } from "@/app/actions/premium";
 import { slugify, toTitleCaseIfAllCaps } from "@/lib/utils";
+import { isTestDaycare } from "@/lib/utils";
 import { projectDaycareListRows } from "@/lib/daycareProjection";
 import {
   getDaycaresForCitySlug,
@@ -216,7 +217,7 @@ function buildCityEditorialCopy(cityDisplay: string, count: number) {
 }
 
 export async function generateStaticParams() {
-  const allDaycares = loadDaycares();
+  const allDaycares = loadDaycares().filter(d => !isTestDaycare(d));
   const citySlugs = Array.from(
     new Set(
       allDaycares
@@ -236,7 +237,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const requestedCitySlug = slugify(cityParam);
   const citySlug = resolveCanonicalCitySlugFromSlug(requestedCitySlug);
   
-  const all = loadDaycares();
+  const all = loadDaycares().filter(d => !isTestDaycare(d));
   const matches = getDaycaresForCitySlug(all, citySlug);
   const cityDisplay =
     getMetroDisplayNameBySlug(citySlug)
@@ -304,7 +305,7 @@ export default async function CityDaycaresPage({ params }: Props) {
     permanentRedirect(`/daycares/${citySlug}`);
   }
 
-  const all = loadDaycares();
+  const all = loadDaycares().filter(d => !isTestDaycare(d));
   const matches = getDaycaresForCitySlug(all, citySlug);
   const cityDisplay =
     getMetroDisplayNameBySlug(citySlug)

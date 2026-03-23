@@ -7,6 +7,7 @@ import { notFound } from "next/navigation";
 import CountyDaycaresPageClient from "@/components/CountyDaycaresPageClient";
 import { loadVerifiedProgramNumbers, loadPremiumLogos, loadPremiumFilterSummaries } from "@/app/actions/premium";
 import { slugify } from "@/lib/utils";
+import { isTestDaycare } from "@/lib/utils";
 import { projectDaycareListRows } from "@/lib/daycareProjection";
 
 type Props = { params: Promise<{ county?: string }> };
@@ -209,6 +210,7 @@ export async function generateStaticParams() {
   const countySlugs = Array.from(
     new Set(
       loadDaycares()
+        .filter(d => !isTestDaycare(d))
         .map((d) => slugify(d["COUNTY"] || ""))
         .filter(Boolean)
     )
@@ -223,7 +225,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const countySlug = slugify(countyParam);
   const countyDisplay = prettyCounty(countyParam);
 
-  const all = loadDaycares();
+  const all = loadDaycares().filter(d => !isTestDaycare(d));
   const matches = all.filter((d) => {
     const dataCountySlug = slugify(d["COUNTY"] || "");
     return dataCountySlug === countySlug;
@@ -286,7 +288,7 @@ export default async function CountyDaycaresPage({ params }: Props) {
   const countySlug = slugify(countyParam);
   const countyDisplay = prettyCounty(countyParam);
 
-  const all = loadDaycares();
+  const all = loadDaycares().filter(d => !isTestDaycare(d));
 
   const matches = all.filter((d) => {
     const dataCountySlug = slugify(d["COUNTY"] || "");

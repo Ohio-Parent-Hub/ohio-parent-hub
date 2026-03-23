@@ -6,6 +6,7 @@ import { loadVerifiedProgramNumbers, loadPremiumLogos, loadPremiumFilterSummarie
 import fs from "node:fs";
 import path from "node:path";
 import { resolveCanonicalCityName } from "@/lib/metroAreas";
+import { isTestDaycare } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "Best Daycares in Ohio | Search Licensed Child Care Near You",
@@ -227,7 +228,7 @@ export default async function GlobalSearchPage({
   searchParams: Promise<{ lat?: string; lng?: string; q?: string }>;
 }) {
   const params = await searchParams;
-  const daycares = loadDaycares();
+  const daycares = loadDaycares().filter(d => !isTestDaycare(d));
   const cityCount = new Set(daycares.map((d) => resolveCanonicalCityName(d.CITY || "")).filter(Boolean)).size;
   const initialDaycares = getInitialDaycares(daycares);
   const statewideSnippetCopy = buildStatewideSnippetCopy(daycares.length);

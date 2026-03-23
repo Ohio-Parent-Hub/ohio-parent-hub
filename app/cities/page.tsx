@@ -3,6 +3,7 @@ import path from "node:path";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import CityBrowseClient from "@/components/CityBrowseClient";
 import { getCitiesWithMetroEntry } from "@/lib/metroAreas";
+import { isTestDaycare } from "@/lib/utils";
 import type { Metadata } from "next";
 import Link from "next/link";
 import type { CSSProperties } from "react";
@@ -61,7 +62,7 @@ interface CityData {
 }
 
 export default function CitiesPage() {
-  const daycares = loadDaycares();
+  const daycares = loadDaycares().filter(d => !isTestDaycare(d));
   const allCities: CityData[] = getCitiesWithMetroEntry(daycares);
   const cityBrowseIntro = `Use this page to browse all ${allCities.length.toLocaleString()} Ohio city pages and quickly jump into local daycare listings.`;
 
