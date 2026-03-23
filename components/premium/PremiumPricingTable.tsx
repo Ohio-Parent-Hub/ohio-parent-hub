@@ -28,7 +28,7 @@ export default function PremiumPricingTable({
   const iconColor = isDark ? "#fff" : "#7EA8A4";
 
   return (
-    <div className="mb-6">
+    <div className="mb-6 overflow-hidden">
       <div className="mb-3 flex items-center gap-2">
         <DollarSign className="h-5 w-5" style={{ color: iconColor }} />
         <h3 className="font-serif text-2xl font-bold" style={{ color: heading }}>
@@ -176,7 +176,7 @@ export default function PremiumPricingTable({
       </div>
 
       {pricing.notes && (
-        <p className="px-1 text-sm italic" style={{ color: isDark ? "rgba(255,255,255,0.75)" : "#4A6B6799" }}>
+        <p className="mt-3 px-1 text-sm italic break-words" style={{ color: isDark ? "rgba(255,255,255,0.75)" : "#4A6B6799" }}>
           {pricing.notes}
         </p>
       )}

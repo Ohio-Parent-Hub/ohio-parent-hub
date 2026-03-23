@@ -464,11 +464,11 @@ export default function DaycareDetailPageShell({
       </div>
 
       <section className={`px-0 pt-0 sm:pt-4 sm:px-6 ${premiumData?.pricing ? "pb-0 sm:pb-8" : "pb-8"}`}>
-        <div className="mx-auto max-w-7xl sm:rounded-3xl sm:border sm:p-6 sm:shadow-sm" style={{ background: "#fff", borderColor: `${sage}55` }}>
-          <div className="grid gap-0 sm:gap-6 lg:grid-cols-3">
+        <div className="mx-auto max-w-7xl overflow-hidden sm:rounded-3xl sm:border sm:p-6 sm:shadow-sm" style={{ background: "#fff", borderColor: `${sage}55` }}>
+          <div className="grid gap-0 sm:gap-6 lg:grid-cols-3 overflow-hidden">
 
             {premiumData?.description && (
-              <div className="px-4 py-5 sm:px-0 sm:py-0 lg:col-span-3">
+              <div className="px-4 py-5 sm:px-0 sm:py-0 lg:col-span-3 overflow-hidden">
                 <PremiumOwnerDescription description={premiumData.description} />
               </div>
             )}
@@ -508,7 +508,7 @@ export default function DaycareDetailPageShell({
               )}
             </section>
 
-            <section className="border-b border-primary/10 bg-white px-4 py-5 sm:rounded-2xl sm:border sm:border-primary/20 sm:p-6 sm:shadow-sm">
+            <section className="border-b border-primary/10 bg-white px-4 py-5 sm:rounded-2xl sm:border sm:border-primary/20 sm:p-6 sm:shadow-sm overflow-hidden">
               <div className="mb-4 flex items-center gap-2">
                 <Phone className="h-5 w-5" style={{ color: "#7EA8A4" }} />
                 <h2 className="font-serif text-2xl font-bold" style={{ color: "#4A6B67" }}>Contact</h2>
@@ -549,13 +549,13 @@ export default function DaycareDetailPageShell({
                   </div>
                 )}
                 {premiumData?.website_url && (
-                  <div>
+                  <div className="overflow-hidden">
                     <div className="text-sm font-bold" style={{ color: "#4A6B67" }}>Website</div>
                     <a
                       href={premiumData.website_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-primary hover:underline min-w-0"
+                      className="flex items-center gap-1 text-primary hover:underline min-w-0 max-w-full"
                     >
                       <Globe className="h-3.5 w-3.5 flex-shrink-0" />
                       <span className="truncate">{premiumData.website_url.replace(/^https?:\/\//, "")}</span>
@@ -573,7 +573,7 @@ export default function DaycareDetailPageShell({
             </section>
 
             {premiumData && premiumData.photos.length > 0 && (
-              <div className="px-4 py-5 sm:px-0 sm:py-0 lg:col-span-3">
+              <div className="px-4 py-5 sm:px-0 sm:py-0 lg:col-span-3 overflow-hidden">
                 <PremiumPhotoGallery photos={premiumData.photos} daycareName={name} />
               </div>
             )}
@@ -609,8 +609,8 @@ export default function DaycareDetailPageShell({
       )}
 
       <section className={`px-0 pb-8 sm:px-6 ${premiumData?.pricing ? "pt-0" : "pt-4"}`}>
-        <div className="mx-auto max-w-7xl sm:rounded-3xl sm:border sm:p-6 sm:shadow-sm" style={{ background: "#fff", borderColor: `${sage}55` }}>
-          <div className="grid gap-0 sm:gap-6 lg:grid-cols-3">
+        <div className="mx-auto max-w-7xl overflow-hidden sm:rounded-3xl sm:border sm:p-6 sm:shadow-sm" style={{ background: "#fff", borderColor: `${sage}55` }}>
+          <div className="grid gap-0 sm:gap-6 lg:grid-cols-3 overflow-hidden">
 
             {premiumData?.amenities && (
               <div className="border-b border-primary/10 px-4 py-5 sm:border-0 sm:px-0 sm:py-0 lg:col-span-3">
