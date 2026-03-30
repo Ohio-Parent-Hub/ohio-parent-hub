@@ -47,5 +47,8 @@ gsc-service-account.json
 *.png
 !public/**/*.png
 
+# SEO audit reports (local data)
+reports/seo-audit/*.json
+
 # playwright MCP local config
 .playwright-mcp/
