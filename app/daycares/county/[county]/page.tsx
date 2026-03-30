@@ -264,6 +264,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: pageTitle,
       description: countySnippetCopy,
       url: `https://ohioparenthub.com/daycares/county/${countySlug}`,
+      siteName: "Ohio Parent Hub",
+      type: "website",
       images: [
         {
           url: "/og-default.png",

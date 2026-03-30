@@ -29,6 +29,17 @@ export const metadata: Metadata = {
     description:
       "Find top-rated, licensed Ohio daycares by city and compare SUTQ quality information.",
     url: "https://ohioparenthub.com/",
+    siteName: "Ohio Parent Hub",
+    type: "website",
+    locale: "en_US",
+    images: [
+      {
+        url: "/og-default.png",
+        width: 1200,
+        height: 630,
+        alt: "Ohio Parent Hub — Licensed Daycare & Family Resources",
+      },
+    ],
   },
 };
 

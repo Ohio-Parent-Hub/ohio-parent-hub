@@ -12,7 +12,7 @@ function SparkleDecor({ className, style }: { className?: string; style?: CSSPro
 }
 
 export const metadata: Metadata = {
-  title: "Methodology | Ohio Parent Hub",
+  title: "Methodology",
   description:
     "See how Ohio Parent Hub sources, standardizes, and publishes licensed child care listings for families across Ohio.",
   alternates: {

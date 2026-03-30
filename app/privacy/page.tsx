@@ -12,7 +12,7 @@ function SparkleDecor({ className, style }: { className?: string; style?: CSSPro
 }
 
 export const metadata: Metadata = {
-  title: "Privacy Policy | Ohio Parent Hub",
+  title: "Privacy Policy",
   description:
     "Review how Ohio Parent Hub handles your data, including accounts, premium listing subscriptions, analytics, and contact communications.",
   alternates: {

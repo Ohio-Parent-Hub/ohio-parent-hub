@@ -277,6 +277,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: pageTitle,
       description: citySnippetCopy,
       url: `https://ohioparenthub.com/daycares/${citySlug}`,
+      siteName: "Ohio Parent Hub",
+      type: "website",
       images: [
         {
           url: "/og-default.png",
@@ -432,6 +434,32 @@ export default async function CityDaycaresPage({ params }: Props) {
           </p>
         </div>
       </section>
+
+      {/* SSR link directory — ensures crawlers discover all daycare detail pages */}
+      {alphabeticalMatches.length > 15 && (
+        <section className="px-6 pb-16 pt-8" style={{ background: cream }}>
+          <div className="mx-auto max-w-4xl">
+            <details>
+              <summary className="cursor-pointer font-serif text-lg font-semibold" style={{ color: dark }}>
+                All {alphabeticalMatches.length} Licensed Daycares in {cityDisplay}
+              </summary>
+              <ul className="mt-4 columns-1 gap-x-8 text-sm sm:columns-2 lg:columns-3" style={{ color: `${dark}cc` }}>
+                {alphabeticalMatches.map((daycare) => (
+                  <li key={daycare["PROGRAM NUMBER"]} className="break-inside-avoid pb-1">
+                    <Link
+                      href={`/daycare/${canonicalDaycareSlug(daycare)}`}
+                      className="hover:underline"
+                      style={{ color: teal }}
+                    >
+                      {daycareDisplayName(daycare)}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </details>
+          </div>
+        </section>
+      )}
     </>
   );
 }

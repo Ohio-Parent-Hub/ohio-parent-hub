@@ -15,7 +15,7 @@ function SparkleDecor({ className, style }: { className?: string; style?: CSSPro
 }
 
 export const metadata: Metadata = {
-  title: "Frequently Asked Questions | Ohio Parent Hub",
+  title: "Frequently Asked Questions",
   description:
     "Answers to common questions about Ohio Parent Hub, how listings work, what SUTQ ratings mean, and how to find the right child care in Ohio.",
   alternates: {

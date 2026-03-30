@@ -12,7 +12,7 @@ function SparkleDecor({ className, style }: { className?: string; style?: CSSPro
 }
 
 export const metadata: Metadata = {
-  title: "Terms of Service | Ohio Parent Hub",
+  title: "Terms of Service",
   description:
     "Review the Terms of Service for Ohio Parent Hub, including account creation, premium listing subscriptions, provider responsibilities, and acceptable use.",
   alternates: {

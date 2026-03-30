@@ -62,7 +62,6 @@ export const metadata: Metadata = {
     title: 'Ohio Parent Hub',
     description:
       'Find licensed daycares, preschools, and trusted parenting resources across Ohio.',
-    url: 'https://ohioparenthub.com',
     siteName: 'Ohio Parent Hub',
     locale: 'en_US',
     type: 'website',
