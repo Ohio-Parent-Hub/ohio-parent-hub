@@ -128,6 +128,73 @@ export default function ContactPage() {
             </ul>
           </section>
 
+          <section className="mt-6">
+            <h2 className="text-xl font-semibold" style={{ color: dark }}>
+              Common reasons to get in touch
+            </h2>
+            <ul className="mt-3 space-y-2 text-sm leading-relaxed" style={{ color: `${dark}bb` }}>
+              <li>• <strong style={{ color: dark }}>Listing corrections</strong> — A program name, address, or contact detail appears wrong on a listing page.</li>
+              <li>• <strong style={{ color: dark }}>Provider claims</strong> — You operate a licensed program and want to claim and upgrade your listing with photos, hours, pricing, and more. See the{" "}
+                <Link href="/for-providers" className="underline hover:no-underline">
+                  For Providers
+                </Link>
+                {" "}page for details.</li>
+              <li>• <strong style={{ color: dark }}>Partnership inquiries</strong> — You represent a child care organization, resource and referral agency, or local business and want to explore ways to work together.</li>
+              <li>• <strong style={{ color: dark }}>General questions</strong> — Anything about how the site works, how data is sourced, or how listings are organized.</li>
+            </ul>
+          </section>
+
+          <section className="mt-6 rounded-2xl border p-5" style={{ borderColor: `${sage}66`, background: `${cream}66` }}>
+            <h2 className="text-xl font-semibold" style={{ color: dark }}>
+              Self-service resources
+            </h2>
+            <p className="mt-3 text-sm leading-relaxed" style={{ color: `${dark}bb` }}>
+              Many questions are already answered on other pages:
+            </p>
+            <ul className="mt-2 space-y-1 text-sm leading-relaxed" style={{ color: `${dark}bb` }}>
+              <li>•{" "}
+                <Link href="/faq" className="underline hover:no-underline">
+                  Frequently Asked Questions
+                </Link>
+                {" "}— SUTQ ratings, program types, costs, and how to evaluate providers.
+              </li>
+              <li>•{" "}
+                <Link href="/methodology" className="underline hover:no-underline">
+                  Methodology
+                </Link>
+                {" "}— How data is sourced, processed, and normalized.
+              </li>
+              <li>•{" "}
+                <Link href="/for-providers" className="underline hover:no-underline">
+                  For Providers
+                </Link>
+                {" "}— How to claim your listing and add photos, pricing, hours, and more.
+              </li>
+              <li>•{" "}
+                <Link href="/about" className="underline hover:no-underline">
+                  About
+                </Link>
+                {" "}— What Ohio Parent Hub is and how listings work.
+              </li>
+            </ul>
+          </section>
+
+          <section className="mt-6 rounded-2xl border p-5" style={{ borderColor: `${teal}44`, background: `${teal}0d` }}>
+            <h2 className="text-xl font-semibold" style={{ color: dark }}>
+              For childcare providers
+            </h2>
+            <p className="mt-3 text-sm leading-relaxed" style={{ color: `${dark}bb` }}>
+              If you operate a licensed child care program in Ohio, your program is already listed on Ohio Parent Hub
+              using public licensing data. You can claim your listing to add your logo, photos, hours of operation,
+              pricing, amenities, and more.
+            </p>
+            <p className="mt-2 text-sm leading-relaxed" style={{ color: `${dark}bb` }}>
+              <Link href="/for-providers" className="underline hover:no-underline">
+                Learn more about claiming your listing →
+              </Link>
+            </p>
+          </section>
+
           <section className="mt-6 rounded-2xl border p-5" style={{ borderColor: `${sage}66`, background: `${cream}66` }}>
             <h2 className="text-xl font-semibold" style={{ color: dark }}>
               Important note on official records

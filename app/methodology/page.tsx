@@ -1,4 +1,6 @@
 import Link from "next/link";
+import fs from "node:fs";
+import path from "node:path";
 import type { Metadata } from "next";
 import type { CSSProperties } from "react";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
@@ -43,9 +45,22 @@ const dark = "#4A6B67";
 const lightTeal = "#D5E5E3";
 const lightPink = "#FADED4";
 const lightGold = "#F5E9BE";
-const updatedAt = "February 26, 2026";
+const updatedAt = "March 31, 2026";
+
+type DaycareRow = Record<string, string>;
+function loadStats() {
+  const p = path.join(process.cwd(), "data", "daycares.json");
+  if (!fs.existsSync(p)) return { total: 0, cities: 0, counties: 0 };
+  const data: DaycareRow[] = JSON.parse(fs.readFileSync(p, "utf8"));
+  return {
+    total: data.length,
+    cities: new Set(data.map((d) => d.CITY).filter(Boolean)).size,
+    counties: new Set(data.map((d) => d.COUNTY).filter(Boolean)).size,
+  };
+}
 
 export default function MethodologyPage() {
+  const stats = loadStats();
   return (
     <div className="min-h-screen" style={{ background: cream, color: dark }}>
       <section className="relative overflow-hidden px-6 pb-12 pt-8" style={{ background: lightTeal }}>
@@ -92,9 +107,9 @@ export default function MethodologyPage() {
 
             <div className="grid grid-cols-3 gap-3 lg:col-span-2">
               {[
-                { value: "Public", label: "Data Source", bg: "#FFFFFF", accent: teal },
-                { value: "Reviewed", label: "Normalization", bg: lightPink, accent: pink },
-                { value: "Statewide", label: "Coverage", bg: lightGold, accent: gold },
+                { value: stats.total.toLocaleString(), label: "Listings", bg: "#FFFFFF", accent: teal },
+                { value: String(stats.cities), label: "Cities", bg: lightPink, accent: pink },
+                { value: String(stats.counties), label: "Counties", bg: lightGold, accent: gold },
               ].map((stat) => (
                 <div key={stat.label} className="rounded-2xl border p-4 shadow-sm" style={{ background: stat.bg, borderColor: `${stat.accent}40` }}>
                   <div className="line-clamp-1 font-serif text-2xl font-bold" style={{ color: stat.accent }}>{stat.value}</div>
@@ -125,9 +140,50 @@ export default function MethodologyPage() {
             </p>
           </section>
 
+          <section>
+            <h2 className="text-xl font-semibold" style={{ color: dark }}>
+              2) Data fields tracked
+            </h2>
+            <p className="mt-3 text-sm leading-relaxed" style={{ color: `${dark}bb` }}>
+              Each listing in the dataset includes the following state-sourced fields:
+            </p>
+            <ul className="mt-2 space-y-1 text-sm leading-relaxed" style={{ color: `${dark}bb` }}>
+              <li>• Program number, program name, and program type</li>
+              <li>• Street address, city, state, ZIP code, and county</li>
+              <li>• Phone number and email address</li>
+              <li>• SUTQ (Step Up To Quality) rating</li>
+              <li>• License begin and end dates</li>
+              <li>• Up to three administrator names</li>
+              <li>• PFCC (Publicly Funded Child Care) agreement status</li>
+              <li>• Geocoded latitude and longitude coordinates</li>
+            </ul>
+            <p className="mt-3 text-sm leading-relaxed" style={{ color: `${dark}bb` }}>
+              The current dataset covers {stats.total.toLocaleString()} licensed programs
+              across {stats.cities} cities and {stats.counties} counties statewide.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-semibold" style={{ color: dark }}>
+              3) Program types covered
+            </h2>
+            <p className="mt-3 text-sm leading-relaxed" style={{ color: `${dark}bb` }}>
+              Ohio Parent Hub indexes all licensed program types published by the state:
+            </p>
+            <ul className="mt-2 space-y-1 text-sm leading-relaxed" style={{ color: `${dark}bb` }}>
+              <li>• Licensed Child Care Centers</li>
+              <li>• Licensed Type A Family Child Care Homes (up to 12 children)</li>
+              <li>• Licensed Type B Family Child Care Homes (up to 6 children)</li>
+              <li>• Licensed School-Based Preschools</li>
+              <li>• Licensed School-Age Child Care</li>
+              <li>• Registered Day Camps / Approved Day Camps</li>
+              <li>• Certified In-Home Aides</li>
+            </ul>
+          </section>
+
           <section className="rounded-2xl border p-5" style={{ borderColor: `${teal}44`, background: `${teal}0d` }}>
             <h2 className="text-xl font-semibold" style={{ color: dark }}>
-              2) Processing pipeline
+              4) Processing pipeline
             </h2>
             <ul className="mt-3 space-y-2 text-sm leading-relaxed" style={{ color: `${dark}bb` }}>
               <li>• Source records are transformed into a structured listing dataset used by the site.</li>
@@ -139,7 +195,7 @@ export default function MethodologyPage() {
 
           <section>
             <h2 className="text-xl font-semibold" style={{ color: dark }}>
-              3) City normalization safeguards
+              5) City normalization safeguards
             </h2>
             <p className="mt-3 text-sm leading-relaxed" style={{ color: `${dark}bb` }}>
               City normalization is intentionally conservative to reduce accidental merges of distinct places.
@@ -154,7 +210,7 @@ export default function MethodologyPage() {
 
           <section>
             <h2 className="text-xl font-semibold" style={{ color: dark }}>
-              4) Maps and geocoding
+              6) Maps and geocoding
             </h2>
             <p className="mt-3 text-sm leading-relaxed" style={{ color: `${dark}bb` }}>
               Map views are built from listing coordinates when available. User-entered location searches are
@@ -171,7 +227,7 @@ export default function MethodologyPage() {
 
           <section>
             <h2 className="text-xl font-semibold" style={{ color: dark }}>
-              5) Updates and corrections
+              7) Updates and corrections
             </h2>
             <p className="mt-3 text-sm leading-relaxed" style={{ color: `${dark}bb` }}>
               Dataset refreshes are performed periodically. Because source systems can change over time,
@@ -185,7 +241,7 @@ export default function MethodologyPage() {
 
           <section className="border-t pt-6" style={{ borderColor: `${sage}66` }}>
             <h2 className="text-xl font-semibold" style={{ color: dark }}>
-              6) Limitations
+              8) Limitations
             </h2>
             <ul className="mt-3 space-y-2 text-sm leading-relaxed" style={{ color: `${dark}bb` }}>
               <li>• Ohio Parent Hub is an informational directory and not a licensing authority.</li>
