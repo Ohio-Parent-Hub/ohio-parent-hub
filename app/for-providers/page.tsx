@@ -27,13 +27,13 @@ const dark = "#4A6B67";
 const lightTeal = "#D5E5E3";
 
 /* ─── Hardcoded showcase photos from the dev test daycare ─── */
-const SHOWCASE_LOGO = "https://aziibxfjoduwwkmcczrm.supabase.co/storage/v1/object/public/listings/9999999999/logo/1773512643439-w9rnk6.png";
+const SHOWCASE_LOGO = "/showcase/logo.png";
 const SHOWCASE_PHOTOS = [
-  "https://aziibxfjoduwwkmcczrm.supabase.co/storage/v1/object/public/listings/9999999999/photos/1773451531214-tzkuu6.jpg",
-  "https://aziibxfjoduwwkmcczrm.supabase.co/storage/v1/object/public/listings/9999999999/photos/1773451527733-fiqj6h.jpg",
-  "https://aziibxfjoduwwkmcczrm.supabase.co/storage/v1/object/public/listings/9999999999/photos/1773451529510-wly53x.jpg",
-  "https://aziibxfjoduwwkmcczrm.supabase.co/storage/v1/object/public/listings/9999999999/photos/1773693463137-ca1kz2.jpg",
-  "https://aziibxfjoduwwkmcczrm.supabase.co/storage/v1/object/public/listings/9999999999/photos/1773693465232-32djcg.jpg",
+  "/showcase/photo-5.jpg",
+  "/showcase/photo-1.jpg",
+  "/showcase/photo-2.jpg",
+  "/showcase/photo-3.jpg",
+  "/showcase/photo-4.jpg",
 ];
 
 /* ─── Decorative Components ─── */
@@ -571,7 +571,7 @@ export default function ForProvidersPage() {
                 Up to 9 photos in a full-screen lightbox. Parents can see your classrooms, playground, and more before they visit.
               </p>
               <div className="rounded-xl border overflow-hidden" style={{ borderColor: `${sage}33` }}>
-                <PremiumPhotoGallery photos={SHOWCASE_PHOTOS} daycareName="Your Daycare" />
+                <PremiumPhotoGallery photos={SHOWCASE_PHOTOS} daycareName="Your Daycare" disableLightbox />
               </div>
             </div>
 
@@ -712,13 +712,15 @@ export default function ForProvidersPage() {
               Everything you get with a <span style={{ color: gold }}>premium listing</span>
             </h2>
           </div>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {benefits.map((b) => (
               <div key={b.title} className="rounded-xl border bg-white p-5 shadow-sm" style={{ borderColor: `${sage}55` }}>
-                <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-xl" style={{ background: `${teal}15`, color: teal }}>
-                  {b.icon}
+                <div className="mb-2 flex items-center gap-3">
+                  <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl" style={{ background: `${teal}15`, color: teal }}>
+                    {b.icon}
+                  </div>
+                  <h3 className="font-serif text-base font-bold" style={{ color: dark }}>{b.title}</h3>
                 </div>
-                <h3 className="font-serif text-base font-bold mb-1" style={{ color: dark }}>{b.title}</h3>
                 <p className="text-sm leading-relaxed" style={{ color: `${dark}bb` }}>{b.desc}</p>
               </div>
             ))}

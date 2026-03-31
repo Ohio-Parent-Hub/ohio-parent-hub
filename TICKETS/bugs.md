@@ -28,7 +28,7 @@
 ✅ when you type in drop in it changes from daily to weekly
 ✅ home homepage hero content up
 ✅ not rated badge details on daycare pages says "may still be licensed"
-updatge legal pages (cookie banner?)
+✅ updatge legal pages (cookie banner?)
 ✅ map preview card needs work, it's busy AF
 ✅ fix mobile map experience, it's clunky and windows 98. horizontal scroll filters? main filter button full screen
 ✅ add handicap accessible to amenities

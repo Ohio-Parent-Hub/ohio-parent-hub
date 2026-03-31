@@ -6,9 +6,10 @@ import { ChevronLeft, ChevronRight, X, Camera } from "lucide-react";
 type Props = {
   photos: string[];
   daycareName: string;
+  disableLightbox?: boolean;
 };
 
-export default function PremiumPhotoGallery({ photos, daycareName }: Props) {
+export default function PremiumPhotoGallery({ photos, daycareName, disableLightbox = false }: Props) {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   const closeLightbox = useCallback(() => setLightboxIndex(null), []);
@@ -44,17 +45,11 @@ export default function PremiumPhotoGallery({ photos, daycareName }: Props) {
           </h3>
         </div>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
-          {photos.map((photo, index) => (
-            <button
-              key={index}
-              type="button"
-              className={`group relative overflow-hidden rounded-xl border transition-shadow hover:shadow-md focus:outline-none focus-visible:ring-2 ${
-                index === 0 ? "col-span-2 row-span-2" : ""
-              }`}
-              style={{ borderColor: "#B8C5B255" }}
-              onClick={() => setLightboxIndex(index)}
-              aria-label={`View photo ${index + 1} of ${photos.length}`}
-            >
+          {photos.map((photo, index) => {
+            const classes = `group relative overflow-hidden rounded-xl border transition-shadow hover:shadow-md ${
+              index === 0 ? "col-span-2 row-span-2" : ""
+            }`;
+            const imgEl = (
               <img
                 src={photo}
                 alt={`${daycareName} - Photo ${index + 1}`}
@@ -62,8 +57,33 @@ export default function PremiumPhotoGallery({ photos, daycareName }: Props) {
                   index === 0 ? "aspect-[4/3]" : "aspect-square"
                 }`}
               />
-            </button>
-          ))}
+            );
+
+            if (disableLightbox) {
+              return (
+                <div
+                  key={index}
+                  className={classes}
+                  style={{ borderColor: "#B8C5B255" }}
+                >
+                  {imgEl}
+                </div>
+              );
+            }
+
+            return (
+              <button
+                key={index}
+                type="button"
+                className={`${classes} focus:outline-none focus-visible:ring-2`}
+                style={{ borderColor: "#B8C5B255" }}
+                onClick={() => setLightboxIndex(index)}
+                aria-label={`View photo ${index + 1} of ${photos.length}`}
+              >
+                {imgEl}
+              </button>
+            );
+          })}
         </div>
       </div>
 
