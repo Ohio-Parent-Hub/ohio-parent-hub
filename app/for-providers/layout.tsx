@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "For Providers — Claim & Upgrade Your Listing | Ohio Parent Hub",
+  title: { absolute: "For Providers — Claim Your Listing | Ohio Parent Hub" },
   description:
     "Own a daycare in Ohio? Claim your listing on Ohio Parent Hub to add photos, hours, pricing, amenities, and more. Stand out to parents searching for childcare.",
   openGraph: {
-    title: "For Providers — Claim & Upgrade Your Listing | Ohio Parent Hub",
+    title: "For Providers — Claim Your Listing | Ohio Parent Hub",
     description:
       "Own a daycare in Ohio? Claim your listing to add photos, hours, pricing, amenities, and more. Stand out to parents searching for childcare.",
     url: "https://ohioparenthub.com/for-providers",
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "For Providers — Claim & Upgrade Your Listing | Ohio Parent Hub",
+    title: "For Providers — Claim Your Listing | Ohio Parent Hub",
     description: "Own a daycare in Ohio? Claim your listing to add photos, hours, pricing, amenities, and more. Stand out to parents searching for childcare.",
     images: ["/og-default.png"],
   },

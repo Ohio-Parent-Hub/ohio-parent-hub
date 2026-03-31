@@ -245,7 +245,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   const countySnippetCopy = buildCountySnippetCopy(countyDisplay, count);
-  const pageTitle = `${count} Daycares in ${countyDisplay} County, OH | Compare`;
+  const pageTitle = `${count} Daycares in ${countyDisplay} County, OH`;
 
   return {
     title: pageTitle,

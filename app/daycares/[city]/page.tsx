@@ -259,7 +259,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   const citySnippetCopy = buildCitySnippetCopy(cityDisplay, count);
-  const pageTitle = `${count} Daycares in ${cityDisplay}, OH | Compare`;
+  const pageTitle = `${count} Daycares in ${cityDisplay}, OH`;
   
   return {
     title: pageTitle,

@@ -11,7 +11,7 @@ import { MapPin, Search, ShieldCheck, Baby, ArrowRight, Sparkles } from "lucide-
 import HomepageSearchInput from "@/components/HomepageSearchInput";
 
 export const metadata: Metadata = {
-  title: "Best Daycares in Ohio | Licensed Child Care Search",
+  title: "Best Daycares in Ohio | Child Care Search",
   description:
     "Find top-rated, licensed Ohio daycares by city. Compare SUTQ quality ratings and provider details to choose child care near you.",
   keywords: [
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     canonical: "/",
   },
   openGraph: {
-    title: "Best Daycares in Ohio | Licensed Child Care Search",
+    title: "Best Daycares in Ohio | Child Care Search",
     description:
       "Find top-rated, licensed Ohio daycares by city and compare SUTQ quality information.",
     url: "https://ohioparenthub.com/",
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Best Daycares in Ohio | Licensed Child Care Search",
+    title: "Best Daycares in Ohio | Child Care Search",
     description:
       "Find top-rated, licensed Ohio daycares by city and compare SUTQ quality information.",
     images: ["/og-default.png"],

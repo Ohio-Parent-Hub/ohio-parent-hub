@@ -9,7 +9,7 @@ import { resolveCanonicalCityName } from "@/lib/metroAreas";
 import { isTestDaycare } from "@/lib/utils";
 
 export const metadata: Metadata = {
-  title: "Best Daycares in Ohio | Search Licensed Child Care Near You",
+  title: "Ohio Daycare Search | Licensed Child Care",
   description: "Search and filter over 8,000 licensed daycare and childcare programs in Ohio. Compare providers by city, county, SUTQ rating, and program type.",
   keywords: [
     "best daycares in ohio",
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     canonical: "/daycares",
   },
   openGraph: {
-    title: "Best Daycares in Ohio | Search Licensed Child Care",
+    title: "Ohio Daycare Search | Licensed Child Care",
     description: "Search and compare licensed childcare providers across Ohio with city and quality filters.",
     url: "https://ohioparenthub.com/daycares",
     siteName: "Ohio Parent Hub",
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Best Daycares in Ohio | Search Licensed Child Care",
+    title: "Ohio Daycare Search | Licensed Child Care",
     description: "Search and compare licensed childcare providers across Ohio with city and quality filters.",
     images: ["/og-default.png"],
   },
