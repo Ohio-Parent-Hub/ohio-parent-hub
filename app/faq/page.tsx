@@ -21,6 +21,20 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/faq",
   },
+  openGraph: {
+    title: "Frequently Asked Questions | Ohio Parent Hub",
+    description: "Answers to common questions about Ohio Parent Hub, how listings work, what SUTQ ratings mean, and how to find the right child care in Ohio.",
+    url: "https://ohioparenthub.com/faq",
+    siteName: "Ohio Parent Hub",
+    type: "website",
+    images: [{ url: "/og-default.png", width: 1200, height: 630, alt: "Ohio Parent Hub FAQ" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Frequently Asked Questions | Ohio Parent Hub",
+    description: "Answers to common questions about Ohio Parent Hub, how listings work, what SUTQ ratings mean, and how to find the right child care in Ohio.",
+    images: ["/og-default.png"],
+  },
 };
 
 const teal = "#7EA8A4";

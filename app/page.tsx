@@ -41,6 +41,13 @@ export const metadata: Metadata = {
       },
     ],
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Best Daycares in Ohio | Licensed Child Care Search",
+    description:
+      "Find top-rated, licensed Ohio daycares by city and compare SUTQ quality information.",
+    images: ["/og-default.png"],
+  },
 };
 
 type DaycareRow = Record<string, string>;

@@ -18,6 +18,20 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/terms",
   },
+  openGraph: {
+    title: "Terms of Service | Ohio Parent Hub",
+    description: "Review the Terms of Service for Ohio Parent Hub, including account creation, premium listing subscriptions, provider responsibilities, and acceptable use.",
+    url: "https://ohioparenthub.com/terms",
+    siteName: "Ohio Parent Hub",
+    type: "website",
+    images: [{ url: "/og-default.png", width: 1200, height: 630, alt: "Ohio Parent Hub Terms of Service" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Terms of Service | Ohio Parent Hub",
+    description: "Review the Terms of Service for Ohio Parent Hub, including account creation, premium listing subscriptions, provider responsibilities, and acceptable use.",
+    images: ["/og-default.png"],
+  },
 };
 
 const teal = "#7EA8A4";

@@ -25,6 +25,15 @@ export const metadata: Metadata = {
     title: "Best Daycares in Ohio | Search Licensed Child Care",
     description: "Search and compare licensed childcare providers across Ohio with city and quality filters.",
     url: "https://ohioparenthub.com/daycares",
+    siteName: "Ohio Parent Hub",
+    type: "website",
+    images: [{ url: "/og-default.png", width: 1200, height: 630, alt: "Best Daycares in Ohio" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Best Daycares in Ohio | Search Licensed Child Care",
+    description: "Search and compare licensed childcare providers across Ohio with city and quality filters.",
+    images: ["/og-default.png"],
   },
 };
 

@@ -43,6 +43,15 @@ export const metadata: Metadata = {
     description:
       "Explore Ohio cities and open local daycare listings with quality and program details.",
     url: "https://ohioparenthub.com/cities",
+    siteName: "Ohio Parent Hub",
+    type: "website",
+    images: [{ url: "/og-default.png", width: 1200, height: 630, alt: "Best Daycares by Ohio City" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Best Daycares by Ohio City",
+    description: "Explore Ohio cities and open local daycare listings with quality and program details.",
+    images: ["/og-default.png"],
   },
 };
 

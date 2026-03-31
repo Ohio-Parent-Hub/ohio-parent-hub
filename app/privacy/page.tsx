@@ -18,6 +18,20 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/privacy",
   },
+  openGraph: {
+    title: "Privacy Policy | Ohio Parent Hub",
+    description: "Review how Ohio Parent Hub handles your data, including accounts, premium listing subscriptions, analytics, and contact communications.",
+    url: "https://ohioparenthub.com/privacy",
+    siteName: "Ohio Parent Hub",
+    type: "website",
+    images: [{ url: "/og-default.png", width: 1200, height: 630, alt: "Ohio Parent Hub Privacy Policy" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Privacy Policy | Ohio Parent Hub",
+    description: "Review how Ohio Parent Hub handles your data, including accounts, premium listing subscriptions, analytics, and contact communications.",
+    images: ["/og-default.png"],
+  },
 };
 
 const teal = "#7EA8A4";

@@ -18,6 +18,20 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/methodology",
   },
+  openGraph: {
+    title: "Methodology | Ohio Parent Hub",
+    description: "See how Ohio Parent Hub sources, standardizes, and publishes licensed child care listings for families across Ohio.",
+    url: "https://ohioparenthub.com/methodology",
+    siteName: "Ohio Parent Hub",
+    type: "website",
+    images: [{ url: "/og-default.png", width: 1200, height: 630, alt: "Ohio Parent Hub Methodology" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Methodology | Ohio Parent Hub",
+    description: "See how Ohio Parent Hub sources, standardizes, and publishes licensed child care listings for families across Ohio.",
+    images: ["/og-default.png"],
+  },
 };
 
 const teal = "#7EA8A4";

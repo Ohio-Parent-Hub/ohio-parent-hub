@@ -18,6 +18,20 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/contact",
   },
+  openGraph: {
+    title: "Contact Ohio Parent Hub",
+    description: "Contact Ohio Parent Hub with questions, listing feedback, and partnership inquiries.",
+    url: "https://ohioparenthub.com/contact",
+    siteName: "Ohio Parent Hub",
+    type: "website",
+    images: [{ url: "/og-default.png", width: 1200, height: 630, alt: "Contact Ohio Parent Hub" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Contact Ohio Parent Hub",
+    description: "Contact Ohio Parent Hub with questions, listing feedback, and partnership inquiries.",
+    images: ["/og-default.png"],
+  },
 };
 
 const teal = "#7EA8A4";

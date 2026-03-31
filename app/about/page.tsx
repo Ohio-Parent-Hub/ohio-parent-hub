@@ -18,6 +18,20 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/about",
   },
+  openGraph: {
+    title: "About Ohio Parent Hub",
+    description: "Learn what Ohio Parent Hub is, how listings are maintained, and how families can use the site to research child care options.",
+    url: "https://ohioparenthub.com/about",
+    siteName: "Ohio Parent Hub",
+    type: "website",
+    images: [{ url: "/og-default.png", width: 1200, height: 630, alt: "About Ohio Parent Hub" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "About Ohio Parent Hub",
+    description: "Learn what Ohio Parent Hub is, how listings are maintained, and how families can use the site to research child care options.",
+    images: ["/og-default.png"],
+  },
 };
 
 const teal = "#7EA8A4";
