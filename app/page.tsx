@@ -7,7 +7,7 @@ import type { Metadata } from "next";
 import { Button } from "@/components/ui/button";
 import { toTitleCaseIfAllCaps } from "@/lib/utils";
 import { getCitiesWithMetroEntry, resolveCanonicalCityName } from "@/lib/metroAreas";
-import { MapPin, Search, ShieldCheck, Baby, ArrowRight, Sparkles } from "lucide-react";
+import { MapPin, Search, ShieldCheck, Baby, ArrowRight, Sparkles, Filter } from "lucide-react";
 import HomepageSearchInput from "@/components/HomepageSearchInput";
 
 export const metadata: Metadata = {
@@ -239,6 +239,10 @@ export default function HomePage() {
       slug,
     }));
 
+  const countySet = new Set<string>();
+  daycares.forEach((d) => { if (d["COUNTY"]) countySet.add(d["COUNTY"]); });
+  const countyCount = countySet.size;
+
   return (
     <div className="flex min-h-screen flex-col" style={{ background: cream, color: dark }}>
       <section className="relative overflow-hidden px-6 pt-12 pb-28 sm:pt-16 sm:pb-36" style={{ background: lightTeal }}>
@@ -309,6 +313,43 @@ export default function HomePage() {
       </section>
 
       <div style={{ background: lightTeal }}>
+        <WaveDivider fill={cream} />
+      </div>
+
+      {/* What is Ohio Parent Hub */}
+      <section className="px-6 pb-20 pt-12" style={{ background: cream }}>
+        <div className="mx-auto grid max-w-6xl items-start gap-8 lg:grid-cols-5 lg:gap-12">
+          <div className="lg:col-span-3">
+            <SparkleDecor className="mb-4 h-5 w-5" style={{ color: `${teal}50` }} />
+            <h2 className="font-serif text-4xl font-bold" style={{ color: dark }}>Ohio&apos;s Free Child Care Directory</h2>
+            <p className="mt-5 leading-relaxed" style={{ color: `${dark}88` }}>
+              Ohio Parent Hub is a free, independent directory of every licensed child care provider in Ohio. Our data comes directly from the Ohio Department of Children and Youth (DCY) licensing database, so every program you see&nbsp;&mdash; from large child care centers to small family homes&nbsp;&mdash; holds a current state license.
+            </p>
+            <p className="mt-4 leading-relaxed" style={{ color: `${dark}88` }}>
+              Search Ohio daycares by city, filter by program type, and compare Step Up To Quality (SUTQ) ratings side-by-side. Whether you need infant care in Columbus, a family child care home in Cincinnati, or after-school programs in a smaller community, we cover all {countyCount} Ohio counties so you can find child care near you.
+            </p>
+          </div>
+          <div className="lg:col-span-2 flex flex-col gap-4">
+            {[
+              { icon: <Search className="h-5 w-5" />, label: "Search by City", desc: `Find providers in any of ${cityCounts.size} Ohio cities`, bg: lightTeal, accent: teal },
+              { icon: <Filter className="h-5 w-5" />, label: "Filter by Type", desc: "7 provider types from centers to family homes", bg: lightGold, accent: gold },
+              { icon: <ShieldCheck className="h-5 w-5" />, label: "Compare Quality", desc: "SUTQ ratings, PFCC status, and license history", bg: lightPink, accent: pink },
+            ].map((item) => (
+              <div key={item.label} className="flex items-start gap-4 rounded-2xl p-4 shadow-sm" style={{ background: item.bg }}>
+                <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl" style={{ background: item.accent, color: "#fff" }}>
+                  {item.icon}
+                </div>
+                <div>
+                  <p className="font-serif text-base font-bold" style={{ color: dark }}>{item.label}</p>
+                  <p className="mt-0.5 text-sm leading-snug" style={{ color: `${dark}88` }}>{item.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <div style={{ background: cream }}>
         <WaveDivider fill="#fff" />
       </div>
 
@@ -327,7 +368,7 @@ export default function HomePage() {
                 <SparkleDecor className="absolute -top-2 -right-2 h-4 w-4" style={{ color: `${gold}50` }} />
               </div>
               <h3 className="mb-3 font-serif text-2xl font-bold" style={{ color: dark }}>State Licensed</h3>
-              <p className="leading-relaxed" style={{ color: `${dark}88` }}>Every program listed is verified against official state records. We only show licensed providers to ensure your child&apos;s safety and quality of care.</p>
+              <p className="leading-relaxed" style={{ color: `${dark}88` }}>Every program listed is verified against official records from the Ohio Department of Children and Youth (DCY). Providers must pass initial inspections and ongoing compliance reviews to maintain their license. We only show licensed providers to ensure your child&apos;s safety and quality of care.</p>
             </div>
 
             <div className="md:col-span-2 flex flex-col gap-8">
@@ -339,7 +380,7 @@ export default function HomePage() {
                   <SparkleDecor className="absolute -top-2 -right-2 h-4 w-4" style={{ color: `${gold}50` }} />
                 </div>
                 <h3 className="mb-3 font-serif text-2xl font-bold" style={{ color: dark }}>Local Focus</h3>
-                <p className="leading-relaxed" style={{ color: `${dark}88` }}>Search by city for care in your neighborhood. Every corner of Ohio.</p>
+                <p className="leading-relaxed" style={{ color: `${dark}88` }}>Search by city for care in your neighborhood. We cover all 88 Ohio counties, from metro areas like Columbus, Cleveland, and Cincinnati to smaller rural communities.</p>
               </div>
 
               <div className="rounded-3xl p-8 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md" style={{ background: lightPink }}>
@@ -350,7 +391,7 @@ export default function HomePage() {
                   <SparkleDecor className="absolute -top-2 -right-2 h-4 w-4" style={{ color: `${gold}50` }} />
                 </div>
                 <h3 className="mb-3 font-serif text-2xl font-bold" style={{ color: dark }}>All Ages</h3>
-                <p className="leading-relaxed" style={{ color: `${dark}88` }}>Infant care to after-school. Filter by age group.</p>
+                <p className="leading-relaxed" style={{ color: `${dark}88` }}>From infant care centers and preschools to school-age programs and day camps. Filter by program type to find the right setting for your child.</p>
               </div>
             </div>
           </div>
@@ -367,6 +408,9 @@ export default function HomePage() {
             <div>
               <SparkleDecor className="mb-3 h-5 w-5" style={{ color: `${teal}50` }} />
               <h2 className="font-serif text-4xl font-bold" style={{ color: dark }}>Explore Top Cities</h2>
+              <p className="mt-3 text-base leading-relaxed" style={{ color: `${dark}88` }}>
+                Browse licensed child care providers in Ohio&apos;s most popular cities&nbsp;&mdash; from Columbus and Cleveland to smaller communities across all 88 counties.
+              </p>
             </div>
             <Button variant="outline" className="group rounded-full border-2 font-bold" style={{ borderColor: teal, color: teal }} asChild>
               <Link href="/cities">View All <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" /></Link>
@@ -415,6 +459,22 @@ export default function HomePage() {
       <div style={{ background: teal }}>
         <WaveDivider fill={cream} />
       </div>
+
+      {/* Provider Callout */}
+      <section className="px-6 pb-8 pt-12" style={{ background: cream }}>
+        <div className="mx-auto max-w-2xl">
+          <div className="rounded-3xl p-8 text-center shadow-sm" style={{ background: lightTeal }}>
+            <SparkleDecor className="mx-auto mb-3 h-5 w-5" style={{ color: `${teal}50` }} />
+            <h2 className="font-serif text-2xl font-bold" style={{ color: dark }}>Child Care Providers</h2>
+            <p className="mx-auto mt-3 max-w-md leading-relaxed" style={{ color: `${dark}88` }}>
+              Claim your free listing to update your details, add photos, and reach thousands of Ohio parents searching for care.
+            </p>
+            <Button className="mt-6 rounded-full px-8 font-bold" style={{ background: teal, color: "#fff" }} asChild>
+              <Link href="/for-providers">Learn More <ArrowRight className="ml-2 h-4 w-4" /></Link>
+            </Button>
+          </div>
+        </div>
+      </section>
 
       {/* FAQ Section */}
       <section className="px-6 pb-24 pt-16" style={{ background: cream }}>
