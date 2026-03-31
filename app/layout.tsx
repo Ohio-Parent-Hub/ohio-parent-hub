@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { DM_Serif_Display, Inter } from "next/font/google";
-import Script from "next/script";
 import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ToastProvider } from "@/components/ui/toast";
@@ -95,9 +94,12 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${dmSerif.variable} font-sans antialiased bg-background text-foreground`}
       >
-        <Script id="site-jsonld" type="application/ld+json" strategy="afterInteractive">
-          {JSON.stringify([organizationSchema, websiteSchema])}
-        </Script>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify([organizationSchema, websiteSchema]).replace(/</g, "\\u003c"),
+          }}
+        />
         {gaMeasurementId && <AnalyticsLoader gaId={gaMeasurementId} />}
         <TooltipProvider>
           <ToastProvider>
