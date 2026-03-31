@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import LocationSearch from "@/components/LocationSearch";
 import CityDashboard from "@/components/CityDashboard";
+import { ChevronDown } from "lucide-react";
 import type { CSSProperties } from "react";
 
 type DaycareRow = Record<string, string>;
@@ -23,6 +24,7 @@ interface DraftCityDaycaresPageClientProps {
   cityCount: number;
   citySnippetCopy: string;
   sutqStats?: CitySutqStats;
+  cityDescription?: string[];
   initialDaycares: DaycareRow[];
   verifiedProgramNumbers?: string[];
   premiumLogos?: Record<string, string>;
@@ -56,6 +58,7 @@ export default function DraftCityDaycaresPageClient({
   cityCount,
   citySnippetCopy,
   sutqStats,
+  cityDescription = [],
   initialDaycares,
   verifiedProgramNumbers = [],
   premiumLogos = {},
@@ -70,6 +73,13 @@ export default function DraftCityDaycaresPageClient({
   const [locationQuery, setLocationQuery] = useState("");
   const [heroSearchClearSignal, setHeroSearchClearSignal] = useState(0);
   const cityHref = `${basePath}/daycares/${citySlug}`;
+
+  const aboutRef = useRef<HTMLDetailsElement>(null);
+  useEffect(() => {
+    if (aboutRef.current && window.innerWidth < 640) {
+      aboutRef.current.removeAttribute("open");
+    }
+  }, []);
 
   return (
     <main className="min-h-screen" style={{ background: cream, color: dark }}>
@@ -159,6 +169,42 @@ export default function DraftCityDaycaresPageClient({
         </div>
       </section>
 
+      {cityDescription.length > 0 && (
+        <section className="px-4 pt-6 pb-2 sm:px-6">
+          <div className="mx-auto max-w-7xl">
+            <details
+              ref={aboutRef}
+              open
+              className="group rounded-xl border-l-4 overflow-hidden"
+              style={{
+                borderLeftColor: sage,
+                background: "#ffffff",
+                boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+              }}
+            >
+              <summary
+                className="sm:hidden px-5 py-3.5 flex items-center justify-between cursor-pointer list-none [&::-webkit-details-marker]:hidden"
+              >
+                <span className="font-semibold text-[0.95rem]" style={{ color: dark }}>
+                  About childcare in {cityDisplay}
+                </span>
+                <ChevronDown
+                  size={18}
+                  className="transition-transform duration-200 group-open:rotate-180"
+                  style={{ color: `${dark}99` }}
+                />
+              </summary>
+              <div className="px-5 pb-4 sm:!block sm:pt-4">
+                <ul className="list-disc space-y-1.5 pl-5 text-[0.9rem] leading-relaxed" style={{ color: dark }}>
+                  {cityDescription.map((bullet, i) => (
+                    <li key={i}>{bullet}</li>
+                  ))}
+                </ul>
+              </div>
+            </details>
+          </div>
+        </section>
+      )}
 
       <section className="px-0 sm:px-6 py-4 sm:py-8">
         <div className="mx-auto max-w-7xl sm:rounded-3xl sm:border px-2 py-3 sm:p-6 sm:shadow-sm" style={{ background: "#fff", borderColor: `${sage}55` }}>

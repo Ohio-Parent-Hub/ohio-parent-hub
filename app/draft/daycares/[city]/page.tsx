@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { notFound } from "next/navigation";
 import DraftCityDaycaresPageClient from "@/components/DraftCityDaycaresPageClient";
+import { generateCityDescription } from "@/lib/generateCityDescription";
 
 type Props = { params: Promise<{ city?: string }> };
 type DaycareRow = Record<string, string>;
@@ -39,6 +40,7 @@ export default async function DraftCityDaycaresPage({ params }: Props) {
   }
 
   const citySnippetCopy = `Browse all ${matches.length.toLocaleString()} licensed daycares in ${cityDisplay}, Ohio. Compare program type, SUTQ status, and key details to find childcare that fits your family.`;
+  const cityDescription = generateCityDescription(cityDisplay, matches);
   const cityIntroCopy = `Choosing childcare in ${cityDisplay} can feel overwhelming, especially when every family's needs are different. This page includes all ${matches.length.toLocaleString()} licensed daycares in ${cityDisplay}, Ohio, so you can compare program type, SUTQ status, and core listing details in one place.`;
   const citySutqCopy = "Step Up To Quality (SUTQ) is Ohio's quality rating system for licensed early care and education programs. Ratings shown are Gold, Silver, Bronze, or Not Rated. In general, higher tiers indicate programs meeting additional quality standards beyond baseline licensing.";
   const cityChoosingCareCopy = `Use SUTQ as a starting filter, then confirm day-to-day fit directly with each program in ${cityDisplay}. Compare program type, call to confirm openings and waitlist timing, ask about teacher consistency and daily communication, and schedule a tour before deciding.`;
@@ -68,6 +70,7 @@ export default async function DraftCityDaycaresPage({ params }: Props) {
       citySlug={citySlug}
       cityCount={matches.length}
       citySnippetCopy={citySnippetCopy}
+      cityDescription={cityDescription}
       countyLinks={countyLinks}
       initialDaycares={matches.slice(0, 15)}
       basePath="/draft"

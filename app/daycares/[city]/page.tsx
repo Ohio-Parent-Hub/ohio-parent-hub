@@ -17,6 +17,7 @@ import {
   resolveCanonicalCitySlugFromName,
   resolveCanonicalCitySlugFromSlug,
 } from "@/lib/metroAreas";
+import { generateCityDescription } from "@/lib/generateCityDescription";
 
 type Props = { params: Promise<{ city?: string }> };
 
@@ -321,6 +322,7 @@ export default async function CityDaycaresPage({ params }: Props) {
   const citySnippetCopy = buildCitySnippetCopy(cityDisplay, matches.length);
   const cityEditorialCopy = buildCityEditorialCopy(cityDisplay, matches.length);
   const sutqStats = buildCitySutqStats(matches);
+  const cityDescription = generateCityDescription(cityDisplay, matches, getMetroDisplayNameBySlug(citySlug) || undefined);
   const primaryCountySlug = slugify((matches[0]?.["COUNTY"] || "").trim());
   const cityFaqs = buildCityFaqs(cityDisplay, primaryCountySlug);
   const countyLinks = Array.from(
@@ -368,6 +370,7 @@ export default async function CityDaycaresPage({ params }: Props) {
         cityCount={matches.length}
         citySnippetCopy={citySnippetCopy}
         sutqStats={sutqStats}
+        cityDescription={cityDescription}
         countyLinks={countyLinks}
         initialDaycares={projectDaycareListRows(matches.slice(0, 15))}
         verifiedProgramNumbers={[...(await loadVerifiedProgramNumbers())]}
