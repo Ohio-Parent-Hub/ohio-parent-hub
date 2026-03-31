@@ -367,11 +367,6 @@ export default async function CityDaycaresPage({ params }: Props) {
         citySlug={citySlug}
         cityCount={matches.length}
         citySnippetCopy={citySnippetCopy}
-        cityIntroCopy={cityEditorialCopy.intro}
-        citySutqCopy={cityEditorialCopy.sutq}
-        cityChoosingCareCopy={cityEditorialCopy.choosingCare}
-        cityTransparencyCopy={cityEditorialCopy.transparency}
-        cityNotRatedCopy={cityEditorialCopy.notRated}
         sutqStats={sutqStats}
         countyLinks={countyLinks}
         initialDaycares={projectDaycareListRows(matches.slice(0, 15))}

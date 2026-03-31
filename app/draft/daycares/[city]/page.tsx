@@ -68,11 +68,6 @@ export default async function DraftCityDaycaresPage({ params }: Props) {
       citySlug={citySlug}
       cityCount={matches.length}
       citySnippetCopy={citySnippetCopy}
-      cityIntroCopy={cityIntroCopy}
-      citySutqCopy={citySutqCopy}
-      cityChoosingCareCopy={cityChoosingCareCopy}
-      cityTransparencyCopy={cityTransparencyCopy}
-      cityNotRatedCopy={cityNotRatedCopy}
       countyLinks={countyLinks}
       initialDaycares={matches.slice(0, 15)}
       basePath="/draft"

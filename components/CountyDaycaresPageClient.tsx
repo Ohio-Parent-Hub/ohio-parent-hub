@@ -21,11 +21,6 @@ interface CountyDaycaresPageClientProps {
   countySlug: string;
   countyCount: number;
   countySnippetCopy: string;
-  countyIntroCopy: string;
-  countySutqCopy: string;
-  countyChoosingCareCopy: string;
-  countyTransparencyCopy: string;
-  countyNotRatedCopy: string;
   sutqStats?: CountySutqStats;
   initialDaycares: DaycareRow[];
   verifiedProgramNumbers?: string[];
@@ -58,11 +53,6 @@ export default function CountyDaycaresPageClient({
   countySlug,
   countyCount,
   countySnippetCopy,
-  countyIntroCopy,
-  countySutqCopy,
-  countyChoosingCareCopy,
-  countyTransparencyCopy,
-  countyNotRatedCopy,
   sutqStats,
   initialDaycares,
   verifiedProgramNumbers = [],
@@ -76,9 +66,6 @@ export default function CountyDaycaresPageClient({
   const [mapZoom, setMapZoom] = useState<number | null>(null);
   const [locationQuery, setLocationQuery] = useState("");
   const [heroSearchClearSignal, setHeroSearchClearSignal] = useState(0);
-  const [isAboutOpenMobile, setIsAboutOpenMobile] = useState(false);
-  const [isSutqOpenMobile, setIsSutqOpenMobile] = useState(false);
-  const [isChooseOpenMobile, setIsChooseOpenMobile] = useState(false);
   const countyHref = `${basePath}/daycares/county/${countySlug}`;
 
   return (
@@ -156,125 +143,6 @@ export default function CountyDaycaresPageClient({
         </div>
       </section>
 
-      <section className="px-6 pt-6 pb-2">
-        <div className="mx-auto max-w-7xl md:hidden">
-          <div className="rounded-2xl border p-4 shadow-sm" style={{ background: "#fff", borderColor: `${sage}55` }}>
-            <h2 className="font-serif text-base font-semibold" style={{ color: dark }}>
-              Parent guidance for {countyDisplay} County
-            </h2>
-
-            <div className="mt-2 border-t" style={{ borderColor: `${sage}55` }}>
-              <button
-                type="button"
-                className="flex w-full items-center justify-between py-2.5 text-left"
-                aria-expanded={isAboutOpenMobile}
-                aria-controls="county-editorial-about-mobile"
-                aria-label={`Toggle About childcare in ${countyDisplay} County`}
-                onClick={() => setIsAboutOpenMobile((current) => !current)}
-              >
-                <span className="text-sm font-semibold" style={{ color: dark }}>About childcare in {countyDisplay} County</span>
-                <span className={`text-base leading-none transition-transform ${isAboutOpenMobile ? "rotate-180" : "rotate-0"}`} style={{ color: teal }} aria-hidden="true">▾</span>
-              </button>
-              <p
-                id="county-editorial-about-mobile"
-                className={`pb-3 text-sm leading-relaxed ${isAboutOpenMobile ? "block" : "hidden"}`}
-                style={{ color: `${dark}cc` }}
-              >
-                {countyIntroCopy}
-              </p>
-            </div>
-
-            <div className="border-t" style={{ borderColor: `${sage}55` }}>
-              <button
-                type="button"
-                className="flex w-full items-center justify-between py-2.5 text-left"
-                aria-expanded={isSutqOpenMobile}
-                aria-controls="county-editorial-sutq-mobile"
-                aria-label="Toggle Understanding SUTQ in Ohio"
-                onClick={() => setIsSutqOpenMobile((current) => !current)}
-              >
-                <span className="text-sm font-semibold" style={{ color: dark }}>Understanding SUTQ in Ohio</span>
-                <span className={`text-base leading-none transition-transform ${isSutqOpenMobile ? "rotate-180" : "rotate-0"}`} style={{ color: teal }} aria-hidden="true">▾</span>
-              </button>
-              <p
-                id="county-editorial-sutq-mobile"
-                className={`text-sm leading-relaxed ${isSutqOpenMobile ? "block" : "hidden"}`}
-                style={{ color: `${dark}cc` }}
-              >
-                {countySutqCopy}
-              </p>
-              <p
-                className={`pb-3 pt-2 text-xs leading-relaxed ${isSutqOpenMobile ? "block" : "hidden"}`}
-                style={{ color: `${dark}99` }}
-              >
-                {countyNotRatedCopy}
-              </p>
-            </div>
-
-            <div className="border-t" style={{ borderColor: `${sage}55` }}>
-              <button
-                type="button"
-                className="flex w-full items-center justify-between py-2.5 text-left"
-                aria-expanded={isChooseOpenMobile}
-                aria-controls="county-editorial-choose-mobile"
-                aria-label={`Toggle How to choose care in ${countyDisplay} County`}
-                onClick={() => setIsChooseOpenMobile((current) => !current)}
-              >
-                <span className="text-sm font-semibold" style={{ color: dark }}>How to choose care in {countyDisplay} County</span>
-                <span className={`text-base leading-none transition-transform ${isChooseOpenMobile ? "rotate-180" : "rotate-0"}`} style={{ color: teal }} aria-hidden="true">▾</span>
-              </button>
-              <p
-                id="county-editorial-choose-mobile"
-                className={`text-sm leading-relaxed ${isChooseOpenMobile ? "block" : "hidden"}`}
-                style={{ color: `${dark}cc` }}
-              >
-                {countyChoosingCareCopy}
-              </p>
-              <p
-                className={`pb-3 pt-2 text-xs leading-relaxed ${isChooseOpenMobile ? "block" : "hidden"}`}
-                style={{ color: `${dark}99` }}
-              >
-                {countyTransparencyCopy}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="mx-auto hidden max-w-7xl gap-4 md:grid md:grid-cols-3">
-          <article className="rounded-2xl border p-5 shadow-sm" style={{ background: "#fff", borderColor: `${sage}55` }}>
-            <h2 className="font-serif text-lg font-semibold" style={{ color: dark }}>
-              About childcare in {countyDisplay} County
-            </h2>
-            <p className="mt-2 text-sm leading-relaxed" style={{ color: `${dark}cc` }}>
-              {countyIntroCopy}
-            </p>
-          </article>
-
-          <article className="rounded-2xl border p-5 shadow-sm" style={{ background: "#fff", borderColor: `${sage}55` }}>
-            <h2 className="font-serif text-lg font-semibold" style={{ color: dark }}>
-              Understanding SUTQ in Ohio
-            </h2>
-            <p className="mt-2 text-sm leading-relaxed" style={{ color: `${dark}cc` }}>
-              {countySutqCopy}
-            </p>
-            <p className="mt-3 text-xs leading-relaxed" style={{ color: `${dark}99` }}>
-              {countyNotRatedCopy}
-            </p>
-          </article>
-
-          <article className="rounded-2xl border p-5 shadow-sm" style={{ background: "#fff", borderColor: `${sage}55` }}>
-            <h2 className="font-serif text-lg font-semibold" style={{ color: dark }}>
-              How to choose care in {countyDisplay} County
-            </h2>
-            <p className="mt-2 text-sm leading-relaxed" style={{ color: `${dark}cc` }}>
-              {countyChoosingCareCopy}
-            </p>
-            <p className="mt-3 text-xs leading-relaxed" style={{ color: `${dark}99` }}>
-              {countyTransparencyCopy}
-            </p>
-          </article>
-        </div>
-      </section>
 
       <section className="px-0 sm:px-6 py-4 sm:py-8">
         <div className="mx-auto max-w-7xl sm:rounded-3xl sm:border px-2 py-3 sm:p-6 sm:shadow-sm" style={{ background: "#fff", borderColor: `${sage}55` }}>

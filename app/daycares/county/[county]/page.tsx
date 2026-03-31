@@ -313,11 +313,6 @@ export default async function CountyDaycaresPage({ params }: Props) {
         countySlug={countySlug}
         countyCount={matches.length}
         countySnippetCopy={countySnippetCopy}
-        countyIntroCopy={countyEditorialCopy.intro}
-        countySutqCopy={countyEditorialCopy.sutq}
-        countyChoosingCareCopy={countyEditorialCopy.choosingCare}
-        countyTransparencyCopy={countyEditorialCopy.transparency}
-        countyNotRatedCopy={countyEditorialCopy.notRated}
         sutqStats={sutqStats}
         initialDaycares={projectDaycareListRows(matches.slice(0, 15))}
         verifiedProgramNumbers={[...(await loadVerifiedProgramNumbers())]}

@@ -84,6 +84,7 @@ export default async function DraftDaycarePage({ params }: Props) {
       name={name}
       city={city}
       sutq={sutq}
+      pfcc={daycare["PFCC"] === "Y" || daycare["PFCC AGREEMENT"] === "Y"}
       programType={programType}
       programNumber={programNumber}
       street={street}

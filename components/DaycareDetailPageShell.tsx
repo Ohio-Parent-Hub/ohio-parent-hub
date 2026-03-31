@@ -17,7 +17,8 @@ import ClaimListingDialog from "@/components/premium/ClaimListingDialog";
 import Link from "next/link";
 import TrackedUplinkLink from "@/components/TrackedUplinkLink";
 import { ChevronDown, ClipboardList, ExternalLink, Globe, MapPin, Phone, Star } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { generateUniqueDescription } from "@/lib/generateUniqueDescription";
 
 type RelatedDaycareCard = {
   href: string;
@@ -41,6 +42,7 @@ type DaycareDetailPageShellProps = {
   name: string;
   city: string;
   sutq: string;
+  pfcc: boolean;
   programType: string;
   programNumber: string;
   street: string;
@@ -156,6 +158,7 @@ export default function DaycareDetailPageShell({
   name,
   city,
   sutq,
+  pfcc,
   programType,
   programNumber,
   street,
@@ -177,10 +180,27 @@ export default function DaycareDetailPageShell({
   isClaimed,
 }: DaycareDetailPageShellProps) {
   const [isSutqDetailsOpen, setIsSutqDetailsOpen] = useState(false);
-  const [isAboutOpenMobile, setIsAboutOpenMobile] = useState(false);
-  const [isQuestionsOpenMobile, setIsQuestionsOpenMobile] = useState(false);
-  const [isCompareOpenMobile, setIsCompareOpenMobile] = useState(false);
   const sutqDetails = getSutqDetails(sutq);
+
+  const aboutRef = useRef<HTMLDetailsElement>(null);
+  useEffect(() => {
+    if (aboutRef.current && window.innerWidth < 640) {
+      aboutRef.current.removeAttribute("open");
+    }
+  }, []);
+
+  const uniqueDescription = generateUniqueDescription({
+    name,
+    programType,
+    sutq,
+    pfcc,
+    city,
+    county,
+    initialLicense,
+    nearbyCount: nearbyDaycares.length,
+    similarCount: similarDaycares.length,
+    administrator: administrator1,
+  });
 
   const renderDaycareCards = (items: RelatedDaycareCard[], keyPrefix: string) => (
     <div className="space-y-3">
@@ -340,122 +360,37 @@ export default function DaycareDetailPageShell({
       </div>
 
       <section className="px-4 pt-6 pb-2 sm:px-6">
-        <div className="mx-auto max-w-7xl md:hidden">
-          <div className="rounded-2xl border p-4 shadow-sm" style={{ background: "#fff", borderColor: `${sage}55` }}>
-            <h2 className="font-serif text-base font-semibold" style={{ color: dark }}>
-              Parent guidance for this listing
-            </h2>
-
-            <div className="mt-2 border-t" style={{ borderColor: `${sage}55` }}>
-              <button
-                type="button"
-                className="flex w-full items-center justify-between py-2.5 text-left"
-                aria-expanded={isAboutOpenMobile}
-                aria-controls="daycare-editorial-about-mobile"
-                aria-label="Toggle how to read this listing"
-                onClick={() => setIsAboutOpenMobile((current) => !current)}
-              >
-                <span className="text-sm font-semibold" style={{ color: dark }}>How to read this listing</span>
-                <span className={`text-base leading-none transition-transform ${isAboutOpenMobile ? "rotate-180" : "rotate-0"}`} style={{ color: teal }} aria-hidden="true">▾</span>
-              </button>
-              <p
-                id="daycare-editorial-about-mobile"
-                className={`pb-3 text-sm leading-relaxed ${isAboutOpenMobile ? "block" : "hidden"}`}
-                style={{ color: `${dark}cc` }}
-              >
-                Start with SUTQ status and program type, then check license dates and contact details before deciding who to call first.
-              </p>
-            </div>
-
-            <div className="border-t" style={{ borderColor: `${sage}55` }}>
-              <button
-                type="button"
-                className="flex w-full items-center justify-between py-2.5 text-left"
-                aria-expanded={isQuestionsOpenMobile}
-                aria-controls="daycare-editorial-questions-mobile"
-                aria-label="Toggle what to ask first"
-                onClick={() => setIsQuestionsOpenMobile((current) => !current)}
-              >
-                <span className="text-sm font-semibold" style={{ color: dark }}>What to ask first</span>
-                <span className={`text-base leading-none transition-transform ${isQuestionsOpenMobile ? "rotate-180" : "rotate-0"}`} style={{ color: teal }} aria-hidden="true">▾</span>
-              </button>
-              <p
-                id="daycare-editorial-questions-mobile"
-                className={`text-sm leading-relaxed ${isQuestionsOpenMobile ? "block" : "hidden"}`}
-                style={{ color: `${dark}cc` }}
-              >
-                Ask about current openings for your child’s age, daily schedule fit, and how families receive updates.
-              </p>
-              <p
-                className={`pb-3 pt-2 text-xs leading-relaxed ${isQuestionsOpenMobile ? "block" : "hidden"}`}
+        <div className="mx-auto max-w-7xl">
+          <details
+            ref={aboutRef}
+            open
+            className="group rounded-xl border-l-4 overflow-hidden"
+            style={{
+              borderLeftColor: sage,
+              background: "#ffffff",
+              boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+            }}
+          >
+            <summary
+              className="sm:hidden px-5 py-3.5 flex items-center justify-between cursor-pointer list-none [&::-webkit-details-marker]:hidden"
+            >
+              <span className="font-semibold text-[0.95rem]" style={{ color: dark }}>
+                About {name}
+              </span>
+              <ChevronDown
+                size={18}
+                className="transition-transform duration-200 group-open:rotate-180"
                 style={{ color: `${dark}99` }}
-              >
-                If this listing looks promising, call now and verify current availability.
-              </p>
+              />
+            </summary>
+            <div className="px-5 pb-4 sm:!block sm:pt-4">
+              <ul className="list-disc space-y-1.5 pl-5 text-[0.9rem] leading-relaxed" style={{ color: dark }}>
+                {uniqueDescription.map((bullet, i) => (
+                  <li key={i}>{bullet}</li>
+                ))}
+              </ul>
             </div>
-
-            <div className="border-t" style={{ borderColor: `${sage}55` }}>
-              <button
-                type="button"
-                className="flex w-full items-center justify-between py-2.5 text-left"
-                aria-expanded={isCompareOpenMobile}
-                aria-controls="daycare-editorial-compare-mobile"
-                aria-label="Toggle how to compare options"
-                onClick={() => setIsCompareOpenMobile((current) => !current)}
-              >
-                <span className="text-sm font-semibold" style={{ color: dark }}>How to compare options</span>
-                <span className={`text-base leading-none transition-transform ${isCompareOpenMobile ? "rotate-180" : "rotate-0"}`} style={{ color: teal }} aria-hidden="true">▾</span>
-              </button>
-              <p
-                id="daycare-editorial-compare-mobile"
-                className={`text-sm leading-relaxed ${isCompareOpenMobile ? "block" : "hidden"}`}
-                style={{ color: `${dark}cc` }}
-              >
-                Compare this listing with nearby and similar programs before final decisions.
-              </p>
-              <p
-                className={`pb-3 pt-2 text-xs leading-relaxed ${isCompareOpenMobile ? "block" : "hidden"}`}
-                style={{ color: `${dark}99` }}
-              >
-                A quick 2–3 program comparison usually makes the best fit clearer.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="mx-auto hidden max-w-7xl gap-4 md:grid md:grid-cols-3">
-          <article className="rounded-2xl border p-5 shadow-sm" style={{ background: "#fff", borderColor: `${sage}55` }}>
-            <h2 className="font-serif text-lg font-semibold" style={{ color: dark }}>
-              How to read this listing
-            </h2>
-            <p className="mt-2 text-sm leading-relaxed" style={{ color: `${dark}cc` }}>
-              Start with SUTQ status and program type, then check license dates and contact details before deciding who to call first.
-            </p>
-          </article>
-
-          <article className="rounded-2xl border p-5 shadow-sm" style={{ background: "#fff", borderColor: `${sage}55` }}>
-            <h2 className="font-serif text-lg font-semibold" style={{ color: dark }}>
-              What to ask first
-            </h2>
-            <p className="mt-2 text-sm leading-relaxed" style={{ color: `${dark}cc` }}>
-              Ask about current openings for your child’s age, daily schedule fit, and how families receive updates.
-            </p>
-            <p className="mt-3 text-xs leading-relaxed" style={{ color: `${dark}99` }}>
-              If this listing looks promising, call now and verify current availability.
-            </p>
-          </article>
-
-          <article className="rounded-2xl border p-5 shadow-sm" style={{ background: "#fff", borderColor: `${sage}55` }}>
-            <h2 className="font-serif text-lg font-semibold" style={{ color: dark }}>
-              How to compare options
-            </h2>
-            <p className="mt-2 text-sm leading-relaxed" style={{ color: `${dark}cc` }}>
-              Compare this listing with nearby and similar programs before final decisions.
-            </p>
-            <p className="mt-3 text-xs leading-relaxed" style={{ color: `${dark}99` }}>
-              A quick 2–3 program comparison usually makes the best fit clearer.
-            </p>
-          </article>
+          </details>
         </div>
       </section>
 

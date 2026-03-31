@@ -58,11 +58,6 @@ export default function DraftGlobalSearchPage() {
       daycareCount={daycares.length}
       cityCount={cityCount}
       statewideSnippetCopy={statewideSnippetCopy}
-      statewideIntroCopy={statewideEditorialCopy.intro}
-      statewideSutqCopy={statewideEditorialCopy.sutq}
-      statewideChoosingCareCopy={statewideEditorialCopy.choosingCare}
-      statewideTransparencyCopy={statewideEditorialCopy.transparency}
-      statewideNotRatedCopy={statewideEditorialCopy.notRated}
       initialDaycares={initialDaycares}
       basePath="/draft"
       homeHref="/draft"

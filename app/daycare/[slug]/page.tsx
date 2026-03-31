@@ -722,6 +722,7 @@ export default async function DaycarePage({ params }: Props) {
       name={name}
       city={city}
       sutq={sutq}
+      pfcc={currentPfcc}
       programType={programType}
       programNumber={programNumber}
       street={street}
