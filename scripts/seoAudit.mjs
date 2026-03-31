@@ -353,14 +353,22 @@ function analyzePage(fetchResult) {
 
   // ── Internal links ──
   const internalLinks = new Set();
+  const contextualLinks = []; // links within main content, not nav/footer
   $('a[href]').each((_, el) => {
     const href = $(el).attr('href') || '';
     if (href.startsWith('/') || href.startsWith(BASE_URL)) {
       const normalized = href.startsWith('/') ? `${BASE_URL}${href}` : href;
-      internalLinks.add(normalized.split('?')[0].split('#')[0].replace(/\/$/, ''));
+      const clean = normalized.split('?')[0].split('#')[0].replace(/\/$/, '');
+      internalLinks.add(clean);
+      // Check if link is inside main content (not header/footer/nav)
+      const parent = $(el).closest('header, footer, nav');
+      if (parent.length === 0) {
+        contextualLinks.push({ href: clean, text: $(el).text().trim() });
+      }
     }
   });
   meta.internalLinkCount = internalLinks.size;
+  meta.contextualLinkCount = contextualLinks.length;
 
   // ── Payload size ──
   const payloadKB = Math.round(body.length / 1024);
@@ -368,6 +376,93 @@ function analyzePage(fetchResult) {
   if (payloadKB > 500) {
     findings.push({ id: 'large-payload', category: 'Performance', severity: 'P2',
       description: `Large HTML payload: ${payloadKB}KB (threshold: 500KB)`,
+      affectedPages: [url], effort: 'High' });
+  }
+
+  // ── Content quality checks ──
+
+  // Extract visible text (strip nav, header, footer, scripts, styles)
+  const $content = cheerio.load(body);
+  $content('script, style, noscript, header, footer, nav, [aria-hidden="true"]').remove();
+  const visibleText = $content('body').text().replace(/\s+/g, ' ').trim();
+  const words = visibleText.split(/\s+/).filter(w => w.length > 0);
+  const wordCount = words.length;
+  meta.wordCount = wordCount;
+
+  // Extract main content area text (exclude boilerplate)
+  const $main = $('main, [role="main"], article, .content');
+  let mainText = '';
+  if ($main.length > 0) {
+    const $mainClone = cheerio.load($main.html() || '');
+    $mainClone('script, style, noscript, nav, [aria-hidden="true"]').remove();
+    mainText = $mainClone('body').text().replace(/\s+/g, ' ').trim();
+  } else {
+    mainText = visibleText; // fallback
+  }
+  const mainWords = mainText.split(/\s+/).filter(w => w.length > 0);
+  const mainWordCount = mainWords.length;
+  meta.mainWordCount = mainWordCount;
+
+  // Content hash for cross-page similarity (use main content area)
+  meta.contentHash = md5(mainText);
+  // Also store a normalized fingerprint for near-duplicate detection
+  // Use sorted word frequency as a rough content fingerprint
+  const wordFreq = {};
+  for (const w of mainWords.map(w => w.toLowerCase().replace(/[^a-z0-9]/g, '')).filter(w => w.length > 3)) {
+    wordFreq[w] = (wordFreq[w] || 0) + 1;
+  }
+  const topWords = Object.entries(wordFreq).sort((a, b) => b[1] - a[1]).slice(0, 20).map(([w]) => w);
+  meta.contentFingerprint = topWords.join(',');
+
+  // Template-to-content ratio: estimate boilerplate vs unique content
+  const boilerplateWordCount = wordCount - mainWordCount;
+  const contentRatio = wordCount > 0 ? Math.round((mainWordCount / wordCount) * 100) : 0;
+  meta.contentRatio = contentRatio;
+
+  // Thin content detection
+  const thinThresholds = {
+    homepage: 150,
+    detail: 200,
+    city: 100,
+    county: 100,
+    browse: 50,
+    static: 300,
+  };
+  const thinThreshold = thinThresholds[pageType] || 200;
+  if (mainWordCount < thinThreshold) {
+    findings.push({ id: 'thin-content', category: 'Content', severity: 'P1',
+      description: `Thin content: ${mainWordCount} words in main area (threshold: ${thinThreshold} for ${pageType}). Total page words: ${wordCount}`,
+      affectedPages: [url], effort: 'Medium' });
+  }
+
+  // ── Heading structure (H2/H3 depth) ──
+  const h2s = [];
+  const h3s = [];
+  $('h2').each((_, el) => h2s.push($(el).text().trim()));
+  $('h3').each((_, el) => h3s.push($(el).text().trim()));
+  meta.h2Count = h2s.length;
+  meta.h3Count = h3s.length;
+
+  if (pageType !== 'browse' && h2s.length === 0 && mainWordCount > 100) {
+    findings.push({ id: 'no-h2-headings', category: 'Content', severity: 'P2',
+      description: `No H2 subheadings on a page with ${mainWordCount} words. Subheadings help Google understand content structure.`,
+      affectedPages: [url], effort: 'Low' });
+  }
+
+  // ── Paragraph and list richness ──
+  const paragraphs = [];
+  $('main p, [role="main"] p, article p').each((_, el) => {
+    const text = $(el).text().trim();
+    if (text.length > 20) paragraphs.push(text);
+  });
+  const lists = $('main ul, main ol, [role="main"] ul, [role="main"] ol, article ul, article ol').length;
+  meta.paragraphCount = paragraphs.length;
+  meta.listCount = lists;
+
+  // Pages with lots of words but no prose = data table / link list, not "content"
+  if (mainWordCount > 100 && paragraphs.length === 0 && pageType !== 'browse') {
+    findings.push({ id: 'no-prose-content', category: 'Content', severity: 'P1',
+      description: `Page has ${mainWordCount} words but no substantive paragraphs in main content. Content appears to be template/tabular data without editorial prose.`,
       affectedPages: [url], effort: 'High' });
   }
 
@@ -413,11 +508,77 @@ function crossPageChecks(pageResults) {
     }
   }
 
-  // Orphan pages (0 inlinks from sampled pages — rough heuristic)
-  const linkedUrls = new Set();
+  // ── Content similarity detection ──
+  // Group by page type and compare content fingerprints
+  const byPageType = {};
   for (const p of pageResults) {
-    // We already collected internal links per page in meta
-    // This is approximate since we only sample ~50 pages
+    if (!byPageType[p.pageType]) byPageType[p.pageType] = [];
+    byPageType[p.pageType].push(p);
+  }
+
+  for (const [type, pages] of Object.entries(byPageType)) {
+    if (pages.length < 2) continue;
+    // Compare all pairs using fingerprint overlap
+    const fingerprints = pages.map(p => ({
+      url: p.url,
+      words: new Set((p.meta.contentFingerprint || '').split(',').filter(Boolean)),
+    }));
+
+    const similarities = [];
+    for (let i = 0; i < fingerprints.length; i++) {
+      for (let j = i + 1; j < fingerprints.length; j++) {
+        const a = fingerprints[i].words;
+        const b = fingerprints[j].words;
+        if (a.size === 0 || b.size === 0) continue;
+        const intersection = new Set([...a].filter(w => b.has(w)));
+        const union = new Set([...a, ...b]);
+        const jaccard = intersection.size / union.size;
+        if (jaccard > 0.7) {
+          similarities.push({
+            urls: [fingerprints[i].url, fingerprints[j].url],
+            similarity: Math.round(jaccard * 100),
+          });
+        }
+      }
+    }
+
+    if (similarities.length > 0) {
+      const allUrls = [...new Set(similarities.flatMap(s => s.urls))];
+      const avgSim = Math.round(similarities.reduce((a, s) => a + s.similarity, 0) / similarities.length);
+      findings.push({ id: 'near-duplicate-content', category: 'Content', severity: 'P1',
+        description: `${allUrls.length} ${type} pages have near-duplicate content (avg ${avgSim}% similar). Template pages with minimal unique text are demoted by Google's Helpful Content system.`,
+        affectedPages: allUrls, effort: 'High' });
+    }
+  }
+
+  // ── Content depth summary ──
+  const detailPages = pageResults.filter(p => p.pageType === 'detail');
+  if (detailPages.length > 0) {
+    const avgWords = Math.round(detailPages.reduce((a, p) => a + (p.meta.mainWordCount || 0), 0) / detailPages.length);
+    const avgParagraphs = Math.round(detailPages.reduce((a, p) => a + (p.meta.paragraphCount || 0), 0) / detailPages.length);
+    const avgContentRatio = Math.round(detailPages.reduce((a, p) => a + (p.meta.contentRatio || 0), 0) / detailPages.length);
+
+    if (avgWords < 200) {
+      findings.push({ id: 'thin-detail-pages', category: 'Content', severity: 'P0',
+        description: `Detail pages average only ${avgWords} words of main content (${avgParagraphs} prose paragraphs, ${avgContentRatio}% content ratio). With 8,000+ detail pages, this is the single biggest ranking factor. Google's Helpful Content system demotes thin template pages. Competitor directories with 500+ word profiles will outrank these.`,
+        affectedPages: detailPages.map(p => p.url), effort: 'High' });
+    } else if (avgWords < 400) {
+      findings.push({ id: 'shallow-detail-pages', category: 'Content', severity: 'P1',
+        description: `Detail pages average ${avgWords} words of main content (${avgParagraphs} prose paragraphs). Adding unique editorial content, parent reviews, or neighborhood context would improve rankings.`,
+        affectedPages: detailPages.map(p => p.url), effort: 'High' });
+    }
+  }
+
+  // ── City page content depth ──
+  const cityPages = pageResults.filter(p => p.pageType === 'city');
+  if (cityPages.length > 0) {
+    const avgWords = Math.round(cityPages.reduce((a, p) => a + (p.meta.mainWordCount || 0), 0) / cityPages.length);
+    const withProse = cityPages.filter(p => (p.meta.paragraphCount || 0) > 0);
+    if (avgWords < 150 || withProse.length === 0) {
+      findings.push({ id: 'thin-city-pages', category: 'Content', severity: 'P1',
+        description: `City pages average ${avgWords} words with ${withProse.length}/${cityPages.length} having prose paragraphs. City landing pages like "Best Daycares in Columbus, OH" need unique local content (intro paragraph, neighborhood info, local parenting resources) to rank for "[city] daycare" queries.`,
+        affectedPages: cityPages.map(p => p.url), effort: 'High' });
+    }
   }
 
   return findings;
@@ -531,6 +692,12 @@ async function redirectChecks() {
 const SEVERITY_WEIGHT = { P0: 1.0, P1: 0.7, P2: 0.3, P3: 0.1 };
 const SEVERITY_IMPACT_MULTIPLIER = { P0: 50, P1: 20, P2: 5, P3: 1 };
 
+// Content issues that affect entire page types get a heavier penalty
+const CONTENT_ISSUE_IDS = new Set([
+  'thin-content', 'thin-detail-pages', 'shallow-detail-pages',
+  'thin-city-pages', 'near-duplicate-content', 'no-prose-content',
+]);
+
 function scoreFinding(finding, sitemapByType) {
   const pagesAffected = finding.affectedPages.length || 1;
   // Estimate total affected pages based on page type of first URL
@@ -554,7 +721,15 @@ function computeHealthScore(allFindings) {
   let penalty = 0;
   for (const f of allFindings) {
     const weight = SEVERITY_WEIGHT[f.severity] || 0.1;
-    penalty += weight * Math.min(f.estimatedTotalAffected || 1, 100) * 0.01;
+    const affected = Math.min(f.estimatedTotalAffected || 1, 100);
+    // Content issues get a heavy penalty — they're the primary ranking factor
+    if (CONTENT_ISSUE_IDS.has(f.id)) {
+      // Scale by severity: P0 content = 15-25pts, P1 = 8-15pts each
+      const contentPenalty = { P0: 25, P1: 12, P2: 5, P3: 2 };
+      penalty += contentPenalty[f.severity] || 5;
+    } else {
+      penalty += weight * affected * 0.05;
+    }
   }
   return Math.max(0, Math.round(maxPenalty - Math.min(penalty, maxPenalty)));
 }
@@ -644,6 +819,23 @@ function printConsoleReport(report) {
     const avg = Math.round(ttfbs.reduce((a, b) => a + b, 0) / ttfbs.length);
     const max = Math.round(Math.max(...ttfbs));
     console.log(`    ${type.padEnd(12)} avg=${avg}ms  max=${max}ms`);
+  }
+
+  // Content depth metrics
+  console.log('\n' + '─'.repeat(70));
+  console.log('  CONTENT DEPTH (by page type)');
+  console.log('─'.repeat(70));
+  const contentByType = {};
+  for (const p of pageResults) {
+    if (!contentByType[p.pageType]) contentByType[p.pageType] = [];
+    contentByType[p.pageType].push(p);
+  }
+  for (const [type, pages] of Object.entries(contentByType)) {
+    const avgWords = Math.round(pages.reduce((a, p) => a + (p.meta.mainWordCount || 0), 0) / pages.length);
+    const avgParagraphs = (pages.reduce((a, p) => a + (p.meta.paragraphCount || 0), 0) / pages.length).toFixed(1);
+    const avgH2 = (pages.reduce((a, p) => a + (p.meta.h2Count || 0), 0) / pages.length).toFixed(1);
+    const avgRatio = Math.round(pages.reduce((a, p) => a + (p.meta.contentRatio || 0), 0) / pages.length);
+    console.log(`    ${type.padEnd(12)} words=${String(avgWords).padStart(4)}  paragraphs=${avgParagraphs}  h2s=${avgH2}  content-ratio=${avgRatio}%`);
   }
 
   console.log('\n' + '═'.repeat(70));
@@ -755,7 +947,15 @@ async function main() {
         jsonLdTypes: p.meta.jsonLdTypes,
         ogTags: p.meta.ogTags,
         internalLinkCount: p.meta.internalLinkCount,
+        contextualLinkCount: p.meta.contextualLinkCount,
         payloadKB: p.meta.payloadKB,
+        wordCount: p.meta.wordCount,
+        mainWordCount: p.meta.mainWordCount,
+        contentRatio: p.meta.contentRatio,
+        h2Count: p.meta.h2Count,
+        h3Count: p.meta.h3Count,
+        paragraphCount: p.meta.paragraphCount,
+        listCount: p.meta.listCount,
       },
       findingCount: p.findings.length,
     })),
