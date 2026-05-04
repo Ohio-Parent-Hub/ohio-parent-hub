@@ -1,4 +1,5 @@
 import { loadAllPublishedJobs } from "@/app/actions/jobs";
+import { loadPremiumLogos } from "@/app/actions/premium";
 import JobsPageClient from "@/components/jobs/JobsPageClient";
 import type { Metadata } from "next";
 
@@ -22,7 +23,10 @@ export const metadata: Metadata = {
 };
 
 export default async function JobsPage() {
-  const jobs = await loadAllPublishedJobs();
+  const [jobs, premiumLogos] = await Promise.all([
+    loadAllPublishedJobs(),
+    loadPremiumLogos(),
+  ]);
 
-  return <JobsPageClient jobs={jobs} />;
+  return <JobsPageClient jobs={jobs} premiumLogos={premiumLogos} />;
 }
