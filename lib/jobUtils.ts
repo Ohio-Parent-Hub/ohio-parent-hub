@@ -15,13 +15,15 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export function buildJobSlug(jobId: string, title: string): string {
   const titleSlug = slugify(title);
-  return titleSlug ? `${titleSlug}-${jobId}` : jobId;
+  return titleSlug ? `${jobId}-${titleSlug}` : jobId;
 }
 
 export function parseJobIdFromSlug(jobSlug: string): string | null {
   const trimmed = jobSlug.trim();
-  const match = trimmed.match(new RegExp(`(?:^|-)(${UUID_PATTERN})$`));
-  return match?.[1] ?? null;
+  const match = trimmed.match(
+    new RegExp(`^(${UUID_PATTERN})(?:-|$)|(?:^|-)(${UUID_PATTERN})$`),
+  );
+  return match?.[1] ?? match?.[2] ?? null;
 }
 
 export function buildJobApplyMailto(
