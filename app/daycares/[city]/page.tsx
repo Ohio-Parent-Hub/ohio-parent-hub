@@ -6,6 +6,7 @@ import Link from "next/link";
 import { notFound, permanentRedirect } from "next/navigation";
 import DraftCityDaycaresPageClient from "@/components/DraftCityDaycaresPageClient";
 import { loadVerifiedProgramNumbers, loadPremiumLogos, loadPremiumFilterSummaries } from "@/app/actions/premium";
+import { loadHiringSummaries } from "@/app/actions/jobs";
 import { slugify, toTitleCaseIfAllCaps } from "@/lib/utils";
 import { isTestDaycare } from "@/lib/utils";
 import { projectDaycareListRows } from "@/lib/daycareProjection";
@@ -376,6 +377,7 @@ export default async function CityDaycaresPage({ params }: Props) {
         verifiedProgramNumbers={[...(await loadVerifiedProgramNumbers())]}
         premiumLogos={await loadPremiumLogos()}
         premiumSummaries={await loadPremiumFilterSummaries()}
+        hiringSummaries={await loadHiringSummaries()}
         basePath=""
         homeHref="/"
         citiesHref="/cities"

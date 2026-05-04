@@ -6,6 +6,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import CountyDaycaresPageClient from "@/components/CountyDaycaresPageClient";
 import { loadVerifiedProgramNumbers, loadPremiumLogos, loadPremiumFilterSummaries } from "@/app/actions/premium";
+import { loadHiringSummaries } from "@/app/actions/jobs";
 import { slugify } from "@/lib/utils";
 import { isTestDaycare } from "@/lib/utils";
 import { projectDaycareListRows } from "@/lib/daycareProjection";
@@ -318,6 +319,7 @@ export default async function CountyDaycaresPage({ params }: Props) {
         verifiedProgramNumbers={[...(await loadVerifiedProgramNumbers())]}
         premiumLogos={await loadPremiumLogos()}
         premiumSummaries={await loadPremiumFilterSummaries()}
+        hiringSummaries={await loadHiringSummaries()}
         basePath=""
         homeHref="/"
         countiesHref="/counties"

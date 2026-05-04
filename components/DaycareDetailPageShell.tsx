@@ -14,11 +14,13 @@ import PremiumPricingTable from "@/components/premium/PremiumPricingTable";
 import PremiumAmenities from "@/components/premium/PremiumAmenities";
 import PremiumOwnerDescription from "@/components/premium/PremiumOwnerDescription";
 import ClaimListingDialog from "@/components/premium/ClaimListingDialog";
+import PublicJobsSection from "@/components/jobs/PublicJobsSection";
 import Link from "next/link";
 import TrackedUplinkLink from "@/components/TrackedUplinkLink";
-import { ChevronDown, ClipboardList, ExternalLink, Globe, MapPin, Phone, Star } from "lucide-react";
+import { BriefcaseBusiness, ChevronDown, ClipboardList, ExternalLink, Globe, MapPin, Phone, Star } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { generateUniqueDescription } from "@/lib/generateUniqueDescription";
+import type { PublicDaycareJob } from "@/lib/jobTypes";
 
 type RelatedDaycareCard = {
   href: string;
@@ -62,6 +64,7 @@ type DaycareDetailPageShellProps = {
   faqSection?: ReactNode;
   premiumData?: PremiumListingData;
   isClaimed?: boolean;
+  publicJobs?: PublicDaycareJob[];
 };
 
 const teal = "#7EA8A4";
@@ -178,6 +181,7 @@ export default function DaycareDetailPageShell({
   faqSection,
   premiumData,
   isClaimed,
+  publicJobs = [],
 }: DaycareDetailPageShellProps) {
   const [isSutqDetailsOpen, setIsSutqDetailsOpen] = useState(false);
   const sutqDetails = getSutqDetails(sutq);
@@ -276,6 +280,16 @@ export default function DaycareDetailPageShell({
               )}
               {(premiumData || isClaimed) && (
                 <VerifiedProviderBadge />
+              )}
+              {publicJobs.length > 0 && (
+                <a
+                  href="#open-jobs"
+                  className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wider transition-shadow hover:shadow-md"
+                  style={{ backgroundColor: `${gold}22`, color: dark }}
+                >
+                  <BriefcaseBusiness className="h-3 w-3" />
+                  Now Hiring · {publicJobs.length} Open {publicJobs.length === 1 ? "Role" : "Roles"}
+                </a>
               )}
             </div>
             {premiumData?.logo_url ? (
@@ -580,6 +594,10 @@ export default function DaycareDetailPageShell({
           </div>
         </div>
       </section>
+
+      {publicJobs.length > 0 && (
+        <PublicJobsSection daycareName={name} jobs={publicJobs} />
+      )}
 
       {faqSection}
 

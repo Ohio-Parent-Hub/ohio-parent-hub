@@ -53,7 +53,7 @@ export default function EditorPhotos({ photos, onChange }: Props) {
       setUploading(false);
       onChange(newPhotos);
     },
-    [photos, onChange]
+    [photos, onChange, toast]
   );
 
   const removePhoto = useCallback(

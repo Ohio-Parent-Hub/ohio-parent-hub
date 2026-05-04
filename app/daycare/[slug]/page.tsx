@@ -3,6 +3,7 @@ import { slugify, toTitleCaseIfAllCaps } from "@/lib/utils";
 import { getMetroForDaycare, resolveCanonicalCityName, resolveCanonicalCitySlugFromName } from "@/lib/metroAreas";
 import { loadPublishedPremiumListing } from "@/app/actions/premium";
 import { checkClaimStatus } from "@/app/actions/claims";
+import { loadPublishedJobsForProgram } from "@/app/actions/jobs";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import fs from "node:fs";
@@ -606,8 +607,12 @@ export default async function DaycarePage({ params }: Props) {
   };
 
   // ─── FAQ section ────────────────────────────────────────────────────────────
-  const premiumData = (await loadPublishedPremiumListing(programNumber)) ?? undefined;
-  const isClaimed = await checkClaimStatus(programNumber);
+  const [premiumListing, isClaimed, publishedJobs] = await Promise.all([
+    loadPublishedPremiumListing(programNumber),
+    checkClaimStatus(programNumber),
+    loadPublishedJobsForProgram(programNumber),
+  ]);
+  const premiumData = premiumListing ?? undefined;
   const ownerFaqs = premiumData?.custom_faqs ?? [];
 
   const detailFaqs = buildDetailFaqs(
@@ -742,6 +747,7 @@ export default async function DaycarePage({ params }: Props) {
       faqSection={faqSection}
       premiumData={premiumData}
       isClaimed={isClaimed}
+      publicJobs={publishedJobs}
     />
   );
 }

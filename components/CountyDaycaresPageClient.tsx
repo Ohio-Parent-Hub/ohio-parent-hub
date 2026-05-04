@@ -26,6 +26,7 @@ interface CountyDaycaresPageClientProps {
   verifiedProgramNumbers?: string[];
   premiumLogos?: Record<string, string>;
   premiumSummaries?: Record<string, import("@/lib/premiumTypes").PremiumFilterSummary>;
+  hiringSummaries?: import("@/lib/jobTypes").JobSummaryByProgramNumber;
   basePath?: string;
   homeHref?: string;
   countiesHref?: string;
@@ -58,6 +59,7 @@ export default function CountyDaycaresPageClient({
   verifiedProgramNumbers = [],
   premiumLogos = {},
   premiumSummaries = {},
+  hiringSummaries = {},
   basePath = "",
   homeHref = "/",
   countiesHref = "/counties",
@@ -154,6 +156,7 @@ export default function CountyDaycaresPageClient({
             verifiedProgramNumbers={verifiedProgramNumbers}
             premiumLogos={premiumLogos}
             premiumSummaries={premiumSummaries}
+            hiringSummaries={hiringSummaries}
             basePath={basePath}
             externalMapCenter={mapCenter}
             onExternalMapCenterChange={setMapCenter}

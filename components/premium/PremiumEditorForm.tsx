@@ -68,6 +68,7 @@ export default function PremiumEditorForm({ programNumber, initialData }: Props)
   const [saving, setSaving] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
+  const initialPhotos = initialData?.photos;
 
   const validate = useCallback((): string[] => {
     const errs: string[] = [];
@@ -106,7 +107,7 @@ export default function PremiumEditorForm({ programNumber, initialData }: Props)
     }
 
     return errs;
-  }, [hours, pricing, faqs, websiteUrl]);
+  }, [hours, pricing, faqs]);
 
   const handleSave = useCallback(async () => {
     const validationErrors = validate();
@@ -136,7 +137,7 @@ export default function PremiumEditorForm({ programNumber, initialData }: Props)
 
     if (result.success) {
       // Clean up removed photos from storage
-      const removedPhotos = (initialData?.photos ?? []).filter((url) => !photos.includes(url));
+      const removedPhotos = (initialPhotos ?? []).filter((url) => !photos.includes(url));
       for (const url of removedPhotos) {
         deleteListingImage(url).catch(() => {});
       }
@@ -145,7 +146,7 @@ export default function PremiumEditorForm({ programNumber, initialData }: Props)
     } else {
       setErrors([result.error ?? "Failed to save. Please try again."]);
     }
-  }, [logoUrl, photos, hours, pricing, amenities, faqs, description, websiteUrl, validate, programNumber]);
+  }, [logoUrl, photos, hours, pricing, amenities, faqs, description, websiteUrl, validate, programNumber, initialPhotos, router, toast]);
 
   return (
     <div className="min-h-screen" style={{ background: "#F5EDE4" }}>
