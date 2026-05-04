@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import DraftDaycaresPageClient from "@/components/DraftDaycaresPageClient";
 import { loadVerifiedProgramNumbers, loadPremiumLogos, loadPremiumFilterSummaries } from "@/app/actions/premium";
+import { loadHiringSummaries } from "@/app/actions/jobs";
 import fs from "node:fs";
 import path from "node:path";
 import { resolveCanonicalCityName } from "@/lib/metroAreas";
@@ -258,6 +259,7 @@ export default async function GlobalSearchPage({
         verifiedProgramNumbers={[...(await loadVerifiedProgramNumbers())]}
         premiumLogos={await loadPremiumLogos()}
         premiumSummaries={await loadPremiumFilterSummaries()}
+        hiringSummaries={await loadHiringSummaries()}
         initialLocation={initialLocation}
         basePath=""
         homeHref="/"

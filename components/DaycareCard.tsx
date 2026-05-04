@@ -4,6 +4,9 @@ import Link from "next/link";
 import { SutqBadge } from "@/components/SutqBadge";
 import VerifiedProviderBadge from "@/components/premium/VerifiedProviderBadge";
 import { Button } from "@/components/ui/button";
+import type { JobSummaryByProgramNumber } from "@/lib/jobTypes";
+
+type HiringSummary = JobSummaryByProgramNumber[string];
 
 export interface DaycareCardProps {
   name: string;
@@ -13,6 +16,7 @@ export interface DaycareCardProps {
   sutqRating: string;
   isPfcc: boolean;
   isVerified: boolean;
+  hiringSummary?: HiringSummary;
   logoUrl?: string;
   distanceMiles?: number | null;
   detailHref: string;
@@ -27,6 +31,7 @@ export function DaycareCard({
   sutqRating,
   isPfcc,
   isVerified,
+  hiringSummary,
   logoUrl,
   distanceMiles,
   detailHref,
@@ -89,6 +94,11 @@ export function DaycareCard({
             {isPfcc && (
               <span className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded font-medium">
                 PFCC
+              </span>
+            )}
+            {hiringSummary && (
+              <span className="bg-amber-50 text-amber-700 px-2 py-0.5 rounded font-medium">
+                Now Hiring · {hiringSummary.count} {hiringSummary.count === 1 ? "role" : "roles"}
               </span>
             )}
           </div>

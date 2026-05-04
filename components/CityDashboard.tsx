@@ -45,6 +45,7 @@ interface CityDashboardProps {
   verifiedProgramNumbers?: string[];
   premiumLogos?: Record<string, string>;
   premiumSummaries?: Record<string, import("@/lib/premiumTypes").PremiumFilterSummary>;
+  hiringSummaries?: import("@/lib/jobTypes").JobSummaryByProgramNumber;
   externalMapCenter?: [number, number] | null;
   onExternalMapCenterChange?: (coords: [number, number] | null) => void;
   externalMapZoom?: number | null;
@@ -79,6 +80,7 @@ export default function CityDashboard({
   verifiedProgramNumbers = [],
   premiumLogos = {},
   premiumSummaries = {},
+  hiringSummaries = {},
   externalMapCenter,
   onExternalMapCenterChange,
   externalMapZoom,
@@ -113,6 +115,7 @@ export default function CityDashboard({
   const [locationSearchClearSignal, setLocationSearchClearSignal] = useState(0);
   const [pfccEnabled, setPfccEnabled] = useState(false);
   const [verifiedEnabled, setVerifiedEnabled] = useState(false);
+  const [nowHiringEnabled, setNowHiringEnabled] = useState(false);
   const [selectedRatings, setSelectedRatings] = useState<string[]>([]);
   const [selectedProgramTypes, setSelectedProgramTypes] = useState<string[]>([]);
   const [selectedCity, setSelectedCity] = useState("");
@@ -212,6 +215,7 @@ export default function CityDashboard({
       const parsed = JSON.parse(rawState) as {
         searchQuery?: string;
         pfccEnabled?: boolean;
+        nowHiringEnabled?: boolean;
         selectedRatings?: string[];
         selectedProgramTypes?: string[];
         selectedCity?: string;
@@ -223,6 +227,7 @@ export default function CityDashboard({
 
       if (typeof parsed.searchQuery === "string") setSearchQuery(parsed.searchQuery);
       if (typeof parsed.pfccEnabled === "boolean") setPfccEnabled(parsed.pfccEnabled);
+      if (typeof parsed.nowHiringEnabled === "boolean") setNowHiringEnabled(parsed.nowHiringEnabled);
       if (Array.isArray(parsed.selectedRatings)) setSelectedRatings(parsed.selectedRatings);
       if (Array.isArray(parsed.selectedProgramTypes)) setSelectedProgramTypes(parsed.selectedProgramTypes);
       if (typeof parsed.selectedCity === "string") setSelectedCity(parsed.selectedCity);
@@ -250,6 +255,7 @@ export default function CityDashboard({
     const state = {
       searchQuery,
       pfccEnabled,
+      nowHiringEnabled,
       selectedRatings,
       selectedProgramTypes,
       selectedCity,
@@ -263,6 +269,7 @@ export default function CityDashboard({
     restoredStateReady,
     searchQuery,
     pfccEnabled,
+    nowHiringEnabled,
     selectedRatings,
     selectedProgramTypes,
     selectedCity,
@@ -306,6 +313,7 @@ export default function CityDashboard({
   const clearAllFilters = () => {
     setPfccEnabled(false);
     setVerifiedEnabled(false);
+    setNowHiringEnabled(false);
     setSelectedRatings([]);
     setSelectedProgramTypes([]);
     setSelectedCity("");
@@ -379,12 +387,17 @@ export default function CityDashboard({
   }, [hydratedDaycares, searchQuery, selectedCity, pfccEnabled, selectedRatings, selectedProgramTypes]);
 
   const verifiedSet = useMemo(() => new Set(verifiedProgramNumbers), [verifiedProgramNumbers]);
+  const hiringProgramNumbers = useMemo(() => new Set(Object.keys(hiringSummaries)), [hiringSummaries]);
 
   const filteredDaycares = useMemo(() => {
     let result = baseFilteredDaycares;
 
     if (verifiedEnabled) {
       result = result.filter((d) => verifiedSet.has(d["PROGRAM NUMBER"] || ""));
+    }
+
+    if (nowHiringEnabled) {
+      result = result.filter((d) => hiringProgramNumbers.has(d["PROGRAM NUMBER"] || ""));
     }
 
     // Premium filters — hide non-verified providers when any premium filter is active
@@ -439,12 +452,13 @@ export default function CityDashboard({
     }
 
     return result;
-  }, [baseFilteredDaycares, verifiedEnabled, verifiedSet, ageBrackets, minWeeklyPrice, maxWeeklyPrice, scheduleFilters, amenityFilters, hasPhotosFilter, premiumSummaries]);
+  }, [baseFilteredDaycares, verifiedEnabled, verifiedSet, nowHiringEnabled, hiringProgramNumbers, ageBrackets, minWeeklyPrice, maxWeeklyPrice, scheduleFilters, amenityFilters, hasPhotosFilter, premiumSummaries]);
   const hasActiveFilters =
     Boolean(searchQuery) ||
     Boolean(selectedCity) ||
     pfccEnabled ||
     verifiedEnabled ||
+    nowHiringEnabled ||
     selectedRatings.length > 0 ||
     selectedProgramTypes.length > 0 ||
     Boolean(mapCenter) ||
@@ -550,6 +564,8 @@ export default function CityDashboard({
           setPfccEnabled={setPfccEnabled}
           verifiedEnabled={verifiedEnabled}
           setVerifiedEnabled={setVerifiedEnabled}
+          nowHiringEnabled={nowHiringEnabled}
+          setNowHiringEnabled={setNowHiringEnabled}
           selectedRatings={selectedRatings}
           toggleRating={toggleRating}
           selectedProgramTypes={selectedProgramTypes}
@@ -657,6 +673,7 @@ export default function CityDashboard({
                 ? distanceMiles(mapCenter as [number, number], [Number(d["LAT"]), Number(d["LNG"])])
                 : null;
               const isVerified = verifiedSet.has(id);
+              const hiringSummary = hiringSummaries[id];
               const hasLogo = Boolean(premiumLogos[id]);
 
               return (
@@ -669,6 +686,7 @@ export default function CityDashboard({
                   sutqRating={d["SUTQ RATING"] || "—"}
                   isPfcc={d["PFCC AGREEMENT"] === "Y"}
                   isVerified={isVerified}
+                  hiringSummary={hiringSummary}
                   logoUrl={hasLogo ? premiumLogos[id] : undefined}
                   distanceMiles={distFromPinned}
                   detailHref={detailHref}
@@ -750,6 +768,7 @@ export default function CityDashboard({
                 ? distanceMiles(mapCenter as [number, number], [Number(d["LAT"]), Number(d["LNG"])])
                 : null;
               const isVerified = verifiedSet.has(id);
+              const hiringSummary = hiringSummaries[id];
               const hasLogo = Boolean(premiumLogos[id]);
 
               return (
@@ -762,6 +781,7 @@ export default function CityDashboard({
                   sutqRating={d["SUTQ RATING"] || "—"}
                   isPfcc={d["PFCC AGREEMENT"] === "Y"}
                   isVerified={isVerified}
+                  hiringSummary={hiringSummary}
                   logoUrl={hasLogo ? premiumLogos[id] : undefined}
                   distanceMiles={distFromPinned}
                   detailHref={detailHref}

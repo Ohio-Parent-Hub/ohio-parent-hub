@@ -75,6 +75,7 @@ interface GlobalDashboardProps {
   verifiedProgramNumbers?: string[];
   premiumLogos?: Record<string, string>;
   premiumSummaries?: Record<string, import("@/lib/premiumTypes").PremiumFilterSummary>;
+  hiringSummaries?: import("@/lib/jobTypes").JobSummaryByProgramNumber;
   basePath?: string;
   externalMapCenter?: [number, number] | null;
   onExternalMapCenterChange?: (coords: [number, number] | null) => void;
@@ -93,6 +94,7 @@ export default function GlobalDashboard({
   verifiedProgramNumbers = [],
   premiumLogos = {},
   premiumSummaries = {},
+  hiringSummaries = {},
   basePath = "",
   externalMapCenter,
   onExternalMapCenterChange,
@@ -170,6 +172,7 @@ export default function GlobalDashboard({
 
   const [pfccEnabled, setPfccEnabled] = useState(false);
   const [verifiedEnabled, setVerifiedEnabled] = useState(false);
+  const [nowHiringEnabled, setNowHiringEnabled] = useState(false);
   const [selectedRatings, setSelectedRatings] = useState<string[]>([]);
   const [selectedProgramTypes, setSelectedProgramTypes] = useState<string[]>([]);
   const [selectedCity, setSelectedCity] = useState("");
@@ -197,6 +200,7 @@ export default function GlobalDashboard({
         searchQuery?: string;
         pfccEnabled?: boolean;
         selectedRatings?: string[];
+        nowHiringEnabled?: boolean;
         selectedProgramTypes?: string[];
         selectedCity?: string;
         selectedCounty?: string;
@@ -208,6 +212,7 @@ export default function GlobalDashboard({
 
       if (typeof parsed.searchQuery === "string") setSearchQuery(parsed.searchQuery);
       if (typeof parsed.pfccEnabled === "boolean") setPfccEnabled(parsed.pfccEnabled);
+      if (typeof parsed.nowHiringEnabled === "boolean") setNowHiringEnabled(parsed.nowHiringEnabled);
       if (Array.isArray(parsed.selectedRatings)) setSelectedRatings(parsed.selectedRatings);
       if (Array.isArray(parsed.selectedProgramTypes)) setSelectedProgramTypes(parsed.selectedProgramTypes);
       if (typeof parsed.selectedCity === "string") setSelectedCity(parsed.selectedCity);
@@ -236,6 +241,7 @@ export default function GlobalDashboard({
     const state = {
       searchQuery,
       pfccEnabled,
+      nowHiringEnabled,
       selectedRatings,
       selectedProgramTypes,
       selectedCity,
@@ -251,6 +257,7 @@ export default function GlobalDashboard({
     restoredStateReady,
     searchQuery,
     pfccEnabled,
+    nowHiringEnabled,
     selectedRatings,
     selectedProgramTypes,
     selectedCity,
@@ -372,6 +379,7 @@ export default function GlobalDashboard({
   }, [daycares]);
 
   const verifiedSet = useMemo(() => new Set(verifiedProgramNumbers), [verifiedProgramNumbers]);
+  const hiringProgramNumbers = useMemo(() => new Set(Object.keys(hiringSummaries)), [hiringSummaries]);
 
   const filteredDaycares = useMemo(() => {
     let result = filteredIndices
@@ -380,6 +388,10 @@ export default function GlobalDashboard({
 
     if (verifiedEnabled) {
       result = result.filter((d) => verifiedSet.has(d["PROGRAM NUMBER"] || ""));
+    }
+
+    if (nowHiringEnabled) {
+      result = result.filter((d) => hiringProgramNumbers.has(d["PROGRAM NUMBER"] || ""));
     }
 
     // Premium filters — hide non-verified providers when any premium filter is active
@@ -435,13 +447,14 @@ export default function GlobalDashboard({
     }
 
     return result;
-  }, [daycares, filteredIndices, verifiedEnabled, verifiedSet, ageBrackets, minWeeklyPrice, maxWeeklyPrice, scheduleFilters, amenityFilters, hasPhotosFilter, premiumSummaries]);
+  }, [daycares, filteredIndices, verifiedEnabled, verifiedSet, nowHiringEnabled, hiringProgramNumbers, ageBrackets, minWeeklyPrice, maxWeeklyPrice, scheduleFilters, amenityFilters, hasPhotosFilter, premiumSummaries]);
   const hasActiveFilters =
     Boolean(searchQuery) ||
     Boolean(selectedCity) ||
     Boolean(selectedCounty) ||
     pfccEnabled ||
     verifiedEnabled ||
+    nowHiringEnabled ||
     selectedRatings.length > 0 ||
     selectedProgramTypes.length > 0 ||
     Boolean(mapCenter) ||
@@ -527,6 +540,7 @@ export default function GlobalDashboard({
   const clearAll = useCallback(() => {
     setPfccEnabled(false);
     setVerifiedEnabled(false);
+    setNowHiringEnabled(false);
     setSelectedRatings([]);
     setSelectedProgramTypes([]);
     setSelectedCity("");
@@ -594,6 +608,8 @@ export default function GlobalDashboard({
         setPfccEnabled={setPfccEnabled}
         verifiedEnabled={verifiedEnabled}
         setVerifiedEnabled={setVerifiedEnabled}
+        nowHiringEnabled={nowHiringEnabled}
+        setNowHiringEnabled={setNowHiringEnabled}
         selectedRatings={selectedRatings}
         toggleRating={toggleRating}
         selectedProgramTypes={selectedProgramTypes}
@@ -701,6 +717,7 @@ export default function GlobalDashboard({
               ? distanceMiles(mapCenter as [number, number], [Number(d["LAT"]), Number(d["LNG"])])
               : null;
             const isVerified = verifiedSet.has(d["PROGRAM NUMBER"] || "");
+            const hiringSummary = hiringSummaries[d["PROGRAM NUMBER"] || ""];
             const hasLogo = Boolean(premiumLogos[d["PROGRAM NUMBER"] || ""]);
 
             return (
@@ -713,6 +730,7 @@ export default function GlobalDashboard({
                 sutqRating={d["SUTQ RATING"] || "—"}
                 isPfcc={d["PFCC"] === "Y"}
                 isVerified={isVerified}
+                hiringSummary={hiringSummary}
                 logoUrl={hasLogo ? premiumLogos[d["PROGRAM NUMBER"] || ""] : undefined}
                 distanceMiles={distFromPinned}
                 detailHref={detailHref}
@@ -793,6 +811,7 @@ export default function GlobalDashboard({
               ? distanceMiles(mapCenter as [number, number], [Number(d["LAT"]), Number(d["LNG"])])
               : null;
             const isVerified = verifiedSet.has(d["PROGRAM NUMBER"] || "");
+            const hiringSummary = hiringSummaries[d["PROGRAM NUMBER"] || ""];
             const hasLogo = Boolean(premiumLogos[d["PROGRAM NUMBER"] || ""]);
 
             return (
@@ -805,6 +824,7 @@ export default function GlobalDashboard({
                 sutqRating={d["SUTQ RATING"] || "—"}
                 isPfcc={d["PFCC"] === "Y"}
                 isVerified={isVerified}
+                hiringSummary={hiringSummary}
                 logoUrl={hasLogo ? premiumLogos[d["PROGRAM NUMBER"] || ""] : undefined}
                 distanceMiles={distFromPinned}
                 detailHref={detailHref}

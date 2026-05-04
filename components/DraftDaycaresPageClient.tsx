@@ -32,6 +32,7 @@ interface DraftDaycaresPageClientProps {
   verifiedProgramNumbers?: string[];
   premiumLogos?: Record<string, string>;
   premiumSummaries?: Record<string, import("@/lib/premiumTypes").PremiumFilterSummary>;
+  hiringSummaries?: import("@/lib/jobTypes").JobSummaryByProgramNumber;
   initialLocation?: { lat: number; lng: number; q: string } | null;
   basePath?: string;
   homeHref?: string;
@@ -46,6 +47,7 @@ export default function DraftDaycaresPageClient({
   verifiedProgramNumbers = [],
   premiumLogos = {},
   premiumSummaries = {},
+  hiringSummaries = {},
   initialLocation = null,
   basePath = "/draft",
   homeHref = "/draft",
@@ -121,9 +123,10 @@ export default function DraftDaycaresPageClient({
             initialDaycares={initialDaycares}
             initialTotalCount={daycareCount}
             verifiedProgramNumbers={verifiedProgramNumbers}
-            premiumLogos={premiumLogos}
-            premiumSummaries={premiumSummaries}
-            basePath={basePath}
+        premiumLogos={premiumLogos}
+        premiumSummaries={premiumSummaries}
+        hiringSummaries={hiringSummaries}
+        basePath={basePath}
             externalMapCenter={mapCenter}
             onExternalMapCenterChange={setMapCenter}
             externalMapZoom={mapZoom}

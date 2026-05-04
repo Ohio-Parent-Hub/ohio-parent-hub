@@ -18,7 +18,7 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import { Check, ChevronsUpDown, X, Search, SlidersHorizontal, Camera } from "lucide-react";
+import { BriefcaseBusiness, Check, ChevronsUpDown, X, Search, SlidersHorizontal, Camera } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { FILTER_DEFINITIONS } from "@/data/filterDefinitions";
 import type { PremiumFilterSummary } from "@/lib/premiumTypes";
@@ -990,6 +990,8 @@ function MobileFilterSheet({
   setPfccEnabled,
   verifiedEnabled,
   setVerifiedEnabled,
+  nowHiringEnabled,
+  setNowHiringEnabled,
   selectedRatings,
   toggleRating,
   selectedProgramTypes,
@@ -1028,6 +1030,8 @@ function MobileFilterSheet({
   setPfccEnabled: (v: boolean) => void;
   verifiedEnabled: boolean;
   setVerifiedEnabled: (v: boolean) => void;
+  nowHiringEnabled: boolean;
+  setNowHiringEnabled: (v: boolean) => void;
   selectedRatings: string[];
   toggleRating: (v: string) => void;
   selectedProgramTypes: string[];
@@ -1094,6 +1098,22 @@ function MobileFilterSheet({
 
       {/* Scrollable content */}
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-6">
+
+        {/* Now Hiring */}
+        <div className="flex items-center justify-between">
+          <Label className="text-sm font-medium">Now Hiring</Label>
+          <button
+            type="button"
+            onClick={() => setNowHiringEnabled(!nowHiringEnabled)}
+            className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${
+              nowHiringEnabled ? "bg-[#DCB346]" : "bg-neutral-300"
+            }`}
+          >
+            <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${
+              nowHiringEnabled ? "translate-x-[18px]" : "translate-x-[3px]"
+            }`} />
+          </button>
+        </div>
 
         {/* Owner Verified */}
         <div className="flex items-center justify-between">
@@ -1411,6 +1431,8 @@ export interface FilterChipBarProps {
   setPfccEnabled: (v: boolean) => void;
   verifiedEnabled: boolean;
   setVerifiedEnabled: (v: boolean) => void;
+  nowHiringEnabled: boolean;
+  setNowHiringEnabled: (v: boolean) => void;
   selectedRatings: string[];
   toggleRating: (v: string) => void;
   selectedProgramTypes: string[];
@@ -1452,6 +1474,8 @@ function FilterChipBar({
   setPfccEnabled,
   verifiedEnabled,
   setVerifiedEnabled,
+  nowHiringEnabled,
+  setNowHiringEnabled,
   selectedRatings,
   toggleRating,
   selectedProgramTypes,
@@ -1489,6 +1513,7 @@ function FilterChipBar({
   const hasActiveFilters =
     pfccEnabled ||
     verifiedEnabled ||
+    nowHiringEnabled ||
     selectedRatings.length > 0 ||
     selectedProgramTypes.length > 0 ||
     !!searchQuery ||
@@ -1517,6 +1542,7 @@ function FilterChipBar({
   // Collect active filter labels for mobile summary badges
   const mobileBadges: string[] = [];
   if (verifiedEnabled) mobileBadges.push("Verified");
+  if (nowHiringEnabled) mobileBadges.push("Now Hiring");
   if (pfccEnabled) mobileBadges.push("PFCC");
   if (hasPhotosFilter) mobileBadges.push("Photos");
   selectedRatings.forEach((r) => mobileBadges.push(r === "0" ? "Not Rated" : `${r}★`));
@@ -1544,6 +1570,7 @@ function FilterChipBar({
   const activeFilterCount =
     (pfccEnabled ? 1 : 0) +
     (verifiedEnabled ? 1 : 0) +
+    (nowHiringEnabled ? 1 : 0) +
     selectedRatings.length +
     selectedProgramTypes.length +
     ageBrackets.length +
@@ -1580,6 +1607,18 @@ function FilterChipBar({
             </span>
           )}
         </button>
+
+        {/* Now Hiring */}
+        <ToggleChip
+          active={nowHiringEnabled}
+          onToggle={() => setNowHiringEnabled(!nowHiringEnabled)}
+          label="Now Hiring"
+          activeClassName="border-[#DCB346] bg-[#DCB346] text-white"
+          inactiveClassName="border-[#DCB346]/50 bg-white text-[#4A6B67] hover:border-[#DCB346]/80"
+        >
+          <BriefcaseBusiness className="h-4 w-4 flex-shrink-0" />
+          <span>Now Hiring</span>
+        </ToggleChip>
 
         {/* Owner Verified */}
         <ToggleChip
@@ -1665,6 +1704,8 @@ function FilterChipBar({
         setPfccEnabled={setPfccEnabled}
         verifiedEnabled={verifiedEnabled}
         setVerifiedEnabled={setVerifiedEnabled}
+        nowHiringEnabled={nowHiringEnabled}
+        setNowHiringEnabled={setNowHiringEnabled}
         selectedRatings={selectedRatings}
         toggleRating={toggleRating}
         selectedProgramTypes={selectedProgramTypes}
@@ -1700,6 +1741,18 @@ function FilterChipBar({
 
       {/* ── Desktop: horizontal chip row ── */}
       <div className="hidden sm:flex items-center gap-2 overflow-x-auto scrollbar-hide py-1 -my-1">
+
+      {/* Owner Verified */}
+      <ToggleChip
+        active={nowHiringEnabled}
+        onToggle={() => setNowHiringEnabled(!nowHiringEnabled)}
+        label="Now Hiring"
+        activeClassName="border-[#DCB346] bg-[#DCB346] text-white"
+        inactiveClassName="border-[#DCB346]/50 bg-white text-[#4A6B67] hover:border-[#DCB346]/80"
+      >
+        <BriefcaseBusiness className="h-4 w-4 flex-shrink-0" />
+        <span>Now Hiring</span>
+      </ToggleChip>
 
       {/* Owner Verified */}
       <ToggleChip
