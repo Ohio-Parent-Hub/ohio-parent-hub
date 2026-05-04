@@ -13,7 +13,10 @@ export default function CookieConsent() {
 
   useEffect(() => {
     const stored = localStorage.getItem(CONSENT_KEY);
-    if (!stored) setVisible(true);
+    if (!stored) {
+      const timer = window.setTimeout(() => setVisible(true), 0);
+      return () => window.clearTimeout(timer);
+    }
   }, []);
 
   function accept() {

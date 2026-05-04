@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
@@ -12,31 +12,45 @@ type BackToResultsButtonProps = {
   trackingContext?: "state" | "county" | "city" | "unknown";
 };
 
+function resolveNavContext(
+  fallbackHref: string,
+  trackingContext: "state" | "county" | "city" | "unknown",
+) {
+  if (typeof window === "undefined") {
+    return { href: fallbackHref, context: trackingContext };
+  }
+
+  try {
+    const stored = sessionStorage.getItem("ohph_nav_context");
+    if (!stored) return { href: fallbackHref, context: trackingContext };
+
+    const parsed = JSON.parse(stored);
+    const href =
+      parsed.returnTo &&
+      typeof parsed.returnTo === "string" &&
+      parsed.returnTo.startsWith("/") &&
+      !parsed.returnTo.startsWith("//")
+        ? parsed.returnTo
+        : fallbackHref;
+    const context = ["state", "county", "city"].includes(parsed.context)
+      ? parsed.context
+      : trackingContext;
+
+    return { href, context };
+  } catch {
+    return { href: fallbackHref, context: trackingContext };
+  }
+}
+
 export default function BackToResultsButton({
   fallbackHref,
   label,
   trackingContext = "unknown",
 }: BackToResultsButtonProps) {
   const router = useRouter();
-  const [resolvedHref, setResolvedHref] = useState(fallbackHref);
-  const [resolvedContext, setResolvedContext] = useState(trackingContext);
-
-  useEffect(() => {
-    try {
-      const stored = sessionStorage.getItem("ohph_nav_context");
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (parsed.returnTo && typeof parsed.returnTo === "string" && parsed.returnTo.startsWith("/") && !parsed.returnTo.startsWith("//")) {
-          setResolvedHref(parsed.returnTo);
-        }
-        if (["state", "county", "city"].includes(parsed.context)) {
-          setResolvedContext(parsed.context);
-        }
-      }
-    } catch {
-      // sessionStorage unavailable — use fallback props
-    }
-  }, []);
+  const [{ href: resolvedHref, context: resolvedContext }] = useState(() =>
+    resolveNavContext(fallbackHref, trackingContext)
+  );
 
   function handleClick() {
     trackUplinkClick({
