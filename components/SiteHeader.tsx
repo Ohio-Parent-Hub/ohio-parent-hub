@@ -3,8 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { ChevronRight, House, MapPin, Menu, Search, Sparkles, User } from "lucide-react";
+import { BriefcaseBusiness, ChevronRight, House, MapPin, Menu, Search, Sparkles, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -19,11 +18,9 @@ import type { User as SupabaseUser } from "@supabase/supabase-js";
 
 const teal = "#7EA8A4";
 const pink = "#E8A0AC";
-const cream = "#F5EDE4";
 const dark = "#4A6B67";
 
 export default function SiteHeader() {
-  const router = useRouter();
   const [isSticky, setIsSticky] = useState(false);
   const [user, setUser] = useState<SupabaseUser | null>(null);
 
@@ -84,6 +81,20 @@ export default function SiteHeader() {
                           Find a Daycare
                         </Link>
                       </Button>
+                    </SheetClose>
+
+                    <SheetClose asChild>
+                      <Link
+                        href="/jobs"
+                        className="flex h-11 w-full items-center justify-between rounded-xl border px-4 text-sm font-medium transition-colors hover:bg-primary/10"
+                        style={{ borderColor: `${teal}40`, color: dark }}
+                      >
+                        <span className="flex items-center gap-2">
+                          <BriefcaseBusiness className="h-4 w-4" style={{ color: teal }} />
+                          Jobs
+                        </span>
+                        <ChevronRight className="h-4 w-4" style={{ color: `${dark}88` }} />
+                      </Link>
                     </SheetClose>
 
                     <SheetClose asChild>
@@ -190,6 +201,7 @@ export default function SiteHeader() {
           <div className="hidden items-center gap-6 md:flex">
             <Link href="/cities" className="text-sm font-medium" style={{ color: dark }}>Browse Cities</Link>
             <Link href="/counties" className="text-sm font-medium" style={{ color: dark }}>Browse Counties</Link>
+            <Link href="/jobs" className="text-sm font-medium" style={{ color: dark }}>Jobs</Link>
             <Link href="/faq" className="text-sm font-medium" style={{ color: dark }}>FAQ</Link>
             <Link href="/for-providers" className="text-sm font-medium" style={{ color: dark }}>For Providers</Link>
             <Button size="sm" className="rounded-full px-5 font-bold" style={{ background: pink, color: "#fff" }} asChild>
