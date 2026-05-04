@@ -27,6 +27,15 @@ export type PublicDaycareJob = {
   created_at: string;
 };
 
+export type PublicDaycareJobDetail = PublicDaycareJob & {
+  street_address: string | null;
+  state: string | null;
+  zip_code: string | null;
+  phone: string | null;
+  latitude: number | null;
+  longitude: number | null;
+};
+
 export type JobSummaryByProgramNumber = Record<
   string,
   { count: number; latestJobTitle: string | null }
