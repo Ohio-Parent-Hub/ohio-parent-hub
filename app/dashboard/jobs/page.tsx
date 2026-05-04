@@ -30,6 +30,7 @@ export default async function DashboardJobsPage() {
     <JobsHubClient
       accountEmail={ownerJobs.profile.email}
       daycareName={ownerJobs.profile.daycare_name}
+      daycareSlug={ownerJobs.profile.daycare_slug}
       initialJobs={ownerJobs.jobs}
     />
   );
