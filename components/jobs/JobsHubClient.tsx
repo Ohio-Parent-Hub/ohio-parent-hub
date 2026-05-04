@@ -4,6 +4,7 @@ import { createJob, deleteJob, updateJob, type JobInput } from "@/app/actions/jo
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { buildJobSlug } from "@/lib/jobUtils";
 import type { ApplicationEmailMode, DaycareJob } from "@/lib/jobTypes";
 import { BriefcaseBusiness, ExternalLink, Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
@@ -14,10 +15,12 @@ const teal = "#7EA8A4";
 const dark = "#4A6B67";
 const cream = "#F5EDE4";
 const gold = "#DCB346";
+const publicSiteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://ohioparenthub.com").replace(/\/$/, "");
 
 type Props = {
   accountEmail: string;
   daycareName: string;
+  daycareSlug: string;
   initialJobs: DaycareJob[];
 };
 
@@ -27,6 +30,12 @@ type FormState = {
   jobUrl: string;
   applicationEmailMode: ApplicationEmailMode;
   applicationEmailCustom: string;
+};
+
+type CopyFeedback = {
+  actionKey: string;
+  kind: "success" | "error";
+  message: string;
 };
 
 const EMPTY_FORM: FormState = {
@@ -73,9 +82,23 @@ function formFromJob(job: DaycareJob): FormState {
   };
 }
 
+function buildPublicJobPath(daycareSlug: string, job: Pick<DaycareJob, "id" | "title">): string {
+  return `/daycare/${daycareSlug}/jobs/${buildJobSlug(job.id, job.title)}`;
+}
+
+function buildOpenJobsPath(daycareSlug: string): string {
+  return `/daycare/${daycareSlug}#open-jobs`;
+}
+
+function toAbsolutePublicUrl(path: string): string {
+  const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+  return `${publicSiteUrl}${normalizedPath}`;
+}
+
 export default function JobsHubClient({
   accountEmail,
   daycareName,
+  daycareSlug,
   initialJobs,
 }: Props) {
   const router = useRouter();
@@ -85,11 +108,18 @@ export default function JobsHubClient({
   const [saving, setSaving] = useState(false);
   const [deletingJobId, setDeletingJobId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [copyFeedback, setCopyFeedback] = useState<CopyFeedback | null>(null);
+  const [lastPublishedJobId, setLastPublishedJobId] = useState<string | null>(null);
 
   const editingJob = useMemo(
     () => jobs.find((job) => job.id === editingJobId) ?? null,
     [editingJobId, jobs],
   );
+  const recentlyPublishedJob = useMemo(
+    () => jobs.find((job) => job.id === lastPublishedJobId) ?? null,
+    [jobs, lastPublishedJobId],
+  );
+  const allJobsCopyFeedback = copyFeedback?.actionKey === "all-open-jobs" ? copyFeedback : null;
 
   function updateForm<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((current) => ({ ...current, [key]: value }));
@@ -105,7 +135,37 @@ export default function JobsHubClient({
     setEditingJobId(job.id);
     setForm(formFromJob(job));
     setError(null);
+    setLastPublishedJobId(null);
     window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  async function copyPublicUrl(
+    actionKey: string,
+    url: string,
+    successMessage: string,
+    failureMessage: string,
+  ) {
+    if (!navigator?.clipboard?.writeText) {
+      setCopyFeedback({
+        actionKey,
+        kind: "error",
+        message: "Clipboard unavailable in this browser. Copy the link manually.",
+      });
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopyFeedback({ actionKey, kind: "success", message: successMessage });
+    } catch {
+      setCopyFeedback({ actionKey, kind: "error", message: failureMessage });
+    }
+
+    window.setTimeout(() => {
+      setCopyFeedback((current) =>
+        current?.actionKey === actionKey ? null : current,
+      );
+    }, 2500);
   }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -126,13 +186,15 @@ export default function JobsHubClient({
 
     const savedJob = result.job;
     if (savedJob) {
+      const isEditing = Boolean(editingJobId);
       setJobs((current) => {
-        if (editingJobId) {
+        if (isEditing) {
           return current.map((job) => (job.id === savedJob.id ? savedJob : job));
         }
 
         return [savedJob, ...current];
       });
+      setLastPublishedJobId(isEditing ? null : savedJob.id);
     }
 
     resetForm();
@@ -154,6 +216,7 @@ export default function JobsHubClient({
     }
 
     setJobs((current) => current.filter((currentJob) => currentJob.id !== job.id));
+    if (lastPublishedJobId === job.id) setLastPublishedJobId(null);
     if (editingJobId === job.id) resetForm();
     router.refresh();
   }
@@ -324,12 +387,48 @@ export default function JobsHubClient({
 
           <section className="space-y-4">
             <div>
-              <h2 className="font-serif text-xl font-semibold" style={{ color: dark }}>
-                Open Jobs
-              </h2>
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <h2 className="font-serif text-xl font-semibold" style={{ color: dark }}>
+                  Open Jobs
+                </h2>
+                {jobs.length > 0 && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() =>
+                      copyPublicUrl(
+                        "all-open-jobs",
+                        toAbsolutePublicUrl(buildOpenJobsPath(daycareSlug)),
+                        "Copied all open jobs link.",
+                        "Unable to copy all open jobs link.",
+                      )
+                    }
+                    style={{ borderColor: "#B8C5B2", color: dark }}
+                  >
+                    Copy all open jobs link
+                  </Button>
+                )}
+              </div>
               <p className="mt-1 text-sm" style={{ color: `${dark}99` }}>
                 {jobs.length === 1 ? "1 published role" : `${jobs.length} published roles`}
               </p>
+              {allJobsCopyFeedback && (
+                <p
+                  className="mt-1 text-xs"
+                  style={{
+                    color:
+                      allJobsCopyFeedback.kind === "success" ? "#166534" : "#B91C1C",
+                  }}
+                >
+                  {allJobsCopyFeedback.message}
+                </p>
+              )}
+              {recentlyPublishedJob && (
+                <p className="mt-2 text-sm" style={{ color: "#166534" }}>
+                  Job published: {recentlyPublishedJob.title}. Copy link or View public page.
+                </p>
+              )}
             </div>
 
             {jobs.length === 0 ? (
@@ -342,6 +441,10 @@ export default function JobsHubClient({
                   job.application_email_mode === "custom"
                     ? job.application_email_custom ?? "Custom email"
                     : accountEmail;
+                const publicJobPath = buildPublicJobPath(daycareSlug, job);
+                const publicJobUrl = toAbsolutePublicUrl(publicJobPath);
+                const jobCopyFeedback =
+                  copyFeedback?.actionKey === `job-${job.id}` ? copyFeedback : null;
 
                 return (
                   <article
@@ -378,6 +481,33 @@ export default function JobsHubClient({
                         type="button"
                         variant="outline"
                         size="sm"
+                        onClick={() =>
+                          copyPublicUrl(
+                            `job-${job.id}`,
+                            publicJobUrl,
+                            `Copied link for ${job.title}.`,
+                            `Unable to copy link for ${job.title}.`,
+                          )
+                        }
+                        style={{ borderColor: "#B8C5B2", color: dark }}
+                      >
+                        Copy job link
+                      </Button>
+                      <Button
+                        asChild
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        style={{ borderColor: "#B8C5B2", color: dark }}
+                      >
+                        <Link href={publicJobPath} target="_blank" rel="noopener noreferrer">
+                          View public page
+                        </Link>
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
                         onClick={() => startEditing(job)}
                         style={{ borderColor: "#B8C5B2", color: dark }}
                       >
@@ -396,6 +526,16 @@ export default function JobsHubClient({
                         {deletingJobId === job.id ? "Deleting..." : "Delete"}
                       </Button>
                     </div>
+                    {jobCopyFeedback && (
+                      <p
+                        className="mt-2 text-xs"
+                        style={{
+                          color: jobCopyFeedback.kind === "success" ? "#166534" : "#B91C1C",
+                        }}
+                      >
+                        {jobCopyFeedback.message}
+                      </p>
+                    )}
                   </article>
                 );
               })

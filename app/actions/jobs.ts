@@ -34,6 +34,7 @@ type OwnerJobProfile = {
   email: string;
   program_number: string;
   daycare_name: string;
+  daycare_slug: string;
 };
 
 type OwnerJobsResult =
@@ -93,6 +94,12 @@ function buildDaycareSlug(daycare: DaycareRow): string {
 function getDaycareName(programNumber: string): string {
   const daycare = findDaycareByProgramNumber(programNumber);
   return nullableField(daycare ?? {}, "PROGRAM NAME") ?? "Your Daycare";
+}
+
+function getDaycareSlug(programNumber: string): string {
+  const daycare = findDaycareByProgramNumber(programNumber);
+  if (!daycare) return programNumber;
+  return buildDaycareSlug(daycare);
 }
 
 function isPremiumStatus(status: string | null | undefined): boolean {
@@ -236,6 +243,7 @@ export async function loadOwnerJobs(): Promise<OwnerJobsResult> {
       email: owner.context.email,
       program_number: owner.context.programNumber,
       daycare_name: getDaycareName(owner.context.programNumber),
+      daycare_slug: getDaycareSlug(owner.context.programNumber),
     },
   };
 }
