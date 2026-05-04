@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -24,9 +24,9 @@ import {
   Megaphone,
   Copy,
   Check,
-  Globe,
   Code2,
   ExternalLink,
+  BriefcaseBusiness,
 } from "lucide-react";
 import {
   Accordion,
@@ -95,11 +95,9 @@ export default function DashboardClient({
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [linkCopied, setLinkCopied] = useState(false);
   const [embedCopied, setEmbedCopied] = useState(false);
-  const [hasNativeShare, setHasNativeShare] = useState(false);
-
-  useEffect(() => {
-    setHasNativeShare(typeof navigator !== "undefined" && !!navigator.share);
-  }, []);
+  const [hasNativeShare] = useState(
+    () => typeof navigator !== "undefined" && !!navigator.share
+  );
 
   // Change password state
   const [newPassword, setNewPassword] = useState("");
@@ -338,28 +336,53 @@ export default function DashboardClient({
         {/* Quick Actions */}
         <div className="grid gap-3 sm:grid-cols-2">
           {isActive && (
-            <Link
-              href="/dashboard/edit"
-              className="flex items-center gap-3 rounded-2xl bg-white p-4 shadow-sm transition-shadow hover:shadow-md"
-            >
-              <div
-                className="flex h-10 w-10 items-center justify-center rounded-xl"
-                style={{ backgroundColor: `${teal}15` }}
+            <>
+              <Link
+                href="/dashboard/edit"
+                className="flex items-center gap-3 rounded-2xl bg-white p-4 shadow-sm transition-shadow hover:shadow-md"
               >
-                <Pencil className="h-5 w-5" style={{ color: teal }} />
-              </div>
-              <div>
-                <p
-                  className="text-sm font-semibold"
-                  style={{ color: dark }}
+                <div
+                  className="flex h-10 w-10 items-center justify-center rounded-xl"
+                  style={{ backgroundColor: `${teal}15` }}
                 >
-                  Edit Listing
-                </p>
-                <p className="text-xs" style={{ color: `${dark}80` }}>
-                  Photos, hours, pricing & more
-                </p>
-              </div>
-            </Link>
+                  <Pencil className="h-5 w-5" style={{ color: teal }} />
+                </div>
+                <div>
+                  <p
+                    className="text-sm font-semibold"
+                    style={{ color: dark }}
+                  >
+                    Edit Listing
+                  </p>
+                  <p className="text-xs" style={{ color: `${dark}80` }}>
+                    Photos, hours, pricing & more
+                  </p>
+                </div>
+              </Link>
+
+              <Link
+                href="/dashboard/jobs"
+                className="flex items-center gap-3 rounded-2xl bg-white p-4 shadow-sm transition-shadow hover:shadow-md"
+              >
+                <div
+                  className="flex h-10 w-10 items-center justify-center rounded-xl"
+                  style={{ backgroundColor: `${gold}18` }}
+                >
+                  <BriefcaseBusiness className="h-5 w-5" style={{ color: dark }} />
+                </div>
+                <div>
+                  <p
+                    className="text-sm font-semibold"
+                    style={{ color: dark }}
+                  >
+                    Jobs Hub
+                  </p>
+                  <p className="text-xs" style={{ color: `${dark}80` }}>
+                    Post open roles and collect resumes
+                  </p>
+                </div>
+              </Link>
+            </>
           )}
 
           {daycareSlug && (
