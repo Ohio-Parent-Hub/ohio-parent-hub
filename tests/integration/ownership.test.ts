@@ -10,6 +10,7 @@ describe("profile grants and row policies through real Auth/Data API roles", () 
   for (const [field, value] of Object.entries({
     program_number: "oph-stolen-program", verified: false, subscription_status: "active",
     stripe_customer_id: "cus_stolen", subscription_id: "sub_stolen", email: "stolen@example.test",
+    billing_event_created: 9999999999, billing_event_priority: 40, billing_event_subscription_id: "sub_stolen",
     id: ownerB.id, created_at: "2000-01-01T00:00:00Z", updated_at: "2000-01-01T00:00:00Z",
   })) {
     it(`rejects authenticated updates to protected ${field}`, async () => {

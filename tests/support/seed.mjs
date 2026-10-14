@@ -3,6 +3,8 @@ import { providers, FIXTURE_PASSWORD } from "../fixtures/providers.mjs";
 
 export async function seedFixtures() {
   const admin = localClient("service");
+  const receipts = await admin.from("billing_event_receipts").delete().neq("event_id", "");
+  if (receipts.error) throw receipts.error;
   for (const provider of providers) {
     const { data: existing, error: lookupError } = await admin.auth.admin.getUserById(provider.id);
     if (lookupError && lookupError.status !== 404) throw lookupError;
@@ -19,6 +21,7 @@ export async function seedFixtures() {
       display_name: `Local fixture ${provider.programNumber}`, verified: true,
       subscription_status: provider.status,
       stripe_customer_id: null, subscription_id: null,
+      billing_event_created: 0, billing_event_priority: 0, billing_event_subscription_id: null,
       created_at: provider.createdAt,
     });
     if (profileError) throw profileError;

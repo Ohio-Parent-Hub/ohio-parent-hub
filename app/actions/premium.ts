@@ -1,69 +1,49 @@
 "use server";
 
 import { createClient, createServiceClient } from "@/lib/supabase/server";
+import { PREMIUM_STATUSES, hasPremiumAccess } from "@/lib/premiumAccess";
 import type { PremiumListingData, PremiumFilterSummary, PremiumPricingTier, PremiumPriceTier } from "@/lib/premiumTypes";
 
-/**
- * Load a premium listing by program_number.
- * Uses the service-role client so it works for both public reads
- * (detail page SSR) and authenticated owner reads (editor).
- */
-export async function loadPremiumListing(
-  programNumber: string
-): Promise<PremiumListingData | null> {
-  const supabase = createServiceClient();
-
-  const { data, error } = await supabase
-    .from("premium_listings")
-    .select(
-      "hours, pricing, amenities, custom_faqs, description, website_url, logo_url, photos, published"
-    )
-    .eq("program_number", programNumber)
-    .maybeSingle();
-
-  if (error || !data) return null;
-  // For public reads, only return data if published
-  // (owner reads through the editor use savePremiumListing which doesn't check published)
-
+function listingData(data: Record<string, unknown>): PremiumListingData {
   return {
-    logo_url: data.logo_url ?? undefined,
-    photos: data.photos ?? [],
-    hours: data.hours ?? undefined,
-    pricing: data.pricing ?? undefined,
-    amenities: data.amenities ?? undefined,
-    custom_faqs: data.custom_faqs ?? [],
-    description: data.description ?? undefined,
-    website_url: data.website_url ?? undefined,
+    logo_url: (data.logo_url ?? undefined) as string | undefined,
+    photos: (data.photos ?? []) as string[],
+    hours: (data.hours ?? undefined) as PremiumListingData["hours"],
+    pricing: (data.pricing ?? undefined) as PremiumListingData["pricing"],
+    amenities: (data.amenities ?? undefined) as PremiumListingData["amenities"],
+    custom_faqs: (data.custom_faqs ?? []) as NonNullable<PremiumListingData["custom_faqs"]>,
+    description: (data.description ?? undefined) as string | undefined,
+    website_url: (data.website_url ?? undefined) as string | undefined,
   };
 }
 
 /**
+ * Load a premium listing by program_number.
+ * Private owner read, including saved drafts/inactive subscription content.
+ */
+export async function loadPremiumListing(
+  programNumber: string
+): Promise<PremiumListingData | null> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return null;
+  const { data: profile } = await supabase.from("profiles").select("program_number").eq("id", user.id).single();
+  if (profile?.program_number !== programNumber) return null;
+  const { data, error } = await supabase.from("premium_listings").select("*").eq("program_number", programNumber).maybeSingle();
+  return error || !data ? null : listingData(data);
+}
+
+/**
  * Load the set of program numbers that have verified provider accounts.
- * Includes both published premium listings AND claimed profiles.
+ * Verification is earned by claiming, independent of paid subscription status.
  * Used for showing verified badges in list/map views.
  */
 export async function loadVerifiedProgramNumbers(): Promise<Set<string>> {
   const supabase = createServiceClient();
 
-  const [premiumResult, profileResult] = await Promise.all([
-    supabase
-      .from("premium_listings")
-      .select("program_number")
-      .eq("published", true),
-    supabase
-      .from("profiles")
-      .select("program_number")
-      .eq("verified", true),
-  ]);
-
+  const { data } = await supabase.from("profiles").select("program_number").eq("verified", true);
   const numbers = new Set<string>();
-
-  if (premiumResult.data) {
-    for (const row of premiumResult.data) numbers.add(row.program_number);
-  }
-  if (profileResult.data) {
-    for (const row of profileResult.data) numbers.add(row.program_number);
-  }
+  for (const row of data ?? []) numbers.add(row.program_number);
 
   return numbers;
 }
@@ -77,8 +57,10 @@ export async function loadPremiumLogos(): Promise<Record<string, string>> {
 
   const { data, error } = await supabase
     .from("premium_listings")
-    .select("program_number, logo_url")
+    .select("program_number, logo_url, profiles!inner(verified, subscription_status)")
     .eq("published", true)
+    .eq("profiles.verified", true)
+    .in("profiles.subscription_status", [...PREMIUM_STATUSES])
     .not("logo_url", "is", null);
 
   if (error || !data) return {};
@@ -106,8 +88,10 @@ export async function loadPremiumFilterSummaries(): Promise<Record<string, Premi
 
   const { data, error } = await supabase
     .from("premium_listings")
-    .select("program_number, pricing, amenities, photos")
-    .eq("published", true);
+    .select("program_number, pricing, amenities, photos, profiles!inner(verified, subscription_status)")
+    .eq("published", true)
+    .eq("profiles.verified", true)
+    .in("profiles.subscription_status", [...PREMIUM_STATUSES]);
 
   if (error || !data) return {};
 
@@ -185,10 +169,12 @@ export async function loadPublishedPremiumListing(
   const { data, error } = await supabase
     .from("premium_listings")
     .select(
-      "hours, pricing, amenities, custom_faqs, description, website_url, logo_url, photos"
+      "hours, pricing, amenities, custom_faqs, description, website_url, logo_url, photos, profiles!inner(verified, subscription_status)"
     )
     .eq("program_number", programNumber)
     .eq("published", true)
+    .eq("profiles.verified", true)
+    .in("profiles.subscription_status", [...PREMIUM_STATUSES])
     .maybeSingle();
 
   if (error || !data) return null;
@@ -224,13 +210,15 @@ export async function savePremiumListing(
   // Verify the user owns this program_number
   const { data: profile } = await supabase
     .from("profiles")
-    .select("program_number")
+    .select("program_number, verified, subscription_status")
     .eq("id", user.id)
     .single();
 
   if (!profile || profile.program_number !== programNumber) {
     return { success: false, error: "Not authorized for this listing" };
   }
+
+  if (!hasPremiumAccess(profile.subscription_status, profile.verified)) return { success: false, error: "Premium subscription required" };
 
   const row = {
     program_number: programNumber,
@@ -280,11 +268,12 @@ export async function uploadListingImage(
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("program_number")
+    .select("program_number, verified, subscription_status")
     .eq("id", user.id)
     .single();
 
   if (!profile?.program_number) return { error: "No listing linked" };
+  if (!hasPremiumAccess(profile.subscription_status, profile.verified)) return { error: "Premium subscription required" };
 
   const file = formData.get("file") as File | null;
   const kind = formData.get("kind") as string; // "logo" | "photo"
@@ -340,7 +329,7 @@ export async function deleteListingImage(
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("program_number")
+    .select("program_number, verified, subscription_status")
     .eq("id", user.id)
     .single();
 
@@ -348,10 +337,15 @@ export async function deleteListingImage(
 
   // Extract the storage path from the public URL
   const marker = `/storage/v1/object/public/${BUCKET}/`;
-  const idx = fileUrl.indexOf(marker);
-  if (idx === -1) return { success: false, error: "Invalid file URL" };
+  let parsed: URL;
+  try { parsed = new URL(fileUrl); } catch { return { success: false, error: "Invalid file URL" }; }
+  if (parsed.origin !== new URL(process.env.NEXT_PUBLIC_SUPABASE_URL!).origin) return { success: false, error: "Invalid file URL" };
+  const idx = parsed.pathname.indexOf(marker);
+  if (idx !== 0) return { success: false, error: "Invalid file URL" };
 
-  const path = decodeURIComponent(fileUrl.slice(idx + marker.length));
+  let path: string;
+  try { path = decodeURIComponent(parsed.pathname.slice(marker.length)); } catch { return { success: false, error: "Invalid file URL" }; }
+  if (path.split("/").some(segment => segment === ".." || segment === ".")) return { success: false, error: "Invalid file URL" };
 
   // Verify the path belongs to this user's program number
   if (!path.startsWith(`${profile.program_number}/`)) {

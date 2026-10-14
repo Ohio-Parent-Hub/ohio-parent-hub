@@ -24,7 +24,7 @@ Ohio Parent Hub helps Ohio parents find licensed childcare by location, program 
 - Supabase provides authentication, provider profiles, premium listings, jobs, and image storage. Schema history lives in `supabase/migrations/`.
 - Stripe provides subscription checkout, the billing portal, and webhook updates.
 - `app/` contains pages, server actions, and API routes; `components/` contains UI; `lib/` contains shared utilities and service clients.
-- Provider claims, listing changes, and job mutations live in `app/actions/`; billing routes live in `app/api/stripe/`. `lib/claims/verification.ts` is the shared server-only claim verifier. See `docs/ownership-security.md` before deploying ownership fixes or applying the new migration.
+- Provider claims, listing changes, and job mutations live in `app/actions/`; billing routes live in `app/api/stripe/`. `lib/claims/verification.ts` is the shared server-only claim verifier. See `docs/ownership-security.md` for ownership rollout and `docs/premium-access.md` for paid access, billing ordering and migration rollout.
 - `proxy.ts` refreshes auth sessions, captures promo codes, normalizes legacy detail query parameters, and blocks draft/preview pages in production.
 
 ## Local development and verification

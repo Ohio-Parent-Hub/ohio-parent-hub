@@ -1,5 +1,6 @@
 "use server";
 
+import { PREMIUM_STATUSES, hasPremiumAccess } from "@/lib/premiumAccess";
 import daycares from "@/data/daycares.json";
 import {
   resolveApplicationEmail,
@@ -102,9 +103,6 @@ function getDaycareSlug(programNumber: string): string {
   return buildDaycareSlug(daycare);
 }
 
-function isPremiumStatus(status: string | null | undefined): boolean {
-  return status === "active" || status === "past_due";
-}
 
 function validateJobInput(input: JobInput): string | null {
   return (
@@ -132,7 +130,7 @@ function normalizeJobInput(input: JobInput) {
   };
 }
 
-async function loadOwnerContext(): Promise<
+async function loadOwnerContext(requirePremium = true): Promise<
   { success: true; context: OwnerContext } | { success: false; error: string }
 > {
   const supabase = await createClient();
@@ -144,13 +142,13 @@ async function loadOwnerContext(): Promise<
 
   const { data: profile, error } = await supabase
     .from("profiles")
-    .select("email, program_number, subscription_status")
+    .select("email, program_number, subscription_status, verified")
     .eq("id", user.id)
     .single();
 
   if (error || !profile) return { success: false, error: "Profile not found" };
 
-  if (!isPremiumStatus(profile.subscription_status)) {
+  if (requirePremium && !hasPremiumAccess(profile.subscription_status, profile.verified)) {
     return { success: false, error: "Premium subscription required" };
   }
 
@@ -224,7 +222,7 @@ async function loadProfileEmails(
 }
 
 export async function loadOwnerJobs(): Promise<OwnerJobsResult> {
-  const owner = await loadOwnerContext();
+  const owner = await loadOwnerContext(false);
   if (!owner.success) return owner;
 
   const supabase = await createClient();
@@ -307,7 +305,7 @@ export async function updateJob(
 }
 
 export async function deleteJob(jobId: string): Promise<DeleteJobResult> {
-  const owner = await loadOwnerContext();
+  const owner = await loadOwnerContext(false);
   if (!owner.success) return owner;
 
   const supabase = await createClient();
@@ -343,9 +341,11 @@ export async function loadPublishedJobsForProgram(
   const supabase = createServiceClient();
   const { data, error } = await supabase
     .from("daycare_jobs")
-    .select("*")
+    .select("*, profiles!inner(verified, subscription_status)")
     .eq("program_number", programNumber)
     .eq("published", true)
+    .eq("profiles.verified", true)
+    .in("profiles.subscription_status", [...PREMIUM_STATUSES])
     .order("created_at", { ascending: false });
 
   if (error || !data) return [];
@@ -360,8 +360,10 @@ export async function loadAllPublishedJobs(): Promise<PublicDaycareJob[]> {
   const supabase = createServiceClient();
   const { data, error } = await supabase
     .from("daycare_jobs")
-    .select("*")
+    .select("*, profiles!inner(verified, subscription_status)")
     .eq("published", true)
+    .eq("profiles.verified", true)
+    .in("profiles.subscription_status", [...PREMIUM_STATUSES])
     .order("created_at", { ascending: false });
 
   if (error || !data) return [];
@@ -390,9 +392,11 @@ export async function loadPublishedJobById(
   const supabase = createServiceClient();
   const { data, error } = await supabase
     .from("daycare_jobs")
-    .select("*")
+    .select("*, profiles!inner(verified, subscription_status)")
     .eq("id", jobId)
     .eq("published", true)
+    .eq("profiles.verified", true)
+    .in("profiles.subscription_status", [...PREMIUM_STATUSES])
     .maybeSingle();
 
   if (error || !data) return null;
@@ -409,8 +413,10 @@ export async function loadHiringSummaries(): Promise<JobSummaryByProgramNumber> 
   const supabase = createServiceClient();
   const { data, error } = await supabase
     .from("daycare_jobs")
-    .select("program_number, title, created_at")
+    .select("program_number, title, created_at, profiles!inner(verified, subscription_status)")
     .eq("published", true)
+    .eq("profiles.verified", true)
+    .in("profiles.subscription_status", [...PREMIUM_STATUSES])
     .order("created_at", { ascending: false });
 
   if (error || !data) return {};
