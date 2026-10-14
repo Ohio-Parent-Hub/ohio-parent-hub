@@ -22,7 +22,7 @@ npm run test:e2e
 npm run test:stop
 ```
 
-See [TESTING.md](TESTING.md) for configuration, fixtures, email testing, reset behavior, and the limits of the current coverage. The tests use a dedicated local Supabase stack and inert Stripe values; production credentials are not needed.
+See [TESTING.md](TESTING.md) for configuration, fixtures, email testing, reset behavior, and the limits of the current coverage. The tests use a dedicated local Supabase stack and inert Stripe values; production credentials are not needed. GitHub Actions runs the Regression suite on PRs to main and main pushes, including desktop/mobile public discovery and local auth/database tests. See TESTING.md for the required-check recommendation and preview/release checklist.
 
 ## Getting Started
 

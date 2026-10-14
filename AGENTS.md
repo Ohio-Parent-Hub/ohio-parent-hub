@@ -36,7 +36,7 @@ Ohio Parent Hub helps Ohio parents find licensed childcare by location, program 
 - `npx tsc --noEmit --incremental false`: check TypeScript without updating the incremental cache.
 - `npm run build`: verify the production build.
 - `npm run city:normalize:report`: generate city normalization reports; inspect any generated changes.
-- Use `TESTING.md` for the isolated Supabase fixtures, Vitest, Playwright, and guarded test commands. `npm run test:setup` prepares the local stack; `npm run verify`, `npm run test:integration`, and `npm run test:e2e` verify the baseline. There is not yet a checked-in GitHub Actions workflow. For auth, billing, ownership, or data changes, add focused regression coverage and report unavailable integration checks.
+- Use `TESTING.md` for the isolated Supabase fixtures, Vitest, Playwright, and guarded test commands. `npm run test:setup` prepares the local stack; `npm run verify`, `npm run test:integration`, and `npm run test:e2e` verify the baseline. The GitHub Actions Regression suite runs these checks on PRs to main; see TESTING.md for release verification and branch-protection guidance. For auth, billing, ownership, or data changes, add focused regression coverage and report unavailable integration checks.
 - Do not regenerate the directory dataset casually: the CSV builder currently uses a custom parser, and regeneration is not wired into dev/build scripts. Review dropped records, coordinates, aliases, and resulting diffs before accepting a refresh.
 
 ## Configuration
