@@ -6,6 +6,7 @@ const local = loadTestEnvironment();
 export default defineConfig({
   testDir: "./tests/e2e",
   fullyParallel: false,
+  forbidOnly: Boolean(process.env.CI),
   workers: 1,
   retries: 0,
   timeout: 30_000,
@@ -15,7 +16,10 @@ export default defineConfig({
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
   },
-  projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
+  projects: [
+    { name: "chromium", use: { ...devices["Desktop Chrome"] } },
+    { name: "mobile-chromium", use: { ...devices["Pixel 7"] } },
+  ],
   webServer: {
     command: "npm run test:start",
     url: `${local.NEXT_PUBLIC_SITE_URL}/about`,
