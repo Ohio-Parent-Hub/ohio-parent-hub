@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { localClient, ownerClient, inboxMessages, inboxMessage } from "../support/clients.mjs";
 import { providers, SUBSCRIPTION_STATUSES } from "../fixtures/providers.mjs";
+import { seedFixtures } from "../support/seed.mjs";
 
 // Verifies the harness, not the pending ownership/entitlement fixes in OPH-14/15.
 describe("isolated Supabase fixture environment", () => {
@@ -30,6 +31,25 @@ describe("isolated Supabase fixture environment", () => {
     expect(listings.error).toBeNull(); expect(listings.data).toHaveLength(8);
     expect(jobs.error).toBeNull(); expect(jobs.data).toHaveLength(8);
     expect((await admin.storage.getBucket("listings")).error).toBeNull();
+  });
+  it("restores credentials and mutable fixture fields after another test changes them", async () => {
+    const provider = providers[0];
+    const admin = localClient("service");
+    const changes = [
+      await admin.auth.admin.updateUserById(provider.id, { password: "Changed-local-fixture-password!" }),
+      await admin.from("profiles").update({ stripe_customer_id: "cus_changed_fixture", subscription_id: "sub_changed_fixture" }).eq("id", provider.id),
+      await admin.from("premium_listings").update({ hours: { changed: true }, photos: ["http://127.0.0.1/changed"] }).eq("program_number", provider.programNumber),
+      await admin.from("daycare_jobs").update({ job_url: "http://127.0.0.1/changed", application_email_custom: "changed@example.test" }).eq("id", provider.jobId),
+    ];
+    for (const result of changes) expect(result.error).toBeNull();
+    await seedFixtures();
+    const owner = await ownerClient(provider);
+    const profile = await owner.from("profiles").select("stripe_customer_id, subscription_id").single();
+    const listing = await admin.from("premium_listings").select("hours, photos").eq("program_number", provider.programNumber).single();
+    const job = await admin.from("daycare_jobs").select("job_url, application_email_custom").eq("id", provider.jobId).single();
+    expect(profile.error).toBeNull(); expect(profile.data).toEqual({ stripe_customer_id: null, subscription_id: null });
+    expect(listing.error).toBeNull(); expect(listing.data).toEqual({ hours: null, photos: [] });
+    expect(job.error).toBeNull(); expect(job.data).toEqual({ job_url: null, application_email_custom: null });
   });
   it("captures recovery email in the local inbox", async () => {
     const provider = providers[0];
