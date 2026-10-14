@@ -12,7 +12,7 @@ These instructions apply to the entire repository.
 - If authentication fails, the account differs, or the identity cannot be verified, stop the affected authenticated operation and report the issue. Never fall back to another account, replace credentials, or change global authentication settings.
 - Check `git remote -v` before fetching or pushing. Keep this repository separate from the user's other projects.
 - GitHub account identity is separate from Git commit author identity. Do not invent an author email or change global Git configuration.
-- Supabase, Stripe, and Vercel account/project IDs have not yet been confirmed by the owner. Verify the intended project and environment before using external credentials or making remote changes; do not infer them from another project or a default account.
+- Supabase production project: **`aziibxfjoduwwkmcczrm`** (`ohio-parent-hub`), confirmed by the owner. No separate hosted staging project is confirmed. Verify the intended environment before remote changes; tests use only the dedicated local stack. Stripe identity still needs confirmation. Verify Vercel team/project/commit against this repository before releases.
 
 ## Product and architecture
 
@@ -24,7 +24,7 @@ Ohio Parent Hub helps Ohio parents find licensed childcare by location, program 
 - Supabase provides authentication, provider profiles, premium listings, jobs, and image storage. Schema history lives in `supabase/migrations/`.
 - Stripe provides subscription checkout, the billing portal, and webhook updates.
 - `app/` contains pages, server actions, and API routes; `components/` contains UI; `lib/` contains shared utilities and service clients.
-- Provider claims, listing changes, and job mutations live in `app/actions/`; billing routes live in `app/api/stripe/`.
+- Provider claims, listing changes, and job mutations live in `app/actions/`; billing routes live in `app/api/stripe/`. `lib/claims/verification.ts` is the shared server-only claim verifier. See `docs/ownership-security.md` before deploying ownership fixes or applying the new migration.
 - `proxy.ts` refreshes auth sessions, captures promo codes, normalizes legacy detail query parameters, and blocks draft/preview pages in production.
 
 ## Local development and verification

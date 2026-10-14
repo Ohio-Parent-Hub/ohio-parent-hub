@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
+import { completeVerifiedClaim } from "@/lib/claims/verification";
 import { stripe } from "@/lib/stripe";
 import { validatePromoCode } from "@/lib/promoValidation";
 import daycares from "@/data/daycares.json";
@@ -44,29 +45,11 @@ export default async function DashboardPage({
     .eq("id", user.id)
     .single();
 
-  // Auto-create profile if it doesn't exist (e.g. email verification
-  // redirect didn't go through /auth/callback)
-  if (!profile) {
-    const programNumber = user.user_metadata?.program_number;
-    if (!programNumber) redirect("/auth/login");
-
-    const adminDb = createServiceClient();
-    const { data: newProfile } = await adminDb
-      .from("profiles")
-      .upsert(
-        {
-          id: user.id,
-          email: user.email!,
-          program_number: programNumber,
-          verified: true,
-        },
-        { onConflict: "id" }
-      )
-      .select("*")
-      .single();
-
-    if (!newProfile) redirect("/auth/login");
-    profile = newProfile;
+  // Covers confirmation links that return to the dashboard directly.
+  if (!profile || !profile.verified) {
+    const claim = await completeVerifiedClaim(supabase);
+    if (claim.status === "error") redirect(`/auth/login?claim_error=${claim.reason}`);
+    profile = claim.profile;
   }
 
   // Auto-redirect to Stripe Checkout for new signups
