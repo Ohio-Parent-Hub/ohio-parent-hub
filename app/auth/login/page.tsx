@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
+import ClaimErrorNotice from "@/components/ClaimErrorNotice";
 import { Shield } from "lucide-react";
 
 const teal = "#7EA8A4";
@@ -104,6 +105,8 @@ export default function LoginPage() {
               style={{ borderColor: `${teal}40` }}
             />
           </div>
+
+          {!error && !loading && <Suspense fallback={null}><ClaimErrorNotice /></Suspense>}
 
           {error && (
             <p className="rounded-lg bg-red-50 px-4 py-2 text-sm text-red-600">

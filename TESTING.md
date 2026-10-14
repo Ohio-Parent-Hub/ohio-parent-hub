@@ -2,7 +2,7 @@
 
 The development baseline is Node **24.19.0**, npm **11.9.0**, Next.js **16.1.6**, and the exact test dependency versions in `package-lock.json`. Use `.nvmrc` to select Node. Production hosting and deployment runtime settings are unchanged.
 
-Use GitHub account **tyhuffman7** only for `Ohio-Parent-Hub/ohio-parent-hub`. Keep Vercel, Supabase, and Stripe. Hosted project IDs still need confirmation before remote work; this setup does not contact a hosted Supabase project.
+Use GitHub account **tyhuffman7** only for `Ohio-Parent-Hub/ohio-parent-hub`. Keep Vercel, Supabase, and Stripe. The owner confirmed production Supabase project `aziibxfjoduwwkmcczrm`; no hosted staging project is confirmed. Verify service identities and environments before remote work; this setup does not contact a hosted Supabase project.
 
 ## Clean checkout
 
@@ -41,6 +41,8 @@ In a restricted workspace, select writable caches without changing your home dir
 
 `npm run build` / `npm run start` remain the normal deployment commands. Local test builds use the same production compiler and routes, but overwrite `.next` with local configuration. Never deploy a test build; build again using the intended deployment configuration. The wrapper records the build ID and environment fingerprint and refuses to use other build artifacts for tests.
 
+Run integration and browser suites sequentially: integration tests reseed accounts and change fixture passwords, which can invalidate browser sessions if run concurrently.
+
 Use `test:reset` after changing migrations or when you need a fully clean database. Stop/setup verifies restart behavior; it does not apply new migrations to existing persisted volumes. Do not pass `--linked`, `--db-url`, `--all`, remote Docker selectors, or raw remote credentials to test lifecycle commands. The wrapper exposes no passthrough flags and clears inherited remote Docker selectors.
 
 Use `test:teardown` when finished with disposable test data; `test:setup` creates it again. Supabase's local ports bind to all network interfaces by default, so run the stack on a protected development machine, not a public server.
@@ -76,9 +78,9 @@ The initial build failure was reproduced with Turbopack diagnostics identifying 
 
 In the managed verification environment, Docker's `vfs` driver exhausted disk while copying the official Postgres image's layers. Verification used a locally flattened filesystem of that same `17.6.1.106` image, with its original runtime configuration preserved. This was an environment-only workaround; no database image/version or storage-driver change is part of this repository. Ordinary Docker installations do not need this workaround.
 
-Current coverage verifies the environment safety boundaries, seeded schema/content, authenticated/anonymous profile reads, captured recovery/confirmation messages, and public discovery/navigation in desktop and mobile Chromium. It does **not** establish that the ownership and entitlement vulnerabilities are fixed. OPH-14/15 add the security/billing regression suites. CI runs the available checks; required-check enforcement still needs a repository administrator. There is no arbitrary coverage-percentage gate.
+Current coverage verifies environment safety, seeded schema/content, real-role ownership protection, trusted claim completion with captured confirmation/recovery email, and public discovery/auth navigation in desktop/mobile Chromium. See [ownership-security.md](docs/ownership-security.md) for claim test boundaries and deployment requirements. Premium entitlement and webhook retry regressions remain OPH-15. CI runs the available checks; required-check enforcement still needs a repository administrator. There is no arbitrary coverage-percentage gate.
 
-The test database uses the three checked-in migrations, without changing their existing policies. Production schema/grants/triggers, Postgres version, email templates, and Storage policies have not been compared because the intended hosted project is unconfirmed. The local image bucket is test-only setup, not a production migration. Record any discovered drift when the hosted project is confirmed; do not adjust production or weaken policies simply to make tests pass.
+The test database applies all checked-in migrations, including the profile ownership protection migration. The confirmed hosted profile schema/grants/triggers were inspected read-only; see [ownership-security.md](docs/ownership-security.md) for findings and migration-history drift. Hosted email templates and Storage policies have not been compared. The local image bucket is test-only setup, not a production migration. Record any additional hosted schema drift before release; do not adjust production or weaken policies simply to make tests pass.
 
 Before releasing auth/schema/billing fixes, verify both allowed and rejected behavior in isolation, run the affected checks on the intended preview, and prepare a rollback. Running this baseline alone is not approval to deploy.
 
@@ -96,7 +98,7 @@ Fatal browser errors and local HTTP 5xx fail tests, with concise attached diagno
 
 The workflow requests only `contents: read`, does not persist checkout credentials, and references pinned action commits. It uses `pull_request`, never `pull_request_target`; no hosted Supabase, Stripe, Vercel or repository secrets are supplied to PR code. Local generated service credentials are disposable and must not be uploaded. The workflow does not deploy its local `.next` build. Vercel's existing Git integration still builds previews and deploys `main`.
 
-After the initial workflow passes, a repository administrator should require **Regression suite** for `main` and prevent merges while it is failing or pending. Keep the job name stable. Verify existing branch rules first, and retain any required Vercel check. The agent's current GitHub credential cannot read main's branch-protection settings (HTTP 403), so enforcement has not been changed. CI reporting alone does not block merges or direct pushes. OPH-14 and OPH-15 must add the ownership/claim and billing regressions to this required suite alongside their fixes; the current integration tests do not prove those vulnerabilities are resolved.
+After the initial workflow passes, a repository administrator should require **Regression suite** for `main` and prevent merges while it is failing or pending. Keep the job name stable. Verify existing branch rules first, and retain any required Vercel check. The agent's current GitHub credential cannot read main's branch-protection settings (HTTP 403), so enforcement has not been changed. CI reporting alone does not block merges or direct pushes. OPH-14 ownership/claim regressions now run in this suite. OPH-15 must add premium/billing regressions alongside those fixes; passing the current suite does not prove those remaining issues are resolved.
 
 ## Release verification and rollback preparation
 

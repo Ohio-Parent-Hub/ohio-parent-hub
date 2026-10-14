@@ -1,7 +1,7 @@
 "use server";
 
 import { cookies } from "next/headers";
-import { createServiceClient } from "@/lib/supabase/server";
+import { createClient, createServiceClient } from "@/lib/supabase/server";
 import daycares from "@/data/daycares.json";
 
 type ClaimResult =
@@ -21,11 +21,15 @@ export async function submitClaim(
   email: string,
   password: string
 ): Promise<ClaimResult> {
+  if (typeof programNumber !== "string" || typeof email !== "string" || typeof password !== "string" || !programNumber.trim()) {
+    return { status: "error", message: "Please enter a valid listing, email and password." };
+  }
   const trimmedEmail = email.trim().toLowerCase();
 
   // Check if already claimed
-  const claimed = await checkClaimStatus(programNumber);
-  if (claimed) {
+  const claimed = await createServiceClient().from("profiles").select("id").eq("program_number", programNumber).maybeSingle();
+  if (claimed.error) return { status: "error", message: "Unable to check this claim. Please try again." };
+  if (claimed.data) {
     return { status: "already_claimed" };
   }
 
@@ -59,7 +63,7 @@ export async function submitClaim(
   }
 
   // Email matches → create account with password (Supabase sends confirmation email)
-  const supabase = createServiceClient();
+  const supabase = await createClient();
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
@@ -87,18 +91,20 @@ export async function submitClaim(
 }
 
 /**
- * Check if a listing is already claimed (a profile exists for this program number).
+ * Check whether a listing has a verified claim (for the public badge).
  */
 export async function checkClaimStatus(
   programNumber: string
 ): Promise<boolean> {
   const supabase = createServiceClient();
 
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("profiles")
     .select("id")
     .eq("program_number", programNumber)
+    .eq("verified", true)
     .maybeSingle();
 
+  if (error) throw new Error("Unable to check this claim. Please try again.");
   return !!data;
 }

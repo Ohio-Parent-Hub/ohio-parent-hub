@@ -42,7 +42,7 @@ export default function ClaimListingDialog({
   useEffect(() => {
     checkClaimStatus(programNumber).then((claimed) => {
       if (claimed) setHidden(true);
-    });
+    }).catch(() => setError("Unable to check this claim. Please try again."));
   }, [programNumber]);
 
   if (hidden) return <VerifiedProviderBadge />;
