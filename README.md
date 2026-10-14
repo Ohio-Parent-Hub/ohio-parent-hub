@@ -1,4 +1,28 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+Ohio Parent Hub is a Next.js directory with Supabase provider accounts and Stripe subscriptions.
+
+## Development and test baseline
+
+Use the Node version in `.nvmrc` (24.19.0) and npm 11.9.0 for the tested development baseline. This does not change the production deployment's runtime setting. Use only the GitHub account **tyhuffman7** for this repository.
+
+```bash
+nvm install
+nvm use
+npm ci
+npm run test:unit
+```
+
+For the isolated database and production build checks, Docker must be running:
+
+```bash
+npm run test:setup
+npm run verify
+npm run test:integration
+npx playwright install chromium
+npm run test:e2e
+npm run test:stop
+```
+
+See [TESTING.md](TESTING.md) for configuration, fixtures, email testing, reset behavior, and the limits of the current coverage. The tests use a dedicated local Supabase stack and inert Stripe values; production credentials are not needed.
 
 ## Getting Started
 
