@@ -1,104 +1,29 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { stripe } from "@/lib/stripe";
 import { createServiceClient } from "@/lib/supabase/server";
-import Stripe from "stripe";
+import { billingEventInput } from "@/lib/billingEvents";
+import type Stripe from "stripe";
 
 export async function POST(request: Request) {
   const body = await request.text();
   const signature = request.headers.get("stripe-signature");
-
-  if (!signature) {
-    return NextResponse.json({ error: "Missing signature" }, { status: 400 });
-  }
-
+  if (!signature) return NextResponse.json({ error: "Missing signature" }, { status: 400 });
   let event: Stripe.Event;
-  try {
-    event = stripe.webhooks.constructEvent(
-      body,
-      signature,
-      process.env.STRIPE_WEBHOOK_SECRET!
-    );
-  } catch {
-    return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
+  try { event = stripe.webhooks.constructEvent(body, signature, process.env.STRIPE_WEBHOOK_SECRET!); }
+  catch { return NextResponse.json({ error: "Invalid signature" }, { status: 400 }); }
+  let input;
+  try { input = billingEventInput(event); }
+  catch { return NextResponse.json({ error: "Invalid billing payload" }, { status: 400 }); }
+  if (!input) return NextResponse.json({ received: true });
+  const { data, error } = await createServiceClient().rpc("apply_billing_event", input);
+  if (error) {
+    console.error("Stripe event persistence failed", { eventId: event.id, type: event.type, code: error.code });
+    return NextResponse.json({ error: "Unable to persist billing event" }, { status: 503 });
   }
-
-  const supabase = createServiceClient();
-
-  switch (event.type) {
-    case "checkout.session.completed": {
-      const session = event.data.object as Stripe.Checkout.Session;
-      const customerId =
-        typeof session.customer === "string"
-          ? session.customer
-          : session.customer?.id;
-      const subscriptionId =
-        typeof session.subscription === "string"
-          ? session.subscription
-          : session.subscription?.id;
-
-      if (customerId) {
-        await supabase
-          .from("profiles")
-          .update({
-            subscription_status: "active",
-            subscription_id: subscriptionId ?? null,
-          })
-          .eq("stripe_customer_id", customerId);
-      }
-      break;
-    }
-
-    case "invoice.payment_succeeded": {
-      const invoice = event.data.object as Stripe.Invoice;
-      const customerId =
-        typeof invoice.customer === "string"
-          ? invoice.customer
-          : invoice.customer?.id;
-
-      if (customerId) {
-        await supabase
-          .from("profiles")
-          .update({ subscription_status: "active" })
-          .eq("stripe_customer_id", customerId);
-      }
-      break;
-    }
-
-    case "invoice.payment_failed": {
-      const invoice = event.data.object as Stripe.Invoice;
-      const customerId =
-        typeof invoice.customer === "string"
-          ? invoice.customer
-          : invoice.customer?.id;
-
-      if (customerId) {
-        await supabase
-          .from("profiles")
-          .update({ subscription_status: "past_due" })
-          .eq("stripe_customer_id", customerId);
-      }
-      break;
-    }
-
-    case "customer.subscription.deleted": {
-      const subscription = event.data.object as Stripe.Subscription;
-      const customerId =
-        typeof subscription.customer === "string"
-          ? subscription.customer
-          : subscription.customer?.id;
-
-      if (customerId) {
-        await supabase
-          .from("profiles")
-          .update({
-            subscription_status: "cancelled",
-            subscription_id: null,
-          })
-          .eq("stripe_customer_id", customerId);
-      }
-      break;
-    }
-  }
-
+  // Cached detail/city/county/jobs pages must stop showing cancelled content.
+  // Also retry invalidation for duplicates if a previous response failed afterward.
+  try { if (data === "applied" || data === "duplicate") revalidatePath("/", "layout"); }
+  catch { return NextResponse.json({ error: "Unable to refresh public listings" }, { status: 503 }); }
   return NextResponse.json({ received: true });
 }
