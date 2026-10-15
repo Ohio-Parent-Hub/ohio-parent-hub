@@ -1,53 +1,18 @@
-import fs from "node:fs";
-import path from "node:path";
+import { parseArgs } from "node:util";
+import { fileURLToPath } from "node:url";
+import { runRefresh } from "./directory/refresh.mjs";
 
-function parseCSVLine(line) {
-  const out = [];
-  let cur = "";
-  let inQuotes = false;
-
-  for (let i = 0; i < line.length; i++) {
-    const ch = line[i];
-
-    if (ch === '"' && line[i + 1] === '"') {
-      cur += '"';
-      i++;
-      continue;
-    }
-    if (ch === '"') {
-      inQuotes = !inQuotes;
-      continue;
-    }
-    if (ch === "," && !inQuotes) {
-      out.push(cur);
-      cur = "";
-      continue;
-    }
-    cur += ch;
+try {
+  const { values, positionals } = parseArgs({ options: { "report-sha256": { type: "string" } }, allowPositionals: true });
+  const action = positionals[0] ?? "stage";
+  if (positionals.length > 1 || (values["report-sha256"] && action !== "apply")) throw new Error("Unexpected refresh arguments");
+  const result = runRefresh(fileURLToPath(new URL("../", import.meta.url)), action, values["report-sha256"]);
+  console.log(`Directory ${action}: ${result.report.counts.source} CSV + ${result.report.counts.additions} additions = ${result.rows.length} programs; ${result.report.counts.geocodedAfter} coordinate pairs.`);
+  if (action === "stage") {
+    console.log(`Review .directory-refresh/report.json and candidate.json: ${result.report.added.length} added, ${result.report.removed.length} removed, ${result.report.changed.length} changed; ${result.report.invalidatedCoordinates.length} invalidated coordinate pairs.`);
+    console.log(`After review: npm run data:apply -- --report-sha256=${result.reportHash}`);
   }
-  out.push(cur);
-  return out;
+} catch (error) {
+  console.error(`Directory refresh failed: ${error.message}`);
+  process.exitCode = 1;
 }
-
-const csvPath = path.join(process.cwd(), "data", "ohio_daycares.csv");
-const outPath = path.join(process.cwd(), "data", "daycares.json");
-
-const raw = fs.readFileSync(csvPath, "utf8");
-const lines = raw.split(/\r?\n/).filter(Boolean);
-
-const headers = parseCSVLine(lines[0]).map((h) => h.trim());
-const rows = [];
-
-for (let i = 1; i < lines.length; i++) {
-  const cols = parseCSVLine(lines[i]);
-  if (cols.length !== headers.length) continue;
-
-  const row = {};
-  for (let j = 0; j < headers.length; j++) {
-    row[headers[j]] = (cols[j] ?? "").trim();
-  }
-  rows.push(row);
-}
-
-fs.writeFileSync(outPath, JSON.stringify(rows, null, 2));
-console.log(`Wrote ${rows.length} records to ${outPath}`);
