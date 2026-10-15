@@ -37,7 +37,7 @@ In a restricted workspace, select writable caches without changing your home dir
 | `npm run test:build` | Production Next.js build using the isolated configuration |
 | `npm run test:start` | Start that build on `127.0.0.1:3100`; refuses a missing or mismatched test build |
 | `npm run test:e2e` | Playwright launches its own built test server and saves failures' traces/screenshots |
-| `npm run verify` | Lint, TypeScript, unit tests, and isolated production build; requires `test:setup` first |
+| `npm run verify` | Read-only directory validation, lint, TypeScript, unit tests, and isolated production build; requires `test:setup` first |
 | `npm run test:stop` | Stop only this test project and remove generated application credentials; local data volumes are preserved |
 | `npm run test:teardown` | Stop only this test project and delete its disposable data volumes and generated application credentials |
 
@@ -100,7 +100,7 @@ Fatal browser errors and local HTTP 5xx fail tests, with concise attached diagno
 
 The workflow requests only `contents: read`, does not persist checkout credentials, and references pinned action commits. It uses `pull_request`, never `pull_request_target`; no hosted Supabase, Stripe, Vercel or repository secrets are supplied to PR code. Local generated service credentials are disposable and must not be uploaded. The workflow does not deploy its local `.next` build. Vercel's existing Git integration still builds previews and deploys `main`.
 
-The owner configured protection for `main` requiring pull requests, up-to-date branches, **Regression suite** and **Vercel**, with admin enforcement and no required human approvals. GitHub reports `main` as protected. The integration cannot read the detailed protection endpoint (HTTP 403), so the individual settings are owner-confirmed. Keep the check names stable and verify the active rules before changing release workflows. OPH-14 ownership/claim, OPH-15 premium/billing and OPH-6 failure/retry regressions run in this suite. The reviewed migrations must be present in the target environment for hosted enforcement.
+The owner configured protection for `main` requiring pull requests, up-to-date branches, **Regression suite** and **Vercel**, with admin enforcement and no required human approvals. GitHub reports `main` as protected. The integration cannot read the detailed protection endpoint (HTTP 403), so the individual settings are owner-confirmed. Keep the check names stable and verify the active rules before changing release workflows. OPH-14 ownership/claim, OPH-15 premium/billing, OPH-6 failure/retry and OPH-7 directory-pipeline regressions run in this suite. The reviewed migrations must be present in the target environment for hosted enforcement.
 
 ## Release verification and rollback preparation
 
@@ -111,3 +111,7 @@ The owner configured protection for `main` requiring pull requests, up-to-date b
 5. Merge through the protected PR path only after checks and review. Confirm the automatic production deployment matches the merge commit, is READY and owns the intended domain, then repeat the public read-only smoke check. If rollback is needed, target the recorded deployment in the confirmed team/project. Vercel rollback can suspend automatic production-domain assignment; verify it and deliberately restore normal promotion afterward. Reconcile database/billing state separately.
 
 This adds release guidance and CI reporting without altering hosting, deployment credentials, or branch policies. Broad onboarding/operations cleanup remains OPH-8.
+
+## Directory pipeline regressions
+
+See [directory-data.md](docs/directory-data.md) for source/enrichment inputs and the stage/review/apply workflow. `npm run data:validate` runs before normal dev/build commands and in `verify`; it never rewrites data. Unit tests cover strict CSV parsing, coordinate/address binding, explicit hidden additions, deterministic staging, stale/tampered report rejection, apply/validation, offline Census response validation, and the complete reviewed directory/URL/display normalization baseline. Changes to the deliberate directory baseline require reviewing and updating its test expectations. The recurring public browser suite uses the same generated directory; provider overlay tests remain in the local Supabase integration suite. No live geocoder or hosted provider data is used by these checks.

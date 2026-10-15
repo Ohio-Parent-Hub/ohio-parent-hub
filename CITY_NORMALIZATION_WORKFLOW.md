@@ -46,5 +46,6 @@ If any answer is uncertain, do not approve the alias.
 
 ## Current status
 - Reporting workflow exists.
-- No aliases applied yet.
-- Next step is manual review + approved alias list population.
+- Approved aliases are populated in `data/city-aliases.approved.json` and applied by the existing runtime canonical-city resolver in `lib/metroAreas.ts`. The blocked-pair file currently contains an empty list.
+- Continue manual review for new aliases; the report never applies them automatically.
+- Directory refreshes preserve raw city values and do not change either alias file. See [the directory refresh workflow](docs/directory-data.md) for candidate reports, coordinate preservation and explicit acceptance.

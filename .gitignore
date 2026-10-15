@@ -55,3 +55,6 @@ reports/seo-audit/*.json
 
 # playwright MCP local config
 .playwright-mcp/
+
+# Unpublished directory refresh candidates/reports
+/.directory-refresh/

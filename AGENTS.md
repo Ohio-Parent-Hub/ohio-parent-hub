@@ -37,7 +37,7 @@ Ohio Parent Hub helps Ohio parents find licensed childcare by location, program 
 - `npm run build`: verify the production build.
 - `npm run city:normalize:report`: generate city normalization reports; inspect any generated changes.
 - Use `TESTING.md` for the isolated Supabase fixtures, Vitest, Playwright, and guarded test commands. `npm run test:setup` prepares the local stack; `npm run verify`, `npm run test:integration`, and `npm run test:e2e` verify the baseline. The GitHub Actions Regression suite runs these checks on PRs to main; see TESTING.md for release verification and branch-protection guidance. For auth, billing, ownership, or data changes, add focused regression coverage and report unavailable integration checks.
-- Do not regenerate the directory dataset casually: the CSV builder currently uses a custom parser, and regeneration is not wired into dev/build scripts. Review dropped records, coordinates, aliases, and resulting diffs before accepting a refresh.
+- Directory dev/build/CI checks validate data read-only. Use `npm run data:refresh` to stage a candidate/report, review it, and `npm run data:apply -- --report-sha256=<reviewed hash>` to accept it explicitly. Preserve the saved geocoding input, intentional additions/test markers, approved/blocked city aliases, runtime normalization, and Supabase identities/overlays. See `docs/directory-data.md`; never regenerate or geocode published data during a build.
 
 ## Configuration
 

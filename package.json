@@ -9,7 +9,7 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit --incremental false",
-    "verify": "npm run lint && npm run typecheck && npm run test:unit && npm run test:build",
+    "verify": "npm run data:validate && npm run lint && npm run typecheck && npm run test:unit && npm run test:build",
     "test:unit": "node scripts/test-environment.mjs run unit",
     "test:integration": "node scripts/test-environment.mjs run integration",
     "test:e2e": "node scripts/test-environment.mjs run e2e",
@@ -19,7 +19,13 @@
     "test:reset": "node scripts/test-environment.mjs reset",
     "test:stop": "node scripts/test-environment.mjs stop",
     "test:teardown": "node scripts/test-environment.mjs teardown",
-    "city:normalize:report": "node scripts/cityNormalizationReport.mjs"
+    "city:normalize:report": "node scripts/cityNormalizationReport.mjs",
+    "predev": "npm run data:validate",
+    "prebuild": "npm run data:validate",
+    "data:validate": "node scripts/buildDaycaresJson.mjs validate",
+    "data:refresh": "node scripts/buildDaycaresJson.mjs stage",
+    "data:apply": "node scripts/buildDaycaresJson.mjs apply",
+    "data:geocode": "node scripts/geocodeDaycares_clean.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.9.0",
