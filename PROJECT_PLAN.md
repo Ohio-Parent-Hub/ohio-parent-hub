@@ -1,3 +1,5 @@
+> **Historical build plan — not the current setup or task list.** This predates the implemented directory, normalization, security and test pipeline. In particular, the old advice to regenerate JSON in predev/prebuild must not be followed: current hooks validate only. Use [README.md](README.md), [operations](docs/operations.md), [directory refreshes](docs/directory-data.md) and Jira OPH. Original notes follow unchanged.
+
 Ohio Parent Hub MVP — Detailed Build Plan (Tailored to Your Repo)
 What we built / strategy so far
 

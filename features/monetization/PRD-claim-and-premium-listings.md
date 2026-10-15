@@ -1,5 +1,7 @@
 # PRD: Daycare Claim & Premium Listing Monetization
 
+> **Historical product/design reference.** This predates later implementation and security hardening. Proposed schemas, code snippets, rollout steps and status labels below are not current operating instructions; do not run them against an existing project. See [README.md](../../README.md), [operations](../../docs/operations.md) and the implemented [ownership](../../docs/ownership-security.md) and [premium/billing rules](../../docs/premium-access.md). Jira OPH tracks current engineering work.
+
 > **Status:** Draft  
 > **Created:** 2026-03-11  
 > **Last Updated:** 2026-03-11

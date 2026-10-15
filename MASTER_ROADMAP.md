@@ -2,8 +2,7 @@
 
 _Last updated: 2026-03-04_
 
-This is the canonical roadmap for all site work.
-Prioritization is indexing-first (where needed), but includes full product/UX/ops enhancements.
+> **Historical roadmap (last content update March 4, 2026).** Jira OPH is the current engineering task tracker. The status claims and checkboxes below have not been reconciled with later implementation and must not be used as the current backlog or security/configuration guide. See [README.md](README.md) and [operations](docs/operations.md). The wider SEO/analytics audit and UI revamp are deferred; these notes do not authorize them.
 
 ---
 

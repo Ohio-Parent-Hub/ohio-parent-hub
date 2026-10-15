@@ -1,6 +1,6 @@
 # Ohio Parent Hub - Development Checklist
 
-> Canonical task tracking now lives in [MASTER_ROADMAP.md](MASTER_ROADMAP.md).
+> Current engineering task tracking lives in Jira OPH. Start with [README.md](README.md) and [operations](docs/operations.md); [MASTER_ROADMAP.md](MASTER_ROADMAP.md) is also historical.
 >
 > This file is retained for historical context and legacy notes.
 

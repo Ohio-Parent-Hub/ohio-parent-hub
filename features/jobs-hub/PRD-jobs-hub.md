@@ -1,5 +1,7 @@
 # PRD: Jobs Hub for Premium Daycare Providers
 
+> **Historical product/design reference.** This predates later implementation and security hardening. Proposed schemas, code snippets, rollout steps and status labels below are not current operating instructions; do not run them against an existing project. See [README.md](../../README.md), [operations](../../docs/operations.md) and the implemented [premium/billing rules](../../docs/premium-access.md). Jira OPH tracks current engineering work.
+
 **Status:** Ready for build planning  
 **Feature:** Jobs Hub  
 **Product:** Ohio Parent Hub  

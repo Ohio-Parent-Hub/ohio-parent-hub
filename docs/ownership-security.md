@@ -1,10 +1,12 @@
 # Provider ownership security rollout (OPH-3 / OPH-9 / OPH-14)
 
-## Verified production context and findings
+## Original findings and current rollout status
+
+The ownership protection and trusted-claim changes are deployed. A read-only production history check on October 15, 2026 confirms the ownership, entitlement, billing and helper-hardening migration entries; see [the current migration table](operations.md#database-migrations). The findings below describe the **initial inspection before hardening**, not the present permissions.
 
 The owner confirmed Supabase project `aziibxfjoduwwkmcczrm` (`ohio-parent-hub`) on October 14, 2026. Read-only inspection found the same profile columns, primary/unique ownership constraints, RLS policies and broad anon/authenticated grants as the checked-in schema. `verified` defaults to true. The only custom profile trigger updates timestamps; no custom Auth-user trigger creates profiles. Production Postgres is 17.6.1.084; the isolated CLI stack uses 17.6.1.106.
 
-The local baseline reproduced an authenticated owner changing subscription status and Stripe customer ID directly through the Data API. No such write was attempted in production. Live policies and grants permit the same category of write; this change prevents it once its migration is applied. Current production migration history contains only `20260504162054_jobs_hub`; the initial schema and claim simplification appear to have been applied outside that history. **Do not blindly run `supabase db push --linked`**, which could attempt to recreate existing tables/types from 001–003. Review/reconcile migration history separately, or apply only the new reviewed migration through the intended project's migration mechanism.
+The local baseline reproduced an authenticated owner changing subscription status and Stripe customer ID directly through the Data API. No such write was attempted in production. Live policies and grants permit the same category of write; this change prevents it once its migration is applied. At that initial inspection, production migration history contained only `20260504162054_jobs_hub`; the initial schema and claim simplification appear to have been applied outside that history. **Do not blindly run `supabase db push --linked`**, which could attempt to recreate existing tables/types from 001–003. Review/reconcile migration history separately, or apply only the new reviewed migration through the intended project's migration mechanism.
 
 ## Behavior after the change
 
@@ -23,7 +25,9 @@ These Node tests invoke the real server actions and route handlers. They replace
 
 Playwright additionally exercises the built app's login/dashboard rejection path with a synthetic account pointing at a real public program number, normal existing-owner sign-in, and visible persistence-error guidance in desktop/mobile Chromium. The existing public discovery tests continue to run. All tests are part of the existing required-check recommendation, `Regression suite`; no checks are skipped to hide an ownership failure.
 
-## Rollout and rollback
+## Original rollout and rollback reference
+
+The original production rollout is complete. Use these compatibility requirements for environments missing the change, not as instructions to replay an applied migration. Current environment selection and history are in [operations.md](operations.md).
 
 1. Review the exact PR commit and its isolated CI results. Verify a clean local `test:reset` applies all migrations and the tests pass. Check Supabase security advisors locally.
 2. Use a confirmed nonproduction Supabase project to confirm email confirmation is enabled (auto-confirmed signup must not be allowed), then validate email templates/redirect allowlists and signup confirmation, established-owner login, claim failure messages and trusted billing writes with the actual deployment configuration. No separate hosted staging project has been confirmed yet. The connector does not expose hosted Auth configuration; email-confirmation settings/templates still require checking before release. Vercel previews may point at production services; public read-only smoke checks are safe, but do not create real claims, send real mail or exercise payments there as tests.
