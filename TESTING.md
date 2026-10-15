@@ -20,6 +20,8 @@ npm run test:e2e
 
 Docker Engine/Docker Desktop must be running. The wrapper uses the local Docker socket; use Linux, macOS with the standard Docker socket, or WSL2 with Docker integration. The first setup downloads Supabase images and can take several minutes. Installing Chromium may require Playwright's OS dependencies (`npx playwright install --with-deps chromium`) on a fresh Linux machine.
 
+CI sets `SUPABASE_INTERNAL_IMAGE_REGISTRY=docker.io` to use the pinned CLI's official Docker Hub image references. Public ECR returned `toomanyrequests: Data limit exceeded` before database startup on a main-branch verification run. This setting changes the image source, not the pinned image versions or test requirements. For the same ECR failure locally, set this variable consistently for the test setup, checks and teardown. Registry failures must not be treated as passing tests.
+
 In a restricted workspace, select writable caches without changing your home directory, for example `npm ci --cache /workspace/.npm` and `PLAYWRIGHT_BROWSERS_PATH=/workspace/.cache/ms-playwright npx playwright install chromium`. Preserve that browser-path variable when running browser tests. Keep the configured proxy and trusted CA settings; do not disable TLS verification.
 
 ## Commands
