@@ -71,11 +71,35 @@ for (const route of [
   });
 }
 
+// Offline fixture keeps CI independent of the tile provider. Only the supported
+// public endpoint is fulfilled, so changing to a key-gated host fails these checks.
+const mapTile = `<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256"><rect width="256" height="256" fill="#e8efe2"/><path d="M0 128H256 M128 0V256" stroke="#fff" stroke-width="12"/></svg>`;
+for (const route of [
+  { name: "directory search", path: `/daycares?lat=${provider.lat}&lng=${provider.lon}&q=Columbus` },
+  { name: "provider detail", path: provider.path },
+]) {
+  test(`${route.name} loads keyless map tiles and attribution`, async ({ page }) => {
+    await page.route(/^https:\/\/tile\.openstreetmap\.org\/\d+\/\d+\/\d+\.png$/, async route => {
+      await route.fulfill({ contentType: "image/svg+xml", body: mapTile });
+    });
+    await page.goto(route.path);
+    const map = page.locator(".leaflet-container").filter({ visible: true }).first();
+    await map.scrollIntoViewIfNeeded();
+    const tile = map.locator("img.leaflet-tile-loaded").first();
+    await expect(tile).toBeVisible();
+    await expect(tile).toHaveAttribute("src", /^https:\/\/tile\.openstreetmap\.org\/\d+\/\d+\/\d+\.png$/);
+    expect(await tile.evaluate(image => image instanceof HTMLImageElement && image.complete && image.naturalWidth === 256 && image.naturalHeight === 256)).toBe(true);
+    await expect(map.locator('.leaflet-control-attribution a[href="https://www.openstreetmap.org/copyright"]')).toBeVisible();
+    await expect(map.locator(".leaflet-marker-icon").first()).toBeVisible();
+  });
+}
+
 test("map markers and results survive unavailable third-party tiles", async ({ page }) => {
   await page.goto(`/daycares?lat=${provider.lat}&lng=${provider.lon}&q=Columbus`);
   await page.getByPlaceholder("Daycare name").fill(provider.name);
   await expect(page.locator(".leaflet-container").filter({ visible: true })).toBeVisible();
   await expect(page.locator(".leaflet-marker-icon").filter({ visible: true }).first()).toBeVisible();
+  await expect(page.locator("img.leaflet-tile-loaded")).toHaveCount(0);
   await expect(page.getByRole("heading", { name: /1 Results in Map View/ }).filter({ visible: true })).toBeVisible();
   await expect(page.getByRole("link", { name: provider.name, exact: true }).filter({ visible: true })).toBeVisible();
 });

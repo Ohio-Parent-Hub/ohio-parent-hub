@@ -43,7 +43,7 @@ npm run test:e2e
 npm run test:teardown
 ```
 
-`verify` runs directory validation, lint, TypeScript, unit tests and the production build against the local test configuration. Run integration and browser suites sequentially because fixtures are reseeded. Linux may require `npx --no-install playwright install --with-deps chromium`. The current suite has **186 recurring tests** (80 unit, 74 integration, 32 desktop/mobile browser); see [TESTING.md](TESTING.md) for coverage, fixture boundaries, registry/proxy troubleshooting and diagnostics. Test commands inject their own isolated configuration; they do not need a populated `.env.local`. Keep unrelated `.env.production*` files out of this checkout so Next.js cannot load extra settings from disk.
+`verify` runs directory validation, lint, TypeScript, unit tests and the production build against the local test configuration. Run integration and browser suites sequentially because fixtures are reseeded. Linux may require `npx --no-install playwright install --with-deps chromium`. The current suite has **190 recurring tests** (80 unit, 74 integration, 36 desktop/mobile browser); see [TESTING.md](TESTING.md) for coverage, fixture boundaries, registry/proxy troubleshooting and diagnostics. Test commands inject their own isolated configuration; they do not need a populated `.env.local`. Keep unrelated `.env.production*` files out of this checkout so Next.js cannot load extra settings from disk.
 
 `test:teardown` removes only the disposable local stack, data volumes and generated test credentials. `test:stop` preserves its database volumes for a later session. Never use either as a production command.
 
