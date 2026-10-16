@@ -30,6 +30,7 @@ Ohio Parent Hub helps Ohio parents find licensed childcare by location, program 
 ## Local development and verification
 
 - Start with `README.md` for setup and `docs/operations.md` for environment identities, configuration, migrations, auth/email, billing and release procedures. Older plans/PRDs are historical references; Jira OPH tracks current work.
+- For `oph-overhaul-2026` work, start at [docs/overhaul/README.md](docs/overhaul/README.md) for approved decisions, access evidence, handoffs and ticket order. Preserve completed OPH-1 through OPH-17; planning does not authorize production changes.
 - Use npm and preserve `package-lock.json`.
 - `npm ci`: install the locked dependencies.
 - `npm run dev`: start the development server.

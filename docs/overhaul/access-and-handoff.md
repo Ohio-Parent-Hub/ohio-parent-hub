@@ -1,0 +1,45 @@
+# Access evidence and handoff
+
+## Verified bootstrap surfaces
+
+Observed **October 16, 2026**. Readability and configuration are separate from authorization to change a service. This is a sanitized inventory; private property/account IDs, principals, grants, customer cohorts and exports belong in an access-controlled record, never this public directory.
+
+| Surface | Evidence / status | Smallest next action |
+| --- | --- | --- |
+| GitHub connector | **VERIFIED**: `mcp__codex_apps__github_get_user_login` returned `tyhuffman7`; `github_get_repo` resolved public `Ohio-Parent-Hub/ohio-parent-hub`, default `main`, with read/push permission. Use this same connector for branch, commit and PR operations. | Recheck the exact acting tool before future authenticated operations. |
+| Canonical repository | **VERIFIED**: connector reads of all four required docs; local checkout matched `main` at `7d67d87122f2db14b0c2c5f8b348121c6c4c5594`. Local `git remote -v` matched the canonical HTTPS remote; initial branch `work` was clean. Documentation branch: `docs/oph-25-overhaul-bootstrap`. | Review the OPH-25 PR. No global account/config changes. |
+| GitHub CLI credential | **NOT USED / UNVERIFIED**: connector identity does not prove CLI identity. No authenticated CLI fetch/push is needed for this bootstrap. | Only if a later task uses CLI: require `gh api user --jq .login` to return `tyhuffman7`; stop on mismatch, never switch global accounts. |
+| Jira direct issue/JQL reads | **VERIFIED**: OPH-25, OPH-18 including coordination comment, all 36 labeled issues OPH-18–53 (pagination exhausted), and Done status for OPH-1–17. | Use direct issue reads and JQL for current scope. No new tickets or status changes in OPH-25. |
+| Rovo cross-content search | **BLOCKED**: HTTP 403, app not installed on this Jira instance. Direct Jira/JQL reads work. | None needed for this handoff. If cross-content search is required later, site admin enables the Rovo app for this site. |
+| Native ChatGPT Space | **VERIFIED**: named hub **Ohio Parent Hub Overhaul** created with native Space controls and root Page content read back. Hub link is supplied in the completion report. | Reopen/read the hub in each intended session; access here does not establish access in another runtime. |
+| Earlier Library planning pack | **PARTIAL / BLOCKED**: the owner attached `Ohio_Parent_Hub_Overhaul_Master_Plan.md`, which was read and reconciled. The original Library folder and five companion files remain inaccessible: no callable Library file/folder reader or accessible Page references exposed them. Space listing/Page search did not locate an OPH hub before creation. | If full historical reconciliation is needed, owner attaches `01-PRODUCT-DECISIONS.md`, `02-CODEX-ACCESS-AND-HANDOFF.md`, `03-JIRA-BACKLOG.md`, `04-SPACE-SETUP-AND-INSTRUCTIONS.md` and the original audit, or adds readable references to the hub. No need to resend the master plan or recreate tickets. |
+| Other chats / automatic synchronization | **UNVERIFIED**: no prior-chat content was read; repository, Jira and Space do not synchronize automatically. | Carry the explicit handoff below into the next chat. |
+| Managed runtime | Local repository is readable. Runtime status reported configured bindings but readiness `unknown`, with no outbound identity aliases. This does not prove service access. | OPH-26 verifies its intended runtime and service-specific access; do not print environment values or inspect credential contents. |
+
+## Configuration references only
+
+Sources: [operations](../operations.md), [.env.example](../../.env.example), [.gitignore](../../.gitignore), [AnalyticsLoader](../../components/AnalyticsLoader.tsx), [root layout](../../app/layout.tsx), [GSC CLI](../../scripts/gsc.mjs) and [testing](../../TESTING.md). Existing service identities/links in operations are historical confirmations, not fresh access proofs. No Google API/Console read test or setup was performed for OPH-25.
+
+| Service | Existing configuration names / reference | Current evidence and next boundary |
+| --- | --- | --- |
+| GA4 | `NEXT_PUBLIC_GA_MEASUREMENT_ID`; root layout → `AnalyticsLoader`; consent key `cookie-consent`, event `cookie-consent-update` | Direct `gtag` loader is present and loads for consent `all` when an ID exists. Property/stream identity, collection and read grants remain **UNVERIFIED / OPH-26**. A measurement ID is not an API credential. |
+| Search Console | `GSC_KEY_FILE`, `GSC_SITE_URL`; ignored default credential filename `gsc-service-account.json`; `scripts/gsc.mjs` requests `webmasters.readonly` | Operations records a prior domain-property/service-account check; current runtime access is **UNVERIFIED / OPH-26**. Executable default uses the domain property; the script's header mentions an older URL default. Its `coverage` command is impression grouping, not a full indexing inventory. Do not run setup instructions or generate a new key as part of this bootstrap. |
+| Google Cloud | Existing Console link/setup references in `scripts/gsc.mjs`; service-account reference in operations | Project/IAM/API/quotas/billing visibility **UNVERIFIED / OPH-26**. GSC and GA4 property grants are separate from Cloud IAM. No Cloud identity binding was exposed by runtime status. |
+| Optional GTM / BigQuery | No dedicated container/warehouse configuration found in inspected application/configuration sources | `googletagmanager.com/gtag/js` is the direct GA library, not proof of a GTM container. Need and access **UNDECIDED / UNVERIFIED**; OPH-28 decides loader strategy. |
+| Vercel | Project/team reference in operations; ignored `.vercel/`; `NEXT_PUBLIC_SITE_URL`, fallback `VERCEL_URL` | Hosted configuration not inspected. Do not pull env files, relink or deploy. Existing Git integration may create a PR preview; main/production is unchanged. |
+| Supabase | Project/dashboard reference in operations; `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`; local `supabase/config.toml` | Hosted access not tested. No separate hosted staging confirmed; Preview is not proof of isolated backing services. |
+| Stripe | `STRIPE_SECRET_KEY`, `STRIPE_PRICE_ID`, `STRIPE_WEBHOOK_SECRET`; billing routes and operations | Account/mode/product/webhook identity remains unconfirmed. Configured binding is not authorization or a successful read. No billing/customer/revenue API calls. |
+
+For OPH-26, the smallest owner input is the intended runtime plus existing GA4 property/stream, GSC property and Cloud project references and the approved credential/connection reference through a private channel. Reuse approved access; test first, then request only the missing service-specific read grant. Do not request Owner/Editor, create duplicate resources, enable APIs, mint keys or change settings without separate specific approval. Record exact blockers and revocation steps privately.
+
+## Handoff process
+
+1. ChatGPT/owner selects an existing Jira ticket and records approved decisions there. Jira is scope/status authority; a Space note cannot silently expand the assignment.
+2. Codex reads the ticket, parent, linked prerequisites, this entry point and the four root operational docs. Verify repository, branch/base and the exact acting GitHub identity before authenticated work.
+3. Work one assigned implementation ticket per PR by default. Keep sensitive evidence private; publish only reviewed configuration names, sanitized methods, limitations and technical results. Stop at unresolved decision/access gates.
+4. Return ticket, branch/base, PR/head commit, changed documents, checks with pass/fail/not-run distinctions, blockers and the exact smallest owner actions. Include the next existing ticket. Report through the current chat and the linked PR; those paths are readable here. Jira commenting/status mutation is not exercised by this bootstrap.
+5. Owner/ChatGPT reconciles the report into Jira and the Space hub. Future Codex sessions read each source explicitly. Do not infer completion from configured credentials, an old report or a passing check on a different commit.
+
+## Next Codex task
+
+> Work on Ohio Parent Hub OPH-26 only after reviewing the OPH-25 handoff. Read OPH-26, OPH-18, AGENTS.md, README.md, docs/operations.md, TESTING.md and docs/overhaul/. Use canonical Ohio-Parent-Hub/ohio-parent-hub and verify tyhuffman7 for the exact GitHub tool/credential without changing global accounts. Discover existing approved Google references privately; prove separate read-only GA4, GSC and project-scoped Cloud access in the intended runtime, including restart/reconnect and owner-UI/export comparison as specified by OPH-26. Report actual reads, date ranges, scopes/limits and service-specific blockers with minimum owner actions. Local and cloud access require separate proof. No new credentials, IAM/API/settings changes, paid services, GTM publication or production changes without specific approval. Keep secrets/private evidence out of chat and the public repo. Preserve OPH-1–17; create no Jira tickets. Stop after OPH-26.
